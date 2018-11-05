@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title><h:outputText value="Bienvenido" /></title>
+	<style>
+body {
+	background-color: rgb(244, 247, 247)
+}
+
+.centered {
+	position: absolute;
+	height: 250px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	width: 425px;
+	left: 50%;
+	margin-left: -212px;
+	background-color: rgb(160, 167, 229);
+	border: 0px
+}
+</style>
+</h:head>
+<h:body>
+	<h:form>
+		<center>
+			<p:panel id="basic" header="Recuperar contraseña" styleClass="centered">
+				<h:panelGrid columns="2" cellpadding="10" styleClass="table">
+
+
+
+					<p:outputLabel value="Nombre de Usuario" style="font-weight:bold" />
+					<p:inputText value="#{userMB.userPass.userName}" />
+					<p:outputLabel value="Correo electronico: " />
+					<p:inputText value="#{userMB.userPass.emailAddress}"></p:inputText>
+
+					<center>
+						<p:commandButton value="Enviar" action="#{userMB.cambiarContraseña}"
+							ajax="false" />
+					</center>
+				</h:panelGrid>
+			</p:panel>
+		</center>
+	</h:form>
+</h:body>
+</html>

@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputText value="ADMIN" /></title>
+
+	<style>
+body {
+	background-color: rgb(244, 247, 247)
+}
+
+.ui-datatable.myTable .ui-datatable-header, .ui-datatable.myTable .ui-paginator
+	{
+	background: rgb(160, 167, 229);
+	border: rgb(5, 5, 5);
+}
+
+.ui-datatable.myTable th {
+	background: rgb(182, 188, 237);
+	height: 8px
+}
+
+.ui-datatable.myTable tr {
+	background-color: rgb(239, 248, 249);
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+
+.centered {
+	position: absolute;
+	height: 380px;
+	top: 0;
+	bottom: 0;
+	margin: 80%;
+	width: 95%;
+	left: 50%;
+	margin-left: -48%;
+	margin-top: 15%;
+	background-color: rgb(203, 216, 237);
+	border: 0px;
+}
+</style>
+
+</h:head>
+<h:body>
+
+	<h:form>
+		<p:panel
+			style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
+
+			<p:graphicImage value="/img/Acme-corp.png"
+				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
+
+			<div style="margin-left: 90%">
+				<p:commandButton id="dynaButton" value="ADMIN" type="button"
+					icon="ui-icon-extlink" styleClass="boton" />
+				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
+					style="background-color: rgb(203, 216, 237);border:none">
+						<p:menuitem value="Datos personales"
+							action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+						<p:menuitem value="Salir" action="#{userMB.logOut}" icon="ui-icon-power" />
+				</p:menu>
+			</div>
+		</p:panel>
+
+
+		<p:panel styleClass="centered" >
+
+			<p:panelGrid columns="2" styleClass="panel">
+
+				<p:menu style="background-color: rgb(203, 216, 237);border:none">
+					<p:submenu label="OPCIONES"
+						style="background-color: rgb(179, 185, 242)">
+						<p:menuitem value="Usuarios" action="/administrador/indexAdmin.xhtml"
+							icon="ui-icon-star" />
+						<p:menuitem value="Auditoria" action="/administrador/indexAudit.xhtml"
+							icon="ui-icon-star" />
+							<p:menuitem value="Parametros" action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
+					</p:submenu>
+				</p:menu>
+
+
+
+
+				<p:panel
+					style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%">
+					<p:dataTable id="tbl" var="au" value="#{auditMB.listarAuditorias}"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+						paginator="true" rows="5"
+						style="width:100%;height:100%;align: top"
+						styleClass="myTable">
+
+						<f:facet name="header">
+							<h:outputText value="LISTADO AUDITORIA" />
+						</f:facet>
+
+						<p:column style="width:5px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.id}" headerText="Id" filterMatchMode="contains" >
+							<center>
+								<h:outputText value="#{au.id}" />
+							</center>
+						</p:column>
+
+						<p:column style="width:5px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.userName}" headerText="UserName" filterMatchMode="contains">
+							<center>
+								<h:outputText value="#{au.userName}" />
+							</center>
+						</p:column>
+
+						<p:column style="width:10px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.operationCrud}" headerText="Operación" filterMatchMode="contains" >
+							<center>
+								<h:outputText value="#{au.operationCrud}" />
+							</center>
+						</p:column>
+
+						<p:column style="width:10px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.tableName}" headerText="Nombre Tabla" filterMatchMode="contains" >
+							<center>
+								<h:outputText value="#{au.tableName}" />
+							</center>
+						</p:column>
+
+						<p:column style="width:5px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.tableId}" headerText="Id Tabla" filterMatchMode="contains" >
+							<center>
+								<h:outputText value="#{au.tableId}" />
+							</center>
+						</p:column>
+
+						<p:column style="width:15px;height:3px;font-size:14px" filterStyle="width: 60px;" filterBy="#{au.createDate}" headerText="Fecha" filterMatchMode="contains">
+							<center>
+							<h:outputText value="#{au.createDate}" />
+							</center>
+						</p:column>
+
+						<p:column style="width:15px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.addressIP}" headerText="IP" filterMatchMode="contains">
+							<center>
+								<h:outputText value="#{au.addressIP}" />
+							</center>
+						</p:column>
+
+
+
+					</p:dataTable>
+				</p:panel>
+
+			</p:panelGrid>
+
+
+		</p:panel>
+
+
+	</h:form>
+
+
+
+
+</h:body>
+</html>

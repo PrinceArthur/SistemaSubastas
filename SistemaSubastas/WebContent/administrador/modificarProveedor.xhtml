@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputText value="ADMIN" /></title>
+	<style>
+body {
+	background-color: rgb(244, 247, 247)
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.centered {
+	position: absolute;
+	height: 380px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	width: 90%;
+	left: 50%;
+	margin-left: -45%;
+	margin-top: 15%;
+	background-color: rgb(203, 216, 237);
+	border: 0px;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+</style>
+</h:head>
+<h:body>
+	<h:form>
+
+		<p:panel
+			style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
+
+			<p:graphicImage value="/img/Acme-corp.png"
+				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
+
+			<div style="margin-left: 90%">
+				<p:commandButton id="dynaButton" value="ADMIN" type="button"
+					icon="ui-icon-extlink" styleClass="boton" />
+				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
+					style="background-color: rgb(203, 216, 237);border:none">
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+					<p:menuitem value="Salir" action="#{userMB.logOut}"
+						icon="ui-icon-power" />
+				</p:menu>
+			</div>
+		</p:panel>
+
+
+		<p:panel styleClass="centered">
+
+
+			<p:panelGrid columns="2" styleClass="panel">
+
+				<p:menu style="background-color: rgb(203, 216, 237);border:none">
+					<p:submenu label="LISTADOS"
+						style="background-color: rgb(179, 185, 242)">
+						<p:menuitem value="Usuarios" action="/administrador/indexAdmin.xhtml"
+							icon="ui-icon-star" />
+						<p:menuitem value="Auditoria" action="/administrador/indexAudit.xhtml"
+							icon="ui-icon-star" />
+					</p:submenu>
+					<p:submenu style="background-color: rgb(179, 185, 242)">
+						<p:menuitem value="Registrar Proveedor"
+						action="#{userMB.prepararAdicionarUser}" icon="ui-icon-pin-w" />
+					</p:submenu>
+				</p:menu>
+
+				<p:panel header="Modificar Datos"
+					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
+
+					<h:form>
+					
+						
+						<p:growl id="growl" showDetail="true" sticky="true" />
+						<p:panelGrid columns="2" styleClass="panel" id="pg">
+
+
+							<h:outputLabel value="Usuario: " style="font-weight:bold"
+								for="unTxt" />
+
+							<p:inputText value="#{userMB.usuario.userName}" required="true"
+								maxlength="12" requiredMessage="Campo requerido"
+								validatorMessage="No puede tener simbolos" id="unTxt"
+								placeholder="#{userMB.usuario.userName}">
+								<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
+							</p:inputText>
+
+							<p:outputLabel value="Contraseña: " style="font-weight:bold" />
+							
+							<p:inputText value="#{userMB.usuario.password}" required="true"
+								requiredMessage="Contraseña requerida" disabled="true" id="paTxt">
+							</p:inputText>
+
+							<p:outputLabel value="Nombre completo: " style="font-weight:bold" />
+							<p:inputText value="#{userMB.usuario.fullName}" required="true"
+								requiredMessage="Nombre requerido" id="nTxt"
+								validatorMessage="Solo puede contener letras"
+								placeholder="#{userMB.usuario.fullName}">
+								<f:validateRegex pattern="[a-zA-Z]*" />
+							</p:inputText>
+
+							<p:outputLabel value="Correo electrónico: "
+								style="font-weight:bold" />
+							<p:inputText value="#{userMB.usuario.emailAddress}"
+								required="true" requiredMessage="Campo requerido"
+								validatorMessage="Estructura de correo invalida" id="emailTxt"
+								placeholder="#{userMB.usuario.emailAddress}">
+								<f:validateRegex
+									pattern="^(([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+([;.](([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5}){1,25})+)*$" />
+							</p:inputText>
+
+							<center>
+								<p:commandButton value="Actualizar"
+									action="#{userMB.modificarUser}" update="growl" />
+							</center>
+						</p:panelGrid>
+
+					</h:form>
+
+				</p:panel>
+			</p:panelGrid>
+
+		</p:panel>
+	</h:form>
+</h:body>
+</html>
