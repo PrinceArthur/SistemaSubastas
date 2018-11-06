@@ -34,6 +34,8 @@ public class Salesueb implements Serializable {
 	private int valueBase;
 
 	private int valueCurrent;
+	
+	private String name;
 
 	public Salesueb() {
 	}
@@ -109,5 +111,15 @@ public class Salesueb implements Serializable {
 	public void setValueCurrent(int valueCurrent) {
 		this.valueCurrent = valueCurrent;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	
 
 }

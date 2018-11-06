@@ -27,6 +27,7 @@ public class EnviarCorreo
 		prop.put("mail.smtp.port", 587);
 		prop.put("mail.smtp.auth", "true");
 		prop.put("mail.smtp.starttls.enable", "true");
+		prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 
 		Session sesion = Session.getDefaultInstance(prop, null);
 

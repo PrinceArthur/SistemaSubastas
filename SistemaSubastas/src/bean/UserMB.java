@@ -30,7 +30,7 @@ public class UserMB
 	private User user;
 	private User loginUser = new User();
 	private User userAdmin = new User();
-	private User userPass;
+	private User userPass = new User();
 	private DataModel listaUser;
 	private String mensajeError;
 
@@ -66,14 +66,16 @@ public class UserMB
 
 	public String prepararCambioContraseña()
 	{
-		userPass = new User();
+		UserService service = new UserService();
+		
+		userPass = service.getUser(loginUser.getUserName());
 		return "/usuarios/cambiarContraseña";
 	}
 
-	public String prepararIngresoProveedor(String userName)
+	public String prepararIngresoProveedor()
 	{
 		UserService service = new UserService();
-		user = service.getUser(userName);
+		user = service.getUser(loginUser.getUserName());
 		return "/usuarios/indexProveedor";
 	}
 
@@ -101,7 +103,7 @@ public class UserMB
 		{
 			user.setDateLastPassword(new Date());
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
-			user.setPassword(pass);
+			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 			service.nuevo(user);
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
@@ -154,42 +156,92 @@ public class UserMB
 		String pagina = "";
 		UserService service = new UserService();
 		User usuarioTemp = service.getUser(loginUser.getUserName());
-		System.out.println(usuarioTemp.getUserType() + " - " + usuarioTemp.getPassword());
-		String pass = loginUser.getPassword();
-		loginUser.setPassword(Cifrado.getStringMessageDigest("" + pass, Cifrado.MD5) + "%");
-		String password = loginUser.getPassword();
-
-		if (usuarioTemp.getPassword().endsWith("$"))
+		boolean existe = false;
+		
+		Iterator<User> it = getListarUser().iterator();
+		while (it.hasNext() && existe == false)
 		{
-
-			usuarioTemp.setFailedAttempts(0);
-
-			try
+			if (it.next().getUserName().equals(loginUser.getUserName()))
 			{
-				String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
-						.getRequestParameterMap().get("g-recaptcha-response");
-				boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
-				if (verify)
-				{
-					pagina = prepararCambioContraseña();
-				} else
-				{
-					mensajeError = "Verificación del CAPTCHA invalida";
-				}
-			} catch (Exception e)
-			{
+				existe = true;
 			}
-
-			pagina = prepararCambioContraseña();
-		} else
+		}
+		
+		
+		if(existe)
 		{
-
-			System.out.println("Entra al else         " + usuarioTemp.getUserType() + "   " + loginUser.getPassword());
 			
-			if (usuarioTemp.getUserType().equalsIgnoreCase("admin") && usuarioTemp.getPassword().equals(loginUser.getPassword()))
+			System.out.println(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5));
+			
+			if(loginUser.getPassword().endsWith("$"))
 			{
-				userAdmin = service.getUser("admin");
-				System.out.println("Entra bien");
+				try
+				{
+					String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
+							.getRequestParameterMap().get("g-recaptcha-response");
+					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
+					if (verify)
+					{
+						pagina = prepararCambioContraseña();
+					} else
+					{
+						mensajeError = "Verificación del CAPTCHA invalida";
+					}
+				} catch (Exception e)
+				{
+				}
+			}
+			else if(usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
+			{
+				System.out.println("Entra");
+				
+				
+				if(usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
+				{
+					try
+					{
+						String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
+								.getRequestParameterMap().get("g-recaptcha-response");
+						boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
+						if (verify)
+						{
+							pagina = prepararIngresoProveedor();
+						} else
+						{
+							mensajeError = "Verificación del CAPTCHA invalida";
+						}
+					} catch (Exception e)
+					{
+					}
+				}
+				else if(usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
+				{
+					try
+					{
+						String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
+								.getRequestParameterMap().get("g-recaptcha-response");
+						boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
+						if (verify)
+						{
+							pagina = "/usuarios/indexPostor";
+						} else
+						{
+							mensajeError = "Verificación del CAPTCHA invalida";
+						}
+					} catch (Exception e)
+					{
+					}
+				}
+				else
+				{
+					FacesContext context = FacesContext.getCurrentInstance();
+					context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+					mensajeError = "Contraseña o Usuario inválido";
+				}
+				
+			}
+			else if(usuarioTemp.getUserType().equalsIgnoreCase("ADMIN") && usuarioTemp.getPassword().equals(loginUser.getPassword()))
+			{
 				try
 				{
 					String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
@@ -205,63 +257,19 @@ public class UserMB
 				} catch (Exception e)
 				{
 				}
-
-			}else if (usuarioTemp.getUserType().equalsIgnoreCase("POSTOR")
-					&& usuarioTemp.getPassword().equalsIgnoreCase(password)
-					&& usuarioTemp.getActive().equalsIgnoreCase("ACTIVO"))
-			{
-
-				try
-				{
-					String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
-							.getRequestParameterMap().get("g-recaptcha-response");
-					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
-					if (verify)
-					{
-						pagina = prepararIngresoPostor(usuarioTemp.getUserName());
-					} else
-					{
-						mensajeError = "Verificación del CAPTCHA invalida";
-					}
-				} catch (Exception e)
-				{
-				}
-
-			} else if (usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR")
-					&& usuarioTemp.getPassword().equalsIgnoreCase(password)
-					&& usuarioTemp.getActive().equalsIgnoreCase("ACTIVO"))
-			{
-
-				try
-				{
-					String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
-							.getRequestParameterMap().get("g-recaptcha-response");
-					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
-					if (verify)
-					{
-						pagina = prepararIngresoProveedor(usuarioTemp.getUserName());
-					} else
-					{
-						mensajeError = "Verificación del CAPTCHA invalida";
-					}
-				} catch (Exception e)
-				{
-				}
-			}
-			else
-			{
-				FacesContext context = FacesContext.getCurrentInstance();
-				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-				mensajeError = "Validación de usuario o contraseña incorrectas";
-				usuarioTemp.setFailedAttempts(+1);
 			}
 		}
-		if (usuarioTemp.getFailedAttempts() == 3)
+		else
 		{
-			mensajeError = "Señor usuario usted exedio el número de intentos de ingreso al sistema. Su estado ahora es INACTIVO";
-			usuarioTemp.setActive("INACTIVE");
-			audit.adicionarAudit(usuarioTemp.getUserName(), "DELETE", "User", 0);
+			mensajeError = "Este usuario no existe";
 		}
+		
+		
+		
+		
+		
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 
 		audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
 
@@ -272,10 +280,23 @@ public class UserMB
 
 	public String recuperarContraseña()
 	{
+		String pagina ="";
 		UserService service = new UserService();
-		User userTemp = service.getUser(userPass.getUserName());
-		service.actualizar(userTemp);
-		return "/administrador/indexAdmin";
+		System.out.println(userPass.getUserName());
+		String pass = userPass.getPassword();
+		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
+		service.actualizar(userPass);
+		
+		if(userPass.getUserType().equalsIgnoreCase("POSTOR"))
+		{
+			pagina = "/usuarios/indexPostor";
+		}else if(userPass.getUserType().equalsIgnoreCase("PROVEEDOR"))
+		{
+			pagina = "/usuarios/indexProveedor";
+		}
+		
+		
+		return pagina;
 
 	}
 
@@ -290,6 +311,7 @@ public class UserMB
 		{
 			EnviarCorreo.sendEmail(userTemp.getEmailAddress());
 			userTemp.setDateLastPassword(date);
+			userTemp.setFailedAttempts(0);
 			service.actualizar(userTemp);
 		} else
 		{
@@ -312,6 +334,33 @@ public class UserMB
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
+	}
+	
+	public boolean validarCorreo(String correo)
+	{
+		boolean correcto = false;
+		if(correo.endsWith("@gmail.com") || correo.endsWith("@hotmail.com") || correo.endsWith("@unbosque.edu.co"))
+		{
+			correcto = true;
+		}
+		
+		if(!correo.startsWith("@"))
+		{
+			correcto = true;
+		}
+		
+		
+		
+			return correcto;
+	}
+	
+	public boolean validarCOntraseña(String contraseña)
+	{
+		if(contraseña.contains("0"))
+		{
+			
+		}
+		return false;
 	}
 
 	public User getUsuario()
