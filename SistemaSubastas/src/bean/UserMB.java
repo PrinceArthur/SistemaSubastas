@@ -49,6 +49,10 @@ public class UserMB
 	public String prepararModificarUser()
 	{
 		user = (User) (listaUser.getRowData());
+		String correo = user.getEmailAddress();
+		String[] x = correo.split("@");
+		email1 = x[0];
+		email2 = x[1];
 		return "/administrador/modificarProveedor";
 	}
 
