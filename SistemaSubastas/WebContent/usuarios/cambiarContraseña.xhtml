@@ -10,7 +10,6 @@
 body {
 	background-color: rgb(246, 249, 149)
 }
-
 .centered {
 	position: absolute;
 	height: 150px;
@@ -23,9 +22,6 @@ body {
 	margin-top:20%;
 	background-color: rgb(246, 249, 149);
 }
-
-
-
 </style>
 </h:head>
 <h:body>
@@ -39,6 +35,9 @@ body {
 
 		</p:panel>
 			<p:panel id="basic"  styleClass="centered">
+			
+			<p:growl id="growl" showDetail="true" sticky="true" />
+			
 				<h:panelGrid columns="1" cellpadding="10" styleClass="table">
 				
 				<p:row>
@@ -49,9 +48,9 @@ body {
 					</p:column>
 					<p:column>
 						<center>
-							<p:password value="#{userMB.userPass.password}" id="pass">
-								<f:validateRegex pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$" />
-							</p:password>
+							<p:inputText value="#{userMB.userPass.password}" id="pass" >
+								<f:validateRegex for="pass" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"  />
+							</p:inputText>
 						</center>
 					</p:column>
 				</p:row>
@@ -60,7 +59,7 @@ body {
 					<p:column colspan="2">
 						<center>
 						<p:commandButton value="Cambiar contraseña" action="#{userMB.recuperarContraseña}"
-							ajax="false" />
+							update="growl" />
 						</center>
 					</p:column>
 				</p:row>
