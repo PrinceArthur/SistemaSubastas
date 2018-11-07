@@ -321,24 +321,19 @@ public class UserMB
 
 	public String recuperarContraseña()
 	{
-		String pagina ="";
 		UserService service = new UserService();
-		System.out.println(userPass.getUserName());
 		String pass = userPass.getPassword();
 		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 		service.actualizar(userPass);
 		
-		if(userPass.getUserType().equalsIgnoreCase("POSTOR"))
+		if(userPass.getUserType().equalsIgnoreCase("proveedor"))
 		{
-			pagina = "/usuarios/indexPostor";
-		}else if(userPass.getUserType().equalsIgnoreCase("PROVEEDOR"))
-		{
-			pagina = "/usuarios/indexProveedor";
+			return prepararIngresoProveedor();
 		}
-		
-		
-		return pagina;
-
+		else
+		{
+			return prepararIngresoPostor(userPass.getUserName());
+		}
 	}
 
 	public void cambiarContraseña()
