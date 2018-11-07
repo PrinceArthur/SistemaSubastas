@@ -49,7 +49,9 @@ body {
 					</p:column>
 					<p:column>
 						<center>
-							<p:password value="#{userMB.userPass.password}" />
+							<p:password value="#{userMB.userPass.password}" id="pass">
+								<f:validateRegex pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$" />
+							</p:password>
 						</center>
 					</p:column>
 				</p:row>
