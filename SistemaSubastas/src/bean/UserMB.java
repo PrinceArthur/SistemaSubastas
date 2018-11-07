@@ -33,6 +33,8 @@ public class UserMB
 	private User userPass = new User();
 	private DataModel listaUser;
 	private String mensajeError;
+	private String email1;
+	private String email2;
 
 	public String prepararAdicionarUser()
 	{
@@ -102,6 +104,7 @@ public class UserMB
 		if (repetido == false)
 		{
 			user.setDateLastPassword(new Date());
+			user.setEmailAddress(email1 + email2);
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
 			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 			service.nuevo(user);
@@ -391,6 +394,22 @@ public class UserMB
 	public void setMensajeError(String mensajeError)
 	{
 		this.mensajeError = mensajeError;
+	}
+	
+	public String getEmail1() {
+		return email1;
+	}
+
+	public void setEmail1(String email1) {
+		this.email1 = email1;
+	}
+
+	public String getEmail2() {
+		return email2;
+	}
+
+	public void setEmail2(String email2) {
+		this.email2 = email2;
 	}
 
 }
