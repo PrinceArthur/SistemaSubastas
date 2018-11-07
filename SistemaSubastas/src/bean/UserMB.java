@@ -170,6 +170,7 @@ public class UserMB
 	public String modificarUser()
 	{
 		UserService service = new UserService();
+		user.setEmailAddress(email1+email2);
 		service.actualizar(user);
 		audit.adicionarAudit("Admin", "UPDATE", "User", user.getId());
 
@@ -374,33 +375,6 @@ public class UserMB
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
 	
-	public boolean validarCorreo(String correo)
-	{
-		boolean correcto = false;
-		if(correo.endsWith("@gmail.com") || correo.endsWith("@hotmail.com") || correo.endsWith("@unbosque.edu.co"))
-		{
-			correcto = true;
-		}
-		
-		if(!correo.startsWith("@"))
-		{
-			correcto = true;
-		}
-		
-		
-		
-			return correcto;
-	}
-	
-	public boolean validarCOntraseña(String contraseña)
-	{
-		if(contraseña.contains("0"))
-		{
-			
-		}
-		return false;
-	}
-
 	public User getUsuario()
 	{
 		return user;
