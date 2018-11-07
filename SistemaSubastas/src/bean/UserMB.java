@@ -343,23 +343,41 @@ public class UserMB
 	{
 		UserService service = new UserService();
 		User userTemp = new User();
-		userTemp = service.getUser(userPass.getUserName());
+		userPass.setEmailAddress(email1+email2);
 		Date date = new Date();
-
-		if (userTemp.getEmailAddress().equals(userPass.getEmailAddress()))
+		String usu = "";
+		
+		boolean existe = false;
+		Iterator<User> it = getListarUser().iterator();
+		
+		while (it.hasNext() && existe == false)
 		{
-			EnviarCorreo.sendEmail(userTemp.getEmailAddress());
-			userTemp.setDateLastPassword(date);
-			userTemp.setFailedAttempts(0);
-			service.actualizar(userTemp);
-		} else
-		{
-			mensajeError = "El correo es incorrecto";
+			User x = it.next();
+			if (x.getEmailAddress().equals(userPass.getEmailAddress()))
+			{
+				existe = true;
+				usu = x.getUserName();
+			}
 		}
-
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-
+		
+		userTemp = service.getUser(usu);
+		
+		if(existe)
+		{
+			String pass = EnviarCorreo.sendEmail(userTemp.getEmailAddress());
+			userTemp.setDateLastPassword(date);
+			userTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
+			service.actualizar(userTemp);
+			
+		}else
+		{
+			mensajeError = "No se encontró un usuario con ese correo.";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		}
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		ec.invalidateSession();
+		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
 
 	public void logOut() throws IOException
