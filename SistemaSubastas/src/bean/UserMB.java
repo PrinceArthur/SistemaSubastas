@@ -336,7 +336,7 @@ public class UserMB
 		}
 	}
 
-	public void cambiarContraseña()
+	public String cambiarContraseña()
 	{
 		UserService service = new UserService();
 		User userTemp = new User();
@@ -345,18 +345,24 @@ public class UserMB
 
 		if (userTemp.getEmailAddress().equals(userPass.getEmailAddress()))
 		{
-			EnviarCorreo.sendEmail(userTemp.getEmailAddress());
-			userTemp.setDateLastPassword(date);
-			userTemp.setFailedAttempts(0);
-			service.actualizar(userTemp);
+			String pass = EnviarCorreo.sendEmail(userTemp.getEmailAddress());
+			userPass.setDateLastPassword(date);
+			userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
+			service.actualizar(userPass);
 		} else
 		{
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			mensajeError = "El correo es incorrecto";
 		}
-
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-
+		if(userPass.getUserType().equalsIgnoreCase("proveedor"))
+		{
+			return prepararIngresoProveedor();
+		}
+		else
+		{
+			return prepararIngresoPostor(userPass.getUserName());
+		}
 	}
 
 	public void logOut() throws IOException
