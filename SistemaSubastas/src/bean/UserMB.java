@@ -58,18 +58,18 @@ public class UserMB
 		return "/administrador/datosAdmin";
 	}
 
-	public String prepararRecuperarContraseña()
+	public String prepararRecuperarContraseÃ±a()
 	{
 		userPass = new User();
-		return "/usuarios/recuperarContraseña";
+		return "/usuarios/recuperarContraseÃ±a";
 	}
 
-	public String prepararCambioContraseña()
+	public String prepararCambioContraseÃ±a()
 	{
 		UserService service = new UserService();
 		
 		userPass = service.getUser(loginUser.getUserName());
-		return "/usuarios/cambiarContraseña";
+		return "/usuarios/cambiarContraseÃ±a";
 	}
 
 	public String prepararIngresoProveedor()
@@ -182,10 +182,10 @@ public class UserMB
 					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 					if (verify)
 					{
-						pagina = prepararCambioContraseña();
+						pagina = prepararCambioContraseÃ±a();
 					} else
 					{
-						mensajeError = "Verificación del CAPTCHA invalida";
+						mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
 					}
 				} catch (Exception e)
 				{
@@ -208,7 +208,7 @@ public class UserMB
 							pagina = prepararIngresoProveedor();
 						} else
 						{
-							mensajeError = "Verificación del CAPTCHA invalida";
+							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
@@ -226,7 +226,7 @@ public class UserMB
 							pagina = "/usuarios/indexPostor";
 						} else
 						{
-							mensajeError = "Verificación del CAPTCHA invalida";
+							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
@@ -236,7 +236,7 @@ public class UserMB
 				{
 					FacesContext context = FacesContext.getCurrentInstance();
 					context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-					mensajeError = "Contraseña o Usuario inválido";
+					mensajeError = "ContraseÃ±a o Usuario invÃ¡lido";
 				}
 				
 			}
@@ -252,7 +252,7 @@ public class UserMB
 						pagina = "/administrador/indexAdmin";
 					} else
 					{
-						mensajeError = "Verificación del CAPTCHA invalida";
+						mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
 					}
 				} catch (Exception e)
 				{
@@ -278,7 +278,7 @@ public class UserMB
 		return pagina;
 	}
 
-	public String recuperarContraseña()
+	public String recuperarContraseÃ±a()
 	{
 		String pagina ="";
 		UserService service = new UserService();
@@ -300,7 +300,7 @@ public class UserMB
 
 	}
 
-	public void cambiarContraseña()
+	public void cambiarContraseÃ±a()
 	{
 		UserService service = new UserService();
 		User userTemp = new User();
@@ -336,33 +336,6 @@ public class UserMB
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
 	
-	public boolean validarCorreo(String correo)
-	{
-		boolean correcto = false;
-		if(correo.endsWith("@gmail.com") || correo.endsWith("@hotmail.com") || correo.endsWith("@unbosque.edu.co"))
-		{
-			correcto = true;
-		}
-		
-		if(!correo.startsWith("@"))
-		{
-			correcto = true;
-		}
-		
-		
-		
-			return correcto;
-	}
-	
-	public boolean validarCOntraseña(String contraseña)
-	{
-		if(contraseña.contains("0"))
-		{
-			
-		}
-		return false;
-	}
-
 	public User getUsuario()
 	{
 		return user;
