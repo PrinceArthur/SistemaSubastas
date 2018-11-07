@@ -62,7 +62,45 @@ public class UserMB
 
 	public String prepararRecuperarContraseña()
 	{
-		userPass = new User();
+		UserService service = new UserService();
+		boolean repetido = false;
+		Iterator<User> it = getListarUser().iterator();
+		while (it.hasNext() && repetido == false)
+		{
+			if (it.next().getUserName().equals(loginUser.getUserName()))
+			{
+				repetido = true;
+			}
+		}
+
+		if (repetido == true)
+		{
+			userPass = service.getUser(loginUser.getUserName());
+			
+			try
+			{
+				String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
+						.getRequestParameterMap().get("g-recaptcha-response");
+				boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
+				if (verify)
+				{
+					return "/usuarios/recuperarContraseña";
+				} else
+				{
+					mensajeError = "Verificación del CAPTCHA invalida";
+				}
+			} catch (Exception e)
+			{
+			}
+			
+		}
+		else
+		{
+			mensajeError = "Este usuario no existe.";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		}
+		
 		return "/usuarios/recuperarContraseña";
 	}
 
