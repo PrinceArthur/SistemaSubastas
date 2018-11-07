@@ -8,43 +8,54 @@
 	<title><h:outputText value="Bienvenido" /></title>
 	<style>
 body {
-	background-color: rgb(244, 247, 247)
+	background-color: rgb(246, 249, 149)
 }
-
 .centered {
 	position: absolute;
-	height: 250px;
+	height: 150px;
 	top: 0;
 	bottom: 0;
 	margin: auto;
-	width: 425px;
+	width: 300px;
 	left: 50%;
-	margin-left: -212px;
-	background-color: rgb(160, 167, 229);
-	border: 0px
+	margin-left: -150px;
+	margin-top:20%;
+	background-color: rgb(246, 249, 149);
 }
 </style>
 </h:head>
 <h:body>
 	<h:form>
-		<center>
+	
+	<p:panel
+			style="background-color: rgb(246, 249, 149);magine-top:0px;height:130px;border:none">
+
+			<p:graphicImage value="/img/Acme-corp.png"
+				style="width:400px;height:150px;backGround-color: rgb(246, 249, 149);margin-left: 36%" />
+
+		</p:panel>
 			<p:panel id="basic" header="Recuperar contraseña" styleClass="centered">
-				<h:panelGrid columns="2" cellpadding="10" styleClass="table">
+				<h:panelGrid columns="1" cellpadding="10" styleClass="table">
+				
+				<p:row>
+					<p:column>
+						<center>
+							<p:outputLabel value="#{userMB.userPass.userName} su contraseña será enviada a su correo: #{userMB.userPass.emailAddress} " style="font-weight:bold" />
+						</center>
+					</p:column>
+				</p:row>
 
-
-
-					<p:outputLabel value="Nombre de Usuario" style="font-weight:bold" />
-					<p:inputText value="#{userMB.userPass.userName}" />
-					<p:outputLabel value="Correo electronico: " />
-					<p:inputText value="#{userMB.userPass.emailAddress}"></p:inputText>
-
-					<center>
+				<p:row>
+					<p:column >
+						<center>
 						<p:commandButton value="Enviar" action="#{userMB.cambiarContraseña}"
 							ajax="false" />
-					</center>
+						</center>
+					</p:column>
+				</p:row>
+					
 				</h:panelGrid>
 			</p:panel>
-		</center>
 	</h:form>
 </h:body>
 </html>
