@@ -60,8 +60,9 @@ public class UserMB
 		return "/administrador/datosAdmin";
 	}
 
-	public String prepararRecuperarContraseÃ±a()
+	public String prepararRecuperarContraseña()
 	{
+		userPass = new User();
 		UserService service = new UserService();
 		boolean repetido = false;
 		Iterator<User> it = getListarUser().iterator();
@@ -72,8 +73,7 @@ public class UserMB
 				repetido = true;
 			}
 		}
-
-		if (repetido == true)
+ 		if (repetido == true)
 		{
 			userPass = service.getUser(loginUser.getUserName());
 			
@@ -84,10 +84,10 @@ public class UserMB
 				boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 				if (verify)
 				{
-					return "/usuarios/recuperarContraseÃ±a";
+					return "recuperarContraseña";
 				} else
 				{
-					mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+					mensajeError = "Verificación del CAPTCHA invalida";
 				}
 			} catch (Exception e)
 			{
@@ -101,29 +101,29 @@ public class UserMB
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 		}
 		
-		return "/usuarios/recuperarContraseÃ±a";
+		return "recuperarContraseña";
 	}
 
-	public String prepararCambioContraseÃ±a()
+	public String prepararCambioContraseña()
 	{
 		UserService service = new UserService();
 		
 		userPass = service.getUser(loginUser.getUserName());
-		return "/usuarios/cambiarContraseÃ±a";
+		return "cambiarContraseña";
 	}
 
 	public String prepararIngresoProveedor()
 	{
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
-		return "/usuarios/indexProveedor";
+		return "/proveedor/indexProveedor";
 	}
 
 	public String prepararIngresoPostor(String userName)
 	{
 		UserService service = new UserService();
 		user = service.getUser(userName);
-		return "/usuarios/indexPostor";
+		return "/postor/indexPostor";
 	}
 
 	public String adicionarUser()
@@ -212,7 +212,6 @@ public class UserMB
 		if(existe)
 		{
 			
-			System.out.println(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5));
 			
 			if(loginUser.getPassword().endsWith("$"))
 			{
@@ -223,10 +222,10 @@ public class UserMB
 					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 					if (verify)
 					{
-						pagina = prepararCambioContraseÃ±a();
+						pagina = prepararCambioContraseña();
 					} else
 					{
-						mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+						mensajeError = "Verificación del CAPTCHA invalida";
 					}
 				} catch (Exception e)
 				{
@@ -234,7 +233,6 @@ public class UserMB
 			}
 			else if(usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
 			{
-				System.out.println("Entra");
 				
 				
 				if(usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
@@ -249,7 +247,7 @@ public class UserMB
 							pagina = prepararIngresoProveedor();
 						} else
 						{
-							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+							mensajeError = "Verificación del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
@@ -264,10 +262,10 @@ public class UserMB
 						boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 						if (verify)
 						{
-							pagina = "/usuarios/indexPostor";
+							pagina = "/postor/indexPostor";
 						} else
 						{
-							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+							mensajeError = "Verificación del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
@@ -277,7 +275,7 @@ public class UserMB
 				{
 					FacesContext context = FacesContext.getCurrentInstance();
 					context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-					mensajeError = "ContraseÃ±a o Usuario invÃ¡lido";
+					mensajeError = "Contraseña o Usuario inválido";
 				}
 				
 			}
@@ -293,7 +291,7 @@ public class UserMB
 						pagina = "/administrador/indexAdmin";
 					} else
 					{
-						mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+						mensajeError = "Verificación del CAPTCHA invalida";
 					}
 				} catch (Exception e)
 				{
@@ -319,7 +317,7 @@ public class UserMB
 		return pagina;
 	}
 
-	public String recuperarContraseÃ±a()
+	public String recuperarContraseña()
 	{
 		UserService service = new UserService();
 		String pass = userPass.getPassword();
@@ -336,7 +334,7 @@ public class UserMB
 		}
 	}
 
-	public String cambiarContraseÃ±a()
+	public void cambiarContraseña()
 	{
 		UserService service = new UserService();
 		User userTemp = new User();
@@ -345,24 +343,18 @@ public class UserMB
 
 		if (userTemp.getEmailAddress().equals(userPass.getEmailAddress()))
 		{
-			String pass = EnviarCorreo.sendEmail(userTemp.getEmailAddress());
-			userPass.setDateLastPassword(date);
-			userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
-			service.actualizar(userPass);
+			EnviarCorreo.sendEmail(userTemp.getEmailAddress());
+			userTemp.setDateLastPassword(date);
+			userTemp.setFailedAttempts(0);
+			service.actualizar(userTemp);
 		} else
 		{
-			FacesContext context = FacesContext.getCurrentInstance();
-			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			mensajeError = "El correo es incorrecto";
 		}
-		if(userPass.getUserType().equalsIgnoreCase("proveedor"))
-		{
-			return prepararIngresoProveedor();
-		}
-		else
-		{
-			return prepararIngresoPostor(userPass.getUserName());
-		}
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+
 	}
 
 	public void logOut() throws IOException
@@ -378,6 +370,33 @@ public class UserMB
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
 	
+	public boolean validarCorreo(String correo)
+	{
+		boolean correcto = false;
+		if(correo.endsWith("@gmail.com") || correo.endsWith("@hotmail.com") || correo.endsWith("@unbosque.edu.co"))
+		{
+			correcto = true;
+		}
+		
+		if(!correo.startsWith("@"))
+		{
+			correcto = true;
+		}
+		
+		
+		
+			return correcto;
+	}
+	
+	public boolean validarCOntraseña(String contraseña)
+	{
+		if(contraseña.contains("0"))
+		{
+			
+		}
+		return false;
+	}
+
 	public User getUsuario()
 	{
 		return user;
@@ -434,7 +453,7 @@ public class UserMB
 	{
 		this.mensajeError = mensajeError;
 	}
-	
+
 	public String getEmail1() {
 		return email1;
 	}
@@ -450,5 +469,6 @@ public class UserMB
 	public void setEmail2(String email2) {
 		this.email2 = email2;
 	}
+	
 
 }

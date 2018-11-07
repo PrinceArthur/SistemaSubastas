@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title><h:outputText value="Bienvenido" /></title>
+	<style>
+body {
+	background-color: rgb(246, 249, 149)
+}
+.centered {
+	position: absolute;
+	height: 150px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	width: 300px;
+	left: 50%;
+	margin-left: -150px;
+	margin-top:20%;
+	background-color: rgb(246, 249, 149);
+}
+</style>
+</h:head>
+<h:body>
+	<h:form>
+	
+	<p:panel
+			style="background-color: rgb(246, 249, 149);magine-top:0px;height:130px;border:none">
+
+			<p:graphicImage value="/img/Acme-corp.png"
+				style="width:400px;height:150px;backGround-color: rgb(246, 249, 149);margin-left: 36%" />
+
+		</p:panel>
+			<p:panel id="basic" header="Recuperar contraseña" styleClass="centered">
+				<h:panelGrid columns="1" cellpadding="10" styleClass="table">
+				
+				<p:row>
+					<p:column>
+						<center>
+							<p:outputLabel value="#{userMB.userPass.userName} su contraseña será enviada a su correo: #{userMB.userPass.emailAddress} " style="font-weight:bold" />
+						</center>
+					</p:column>
+				</p:row>
+
+				<p:row>
+					<p:column >
+						<center>
+						<p:commandButton value="Enviar" action="#{userMB.cambiarContraseña}"
+							ajax="false" />
+						</center>
+					</p:column>
+				</p:row>
+					
+				</h:panelGrid>
+			</p:panel>
+	</h:form>
+</h:body>
+</html>
