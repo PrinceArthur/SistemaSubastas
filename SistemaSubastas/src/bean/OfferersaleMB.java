@@ -1,18 +1,39 @@
 package bean;
 
+import java.util.List;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import org.primefaces.component.datalist.DataList;
 
 import entity.Offerersale;
+import entity.Salesueb;
+import service.OfferersaleService;
+import service.SalesuebService;
 
 @ManagedBean
 @SessionScoped
 public class OfferersaleMB
 {
 	private Offerersale offerer;
-	private DataList listaOfertas;
+	private DataModel<Offerersale> listaOfertas;
+	
+	public String prepararAdicionarOferta()
+	{
+		offerer = new Offerersale();
+		return "";
+	}
+	
+	public String agregarOferta()
+	{
+		OfferersaleService service = new OfferersaleService();
+		service.nuevo(offerer);
+		return "";
+	}
+	
 	
 	public Offerersale getOfferer()
 	{
@@ -22,11 +43,13 @@ public class OfferersaleMB
 	{
 		this.offerer = offerer;
 	}
-	public DataList getListaOfertas()
+	public DataModel<Offerersale> getListaOfertas()
 	{
+		List<Offerersale> lista = new OfferersaleService().lista();
+		listaOfertas = new ListDataModel(lista);
 		return listaOfertas;
 	}
-	public void setListaOfertas(DataList listaOfertas)
+	public void setListaOfertas(DataModel<Offerersale> listaOfertas)
 	{
 		this.listaOfertas = listaOfertas;
 	}
