@@ -294,7 +294,7 @@ public class UserMB
 					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 					if (verify)
 					{
-						pagina = "/administrador/indexAdmin";
+						pagina = "/administrador/inicioAdmin";
 					} else
 					{
 						mensajeError = "Verificación del CAPTCHA invalida";
