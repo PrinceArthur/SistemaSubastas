@@ -133,11 +133,12 @@ public class UserMB
 	public String adicionarUser()
 	{
 		UserService service = new UserService();
+		user.setEmailAddress(email1+email2);
 		boolean repetido = false;
 		Iterator<User> it = listaUser.iterator();
 		while (it.hasNext() && repetido == false)
 		{
-			if (it.next().getUserName().equals(user.getUserName()))
+			if (it.next().getUserName().equals(user.getUserName()) || it.next().getEmailAddress().equals(user.getEmailAddress()))
 			{
 				repetido = true;
 			}
