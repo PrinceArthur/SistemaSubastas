@@ -78,7 +78,8 @@ body {
 
 
 		<p:panel styleClass="centered">
-		<p:panel
+
+			<p:panel
 				style="background-color: rgb(203, 216, 237);border:none;width:55%;height:100%;margin-left:20%">
 				<p:growl id="growl" showDetail="true" sticky="true" />
 
@@ -88,71 +89,51 @@ body {
 						style="font-weight:bold" />
 				</center>
 
-
-			<p:panelGrid columns="2" styleClass="panel">
-
-				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="OPCIONES"
-						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Usuarios"
-							action="/administrador/indexAdmin.xhtml" icon="ui-icon-star" />
-						<p:menuitem value="Auditoria"
-							action="/administrador/indexAudit.xhtml" icon="ui-icon-star" />
-					</p:submenu>
-				</p:menu>
-
-				<p:panel header="Registrar Proveedor"
-					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
-
-					<h:form>
-						<p:growl id="growl" showDetail="true" sticky="true" />
-						<p:panelGrid columns="3" styleClass="panel" id="pg">
+				<p:panelGrid columns="3" styleClass="panel" id="pg"
+					style="margin-top:7%">
 
 
-							<h:outputLabel value="Usuario: " style="font-weight:bold"
-								for="unTxt" />
-							<p:inputText value="#{userMB.usuario.userName}" required="true"
-								maxlength="12" requiredMessage="Campo requerido"
-								validatorMessage="No puede tener simbolos" id="unTxt">
-								<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
-							</p:inputText>
-							<h:panelGroup />
+					<h:outputLabel value="Usuario: " style="font-weight:bold"
+						for="unTxt" />
+					<p:inputText value="#{userMB.usuario.userName}" required="true"
+						maxlength="12" requiredMessage="Campo requerido"
+						validatorMessage="No puede tener simbolos" id="unTxt">
+						<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
+					</p:inputText>
+					<h:panelGroup />
 
-							<p:outputLabel value="Nombre completo: " style="font-weight:bold" />
-							<p:inputText value="#{userMB.usuario.fullName}" required="true"
-								requiredMessage="Nombre requerido" id="nTxt"
-								validatorMessage="Solo puede contener letras">
-								<f:validateRegex pattern="[a-zA-Z]*" />
-							</p:inputText>
-							<h:panelGroup />
+					<p:outputLabel value="Nombre completo: " style="font-weight:bold" />
+					<p:inputText value="#{userMB.usuario.fullName}" required="true"
+						requiredMessage="Nombre requerido" id="nTxt"
+						validatorMessage="Solo puede contener letras">
+						<f:validateRegex pattern="[a-zA-Z]*" />
+					</p:inputText>
+					<h:panelGroup />
 
-							<p:outputLabel value="Correo electrónico: "
-								style="font-weight:bold" />
-							<p:inputText value="#{userMB.email1}" required="true"
-								requiredMessage="Campo requerido"
-								validatorMessage="Estructura de correo invalida" id="emailTxt">
-								<f:validateRegex
-									pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-])$" />
-							</p:inputText>
-							<p:selectOneMenu id="mail" value="#{userMB.email2}"
-								style="width:125px">
-								<f:selectItem itemLabel="Seleccione" itemValue="" />
-								<f:selectItem itemLabel="@gmail.com" itemValue="@gmail.com" />
-								<f:selectItem itemLabel="@hotmail.com" itemValue="@hotmail.com" />
-								<f:selectItem itemLabel="@unbosque.edu.co"
-									itemValue="@unbosque.edu.co" />
-							</p:selectOneMenu>
+					<p:outputLabel value="Correo electrónico: "
+						style="font-weight:bold" />
+					<p:inputText value="#{userMB.email1}" required="true"
+						requiredMessage="Campo requerido"
+						validatorMessage="Estructura de correo invalida" id="txtCorero">
+						<f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+					</p:inputText>
+					<p:selectOneMenu required="true"
+						validatorMessage="Debe seleccionar una opción de correo" id="mail"
+						value="#{userMB.email2}" style="width:125px">
+						<f:selectItem itemLabel="Seleccione" itemValue="" />
+						<f:selectItem itemLabel="@gmail.com" itemValue="@gmail.com" />
+						<f:selectItem itemLabel="@hotmail.com" itemValue="@hotmail.com" />
+						<f:selectItem itemLabel="@unbosque.edu.co"
+							itemValue="@unbosque.edu.co" />
+					</p:selectOneMenu>
 
-							<center>
-								<p:commandButton value="Registrar"
-									action="#{userMB.adicionarUser}" update="growl" />
-							</center>
-						</p:panelGrid>
-						</p:panel>
-					</h:form>
-
-				</p:panel>
-			</p:panelGrid>
+					<center>
+						<p:commandButton value="Registrar"
+							action="#{userMB.adicionarUser}" update="growl" />
+						<p:button value="CANCELAR" outcome="/administrador/indexAdmin" />
+					</center>
+				</p:panelGrid>
+			</p:panel>
 		</p:panel>
 	</h:form>
 </h:body>
