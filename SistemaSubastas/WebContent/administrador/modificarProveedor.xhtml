@@ -1,1 +1,151 @@
-i
+i<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputText value="ADMIN" /></title>
+	<style>
+body {
+	background-color: rgb(244, 247, 247)
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.centered {
+	position: absolute;
+	height: 380px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	width: 90%;
+	left: 50%;
+	margin-left: -45%;
+	margin-top: 15%;
+	background-color: rgb(203, 216, 237);
+	border: 0px;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+</style>
+</h:head>
+<h:body>
+	<h:form>
+
+		<p:panel
+			style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
+
+			<p:graphicImage value="/img/Acme-corp.png"
+				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
+
+			<div style="margin-left: 90%">
+				<p:commandButton id="dynaButton" value="ADMIN" type="button"
+					icon="ui-icon-extlink" styleClass="boton" />
+				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
+					style="background-color: rgb(203, 216, 237);border:none">
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+					<p:menuitem value="Salir" action="#{userMB.logOut}"
+						icon="ui-icon-power" />
+				</p:menu>
+			</div>
+		</p:panel>
+
+
+		<p:panel styleClass="centered">
+
+			<p:panel
+				style="background-color: rgb(203, 216, 237);border:none;width:55%;height:100%;margin-left:20%">
+				<p:growl id="growl" showDetail="true" sticky="true" />
+
+				<center>
+					<p:outputLabel
+						value="Ingrese todos los datos para modificar el Proveedor"
+						style="font-weight:bold" />
+				</center>
+
+				<p:panelGrid columns="3" styleClass="panel" id="pg" style="margin-top:7%">
+
+
+					<h:outputLabel value="Usuario: " style="font-weight:bold"
+						for="unTxt" />
+
+					<p:inputText value="#{userMB.usuario.userName}" required="true"
+						maxlength="12" requiredMessage="Campo requerido"
+						validatorMessage="El usuario NO puede tener simbolos" id="unTxt"
+						placeholder="#{userMB.usuario.userName}">
+						<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
+					</p:inputText>
+					<h:panelGroup />
+
+					<p:outputLabel value="Contraseña: " style="font-weight:bold" />
+
+					<p:inputText value="#{userMB.usuario.password}" required="true"
+						requiredMessage="Contraseña requerida" disabled="true" id="paTxt">
+					</p:inputText>
+					<h:panelGroup />
+
+					<p:outputLabel value="Nombre completo: " style="font-weight:bold" />
+					<p:inputText value="#{userMB.usuario.fullName}" required="true"
+						requiredMessage="Nombre requerido" id="nTxt"
+						validatorMessage="El nombre solo puede contener letras"
+						placeholder="#{userMB.usuario.fullName}">
+						<f:validateRegex pattern="[a-zA-Z]*" />
+					</p:inputText>
+					<h:panelGroup />
+
+					<p:outputLabel value="Correo electrónico: "
+						style="font-weight:bold" />
+					<p:inputText value="#{userMB.email1}" required="true"
+						requiredMessage="Campo requerido"
+						validatorMessage="Estructura de correo invalida" id="emailTxt"
+						placeholder="#{userMB.email1}">
+						<f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+					</p:inputText>
+					<p:selectOneMenu required="true" id="mail" value="#{userMB.email2}"
+						style="width:125px">
+						<f:selectItem itemLabel="Seleccione" itemValue="" />
+						<f:selectItem itemLabel="@gmail.com" itemValue="@gmail.com" />
+						<f:selectItem itemLabel="@hotmail.com" itemValue="@hotmail.com" />
+						<f:selectItem itemLabel="@unbosque.edu.co"
+							itemValue="@unbosque.edu.co" />
+					</p:selectOneMenu>
+
+					<center>
+						<p:commandButton value="ACTUALIZAR"
+							action="#{userMB.modificarUser}" update="growl" />
+						<p:button value="CANCELAR" outcome="/administrador/indexAdmin"/>
+					</center>
+					
+				</p:panelGrid>
+					
+					
+			</p:panel>
+			
+		</p:panel>
+	
+	</h:form>
+</h:body>
+</html>
