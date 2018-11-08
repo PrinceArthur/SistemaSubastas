@@ -78,6 +78,15 @@ body {
 
 
 		<p:panel styleClass="centered">
+		<p:panel
+				style="background-color: rgb(203, 216, 237);border:none;width:55%;height:100%;margin-left:20%">
+				<p:growl id="growl" showDetail="true" sticky="true" />
+
+				<center>
+					<p:outputLabel
+						value="Ingrese todos los datos para registrar el nuevo Proveedor"
+						style="font-weight:bold" />
+				</center>
 
 
 			<p:panelGrid columns="2" styleClass="panel">
@@ -139,6 +148,7 @@ body {
 									action="#{userMB.adicionarUser}" update="growl" />
 							</center>
 						</p:panelGrid>
+						</p:panel>
 					</h:form>
 
 				</p:panel>
