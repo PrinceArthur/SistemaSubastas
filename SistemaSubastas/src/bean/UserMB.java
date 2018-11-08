@@ -141,10 +141,6 @@ public class UserMB
 			{
 				repetido = true;
 			}
-			if(it.next().getEmailAddress().equals(user.getEmailAddress()))
-			{
-				repetido = true;
-			}
 		}
 
 		if (repetido == false)
