@@ -78,79 +78,69 @@ body {
 
 		<p:panel styleClass="centered">
 
+			<p:panel
+				style="background-color: rgb(203, 216, 237);border:none;width:55%;height:100%;margin-left:20%">
+				<p:growl id="growl" showDetail="true" sticky="true" />
 
-			<p:panelGrid columns="2" styleClass="panel">
+				<center>
+					<p:outputLabel
+						value="Ingrese todos los datos para modificar el Proveedor"
+						style="font-weight:bold" />
+				</center>
 
-				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="LISTADOS"
-						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Usuarios" action="/administrador/indexAdmin.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Auditoria" action="/administrador/indexAudit.xhtml"
-							icon="ui-icon-star" />
-					</p:submenu>
-				</p:menu>
-
-				<p:panel header="Modificar Datos"
-					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
-
-					<h:form>
-					
-						
-						<p:growl id="growl" showDetail="true" sticky="true" />
-						<p:panelGrid columns="2" styleClass="panel" id="pg">
+				<p:panelGrid columns="3" styleClass="panel" id="pg" style="margin-top:7%">
 
 
-							<h:outputLabel value="Código: " style="font-weight:bold"
-								/>
+					<h:outputLabel value="Usuario: " style="font-weight:bold"
+						for="unTxt" />
 
-							<p:inputText value="#{parameterMB.parameter.parameterCode}" disabled="true"/>
+					<p:inputText value="#{userMB.usuario.userName}" required="true"
+						maxlength="12" requiredMessage="Campo requerido"
+						validatorMessage="No puede tener simbolos" id="unTxt"
+						placeholder="#{userMB.usuario.userName}">
+						<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
+					</p:inputText>
+					<h:panelGroup />
 
-							<p:outputLabel value="Tipo: " style="font-weight:bold" />
-							
-							<p:inputText value="#{parameterMB.parameter.parameterType}" required="true"
-								requiredMessage="Contraseña requerida"  
-								validatorMessage="Solo puede contener letras"
-								placeholder="#{parameterMB.parameter.parameterType}">
-								<f:validateRegex pattern="[a-zA-Z]*" />
-							</p:inputText>
+					<p:outputLabel value="Contraseña: " style="font-weight:bold" />
 
-							<p:outputLabel value="Descripción: " style="font-weight:bold" />
-							<p:inputText value="#{parameterMB.parameter.descripcionParameter}" required="true"
-								requiredMessage="Nombre requerido" 
-								validatorMessage="Solo puede contener letras"
-								placeholder="#{parameterMB.parameter.descripcionParameter}">
-								<f:validateRegex pattern="[a-zA-Z]*" />
-							</p:inputText>
+					<p:inputText value="#{userMB.usuario.password}" required="true"
+						requiredMessage="Contraseña requerida" disabled="true" id="paTxt">
+					</p:inputText>
+					<h:panelGroup />
 
-							<p:outputLabel value="Valor Texto: "
-								style="font-weight:bold" />
-							<p:inputText value="#{parameterMB.parameter.textValue}"
-								required="true" requiredMessage="Campo requerido"
-								validatorMessage="Valor Texto solo puede contener letras" id="emailTxt"
-								placeholder="#{parameterMB.parameter.textValue}">
-								<f:validateRegex
-									pattern="[a-zA-Z]*" />
-							</p:inputText>
-							<p:outputLabel value="Valor Número: "
-								style="font-weight:bold" />
-							<p:inputNumber value="#{parameterMB.parameter.numberValue}"
-								required="true" requiredMessage="Campo requerido"
-								placeholder="#{parameterMB.parameter.numberValue}">
-							</p:inputNumber>
-							
+					<p:outputLabel value="Nombre completo: " style="font-weight:bold" />
+					<p:inputText value="#{userMB.usuario.fullName}" required="true"
+						requiredMessage="Nombre requerido" id="nTxt"
+						validatorMessage="Solo puede contener letras"
+						placeholder="#{userMB.usuario.fullName}">
+						<f:validateRegex pattern="[a-zA-Z]*" />
+					</p:inputText>
+					<h:panelGroup />
 
-							<center>
-								<p:commandButton value="Actualizar"
-									action="#{parameterMB.modificarParameter}" update="growl" />
-							</center>
-						</p:panelGrid>
+					<p:outputLabel value="Correo electrónico: "
+						style="font-weight:bold" />
+					<p:inputText value="#{userMB.email1}" required="true"
+						requiredMessage="Campo requerido"
+						validatorMessage="Estructura de correo invalida" id="emailTxt"
+						placeholder="#{userMB.email1}">
+						<f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+					</p:inputText>
+					<p:selectOneMenu id="mail" value="#{userMB.email2}"
+						style="width:125px">
+						<f:selectItem itemLabel="Seleccione" itemValue="" />
+						<f:selectItem itemLabel="@gmail.com" itemValue="@gmail.com" />
+						<f:selectItem itemLabel="@hotmail.com" itemValue="@hotmail.com" />
+						<f:selectItem itemLabel="@unbosque.edu.co"
+							itemValue="@unbosque.edu.co" />
+					</p:selectOneMenu>
 
-					</h:form>
-
-				</p:panel>
-			</p:panelGrid>
-
+					<center>
+						<p:commandButton value="Actualizar"
+							action="#{userMB.modificarUser}" update="growl" />
+					</center>
+				</p:panelGrid>
+			</p:panel>
 		</p:panel>
 	</h:form>
 </h:body>
