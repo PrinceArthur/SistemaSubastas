@@ -149,7 +149,7 @@ public class UserMB
 			user.setDateLastPassword(new Date());
 			user.setEmailAddress(email1 + email2);
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
-			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
+			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
@@ -219,7 +219,7 @@ public class UserMB
 		{
 			
 			
-			if(loginUser.getPassword().endsWith("$"))
+			if(usuarioTemp.getPassword().endsWith("$"))
 			{
 				try
 				{
