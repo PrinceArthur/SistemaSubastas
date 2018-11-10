@@ -18,19 +18,34 @@ public class ParameterMB
 	private Parameter parameter;
 	private DataModel<Parameter> listaParametros;
 	
-	public void prepararModificarParametro()
+	public String prepararModificarParametro()
 	{
-		
+		parameter = (Parameter)(listaParametros.getRowData());
+		return "/administrador/modificarParametro";
 	}
 	
-	public void modificarParameter()
+	public String modificarParameter()
 	{
-		
+		ParameterService servicio = new ParameterService();
+		servicio.actualizar(parameter);
+		audit.adicionarAudit("Admin", "UPDATE", "Parameter", parameter.getId());
+		return "/administrador/indexParameter";
 	}
 	
 	public void eliminarParameter()
 	{
+		Parameter parametroTemp = (Parameter) (listaParametros.getRowData());
+		ParameterService servicio = new ParameterService();
 		
+		if(parametroTemp.getState().equalsIgnoreCase("ACTIVE"))
+		{
+			parametroTemp.setState("INACTIVE");
+			audit.adicionarAudit("Admin", "DELETE", "Parameter", parametroTemp.getId());
+		}
+		else if(parametroTemp.getState().equalsIgnoreCase("INACTIVE"))
+		{
+			parametroTemp.setState("ACTIVE");
+		}
 	}
 	
 	public Parameter getParameter()
