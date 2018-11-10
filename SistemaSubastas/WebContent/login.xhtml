@@ -39,9 +39,9 @@ body {
 		</p:panel>
 
 		<p:panel id="basic" header="Login" styleClass="centered">
+				<p:growl id="growl" showDetail="true" sticky="true" />
 			<h:panelGrid columns="1" cellpadding="10" id="pg" styleClass="table">
 
-				<p:growl id="growl" showDetail="true" sticky="true" />
 
 				<p:row>
 					<p:column>
@@ -52,7 +52,7 @@ body {
 					<p:column>
 						<center>
 							<p:inputText value="#{userMB.loginUser.userName}" maxlength="12"
-								id="usu" required="true" requiredMessage="Campo requerido"
+								id="usu" required="false" requiredMessage="Campo requerido"
 								validatorMessage="El Usuario no puede tener simbolos">
 								<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
 							</p:inputText>
@@ -70,9 +70,7 @@ body {
 						<center>
 							<p:password value="#{userMB.loginUser.password}" id="pass"
 								required="false" requiredMessage="Campo requerido"
-								maxlength="8" validatorMessage="La contraseña debe tener entre 6 y 8 caracteres." >
-								<f:validateLongRange minimum="6" for="pass"/>	
-								</p:password>
+								validatorMessage="La contraseña es necesaria para en ingreso" />
 						</center>
 					</p:column>
 				</p:row>
@@ -95,10 +93,16 @@ body {
 						</center>
 					</p:column>
 					<center>
+
 						<h:commandLink value="Olvidé mi contraseña" />
+
 					</center>
-					<p:column>
-					</p:column>
+					<center>
+
+						<h:commandLink value="¿No tienes cuenta? Regístrate"
+							action="#{userMB.prepararAdicionarPostor}" />
+
+					</center>
 				</p:row>
 
 
@@ -108,5 +112,6 @@ body {
 		</p:panel>
 
 	</h:form>
+					
 </h:body>
 </html>
