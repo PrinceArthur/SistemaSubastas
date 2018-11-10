@@ -48,8 +48,9 @@ body {
 					</p:column>
 					<p:column>
 						<center>
-							<p:inputText value="#{userMB.userPass.password}" id="pass" validatorMessage="La contraseña debe contener al menos una letra mayúscula, una minúscula y un número">
+							<p:inputText maxlength="8" value="#{userMB.userPass.password}" id="pass" validatorMessage="La contraseña debe contener al menos una letra mayúscula, una minúscula y un número. Solo puede tener entre 6 y 8 caracteres." >
 								<f:validateRegex for="pass" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$"  />
+								<f:validateLongRange minimum="6" for="pass"/>	
 							</p:inputText>
 						</center>
 					</p:column>
