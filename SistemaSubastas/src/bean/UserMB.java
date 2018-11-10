@@ -1,6 +1,9 @@
 package bean;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
@@ -10,6 +13,8 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+
+
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.application.FacesMessage;
@@ -18,8 +23,10 @@ import util.Cifrado;
 import util.EnviarCorreo;
 import util.VerifyRecaptcha;
 import entity.Audit;
+import entity.Salesueb;
 import entity.User;
 import service.AuditService;
+import service.SalesuebService;
 import service.UserService;
 
 @ManagedBean
@@ -32,9 +39,12 @@ public class UserMB
 	private User userAdmin = new User();
 	private User userPass = new User();
 	private DataModel listaUser;
+	private DataModel listaProveedor;
 	private String mensajeError;
 	private String email1;
 	private String email2;
+	private Salesueb sale;
+	private String nombre;
 
 	public String prepararAdicionarUser()
 	{
@@ -67,59 +77,21 @@ public class UserMB
 	public String prepararRecuperarContraseña()
 	{
 		userPass = new User();
-		UserService service = new UserService();
-		boolean repetido = false;
-		Iterator<User> it = getListarUser().iterator();
-		while (it.hasNext() && repetido == false)
-		{
-			if (it.next().getUserName().equals(loginUser.getUserName()))
-			{
-				repetido = true;
-			}
-		}
- 		if (repetido == true)
-		{
-			userPass = service.getUser(loginUser.getUserName());
-			
-			try
-			{
-				String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
-						.getRequestParameterMap().get("g-recaptcha-response");
-				boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
-				if (verify)
-				{
-					return "recuperarContraseña";
-				} else
-				{
-					mensajeError = "Verificación del CAPTCHA invalida";
-				}
-			} catch (Exception e)
-			{
-			}
-			
-		}
-		else
-		{
-			mensajeError = "Este usuario no existe.";
-			FacesContext context = FacesContext.getCurrentInstance();
-			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-		}
-		
 		return "recuperarContraseña";
 	}
 
 	public String prepararCambioContraseña()
 	{
-		UserService service = new UserService();
-		
-		userPass = service.getUser(loginUser.getUserName());
+		userPass = new User();
 		return "cambiarContraseña";
 	}
 
 	public String prepararIngresoProveedor()
 	{
 		UserService service = new UserService();
+		SalesuebService serviceSale = new SalesuebService();
 		user = service.getUser(loginUser.getUserName());
+		listaProveedor = inicializarListaProveedor(loginUser.getUserName());
 		return "/proveedor/indexProveedor";
 	}
 
@@ -130,15 +102,25 @@ public class UserMB
 		return "/postor/indexPostor";
 	}
 
+	public String prepararAdicionarSubasta()
+	{
+		sale = new Salesueb();
+		nombre = user.getUserName();
+		sale.setPhotoProduct("/img/ImagenSubasta.png");
+		return "/proveedor/nuevaSubasta";
+
+	}
+
 	public String adicionarUser()
 	{
 		UserService service = new UserService();
-		user.setEmailAddress(email1+email2);
+		user.setEmailAddress(email1 + email2);
 		boolean repetido = false;
 		Iterator<User> it = listaUser.iterator();
 		while (it.hasNext() && repetido == false)
 		{
-			if (it.next().getUserName().equals(user.getUserName()) || it.next().getEmailAddress().equals(user.getEmailAddress()))
+			if (it.next().getUserName().equals(user.getUserName())
+					|| it.next().getEmailAddress().equals(user.getEmailAddress()))
 			{
 				repetido = true;
 			}
@@ -171,7 +153,7 @@ public class UserMB
 	public String modificarUser()
 	{
 		UserService service = new UserService();
-		user.setEmailAddress(email1+email2);
+		user.setEmailAddress(email1 + email2);
 		service.actualizar(user);
 		audit.adicionarAudit("Admin", "UPDATE", "User", user.getId());
 
@@ -190,7 +172,7 @@ public class UserMB
 		} else if (usuarioTemp.getActive().equalsIgnoreCase("INACTIVE"))
 		{
 			String pass = EnviarCorreo.sendEmail(usuarioTemp.getEmailAddress());
-			usuarioTemp.setPassword(pass);
+			usuarioTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			usuarioTemp.setDateLastPassword(now);
 			usuarioTemp.setActive("ACTIVE");
 		}
@@ -204,7 +186,7 @@ public class UserMB
 		UserService service = new UserService();
 		User usuarioTemp = service.getUser(loginUser.getUserName());
 		boolean existe = false;
-		
+
 		Iterator<User> it = getListarUser().iterator();
 		while (it.hasNext() && existe == false)
 		{
@@ -213,13 +195,11 @@ public class UserMB
 				existe = true;
 			}
 		}
-		
-		
-		if(existe)
+
+		if (existe)
 		{
-			
-			
-			if(usuarioTemp.getPassword().endsWith("$"))
+
+			if (usuarioTemp.getPassword().endsWith("$"))
 			{
 				try
 				{
@@ -236,12 +216,11 @@ public class UserMB
 				} catch (Exception e)
 				{
 				}
-			}
-			else if(usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
+			} else if (usuarioTemp.getPassword()
+					.equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
 			{
-				
-				
-				if(usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
+
+				if (usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
 				{
 					try
 					{
@@ -258,8 +237,7 @@ public class UserMB
 					} catch (Exception e)
 					{
 					}
-				}
-				else if(usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
+				} else if (usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
 				{
 					try
 					{
@@ -277,15 +255,9 @@ public class UserMB
 					{
 					}
 				}
-				else
-				{
-					FacesContext context = FacesContext.getCurrentInstance();
-					context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-					mensajeError = "Contraseña o Usuario inválido";
-				}
-				
-			}
-			else if(usuarioTemp.getUserType().equalsIgnoreCase("ADMIN") && usuarioTemp.getPassword().equals(loginUser.getPassword()))
+
+			} else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN")
+					&& usuarioTemp.getPassword().equals(loginUser.getPassword()))
 			{
 				try
 				{
@@ -303,22 +275,14 @@ public class UserMB
 				{
 				}
 			}
-		}
-		else
+		} else
 		{
-			mensajeError = "Este usuario no existe";
+			mensajeError = "Contraseña o Usuario inválido";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 		}
-		
-		
-		
-		
-		
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 
 		audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
-
-		
 
 		return pagina;
 	}
@@ -329,28 +293,28 @@ public class UserMB
 		String pass = userPass.getPassword();
 		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 		service.actualizar(userPass);
-		
-		if(userPass.getUserType().equalsIgnoreCase("proveedor"))
+
+		if (userPass.getUserType().equalsIgnoreCase("proveedor"))
 		{
 			return prepararIngresoProveedor();
-		}
-		else
+		} else
 		{
 			return prepararIngresoPostor(userPass.getUserName());
 		}
 	}
 
-	public void cambiarContraseña()
+	public void cambiarContraseña() throws IOException
 	{
 		UserService service = new UserService();
 		User userTemp = new User();
-		userPass.setEmailAddress(email1+email2);
+		userPass = service.getUser(loginUser.getUserName());
+		userPass.setEmailAddress(email1 + email2);
 		Date date = new Date();
 		String usu = "";
-		
+
 		boolean existe = false;
 		Iterator<User> it = getListarUser().iterator();
-		
+
 		while (it.hasNext() && existe == false)
 		{
 			User x = it.next();
@@ -360,17 +324,17 @@ public class UserMB
 				usu = x.getUserName();
 			}
 		}
-		
+
 		userTemp = service.getUser(usu);
-		
-		if(existe)
+
+		if (existe)
 		{
 			String pass = EnviarCorreo.sendEmail(userTemp.getEmailAddress());
 			userTemp.setDateLastPassword(date);
 			userTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.actualizar(userTemp);
-			
-		}else
+
+		} else
 		{
 			mensajeError = "No se encontró un usuario con ese correo.";
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -379,6 +343,7 @@ public class UserMB
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
+
 	}
 
 	public void logOut() throws IOException
@@ -393,7 +358,17 @@ public class UserMB
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
-	
+
+	public String adicionarSubasta()
+	{
+		SalesuebMB saleB = new SalesuebMB();
+		
+		saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(), sale.getDescriptionProduct(),
+				sale.getName(), sale.getValueBase());
+		return "/proveedor/indexProveedor";
+	}
+
+
 	public User getUsuario()
 	{
 		return user;
@@ -451,21 +426,63 @@ public class UserMB
 		this.mensajeError = mensajeError;
 	}
 
-	public String getEmail1() {
+	public String getEmail1()
+	{
 		return email1;
 	}
 
-	public void setEmail1(String email1) {
+	public void setEmail1(String email1)
+	{
 		this.email1 = email1;
 	}
 
-	public String getEmail2() {
+	public String getEmail2()
+	{
 		return email2;
 	}
 
-	public void setEmail2(String email2) {
+	public void setEmail2(String email2)
+	{
 		this.email2 = email2;
 	}
+
+	public Salesueb getSale()
+	{
+		return sale;
+	}
+
+	public void setSale(Salesueb sale)
+	{
+		this.sale = sale;
+	}
+
+	public String getNombre()
+	{
+		return nombre;
+	}
+
+	public void setNombre(String nombre)
+	{
+		this.nombre = nombre;
+	}
+
+	public DataModel inicializarListaProveedor(String userSales)
+	{
+		List<Salesueb> lista = new SalesuebService().getSalesueb(userSales);
+		listaProveedor = new ListDataModel<>(lista);
+		return listaProveedor;
+	}
+	
+	public DataModel getListaProveedor()
+	{
+		return listaProveedor;
+	}
+
+	public void setListaProveedor(DataModel listaProveedor)
+	{
+		this.listaProveedor = listaProveedor;
+	}
+	
 	
 
 }
