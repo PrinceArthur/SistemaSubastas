@@ -107,7 +107,7 @@ body {
 						styleClass="myTable">
 
 						<f:facet name="header">
-							<h:outputText value="PARAMETROS" />
+							<h:outputText value="LISTADO PARAMETROS" />
 						</f:facet>
 
 						<p:column style="width:5px;height:3px;font-size:14px">
@@ -126,7 +126,7 @@ body {
 								<h:outputText value="#{parametro.parameterCode}" />
 							</center>
 						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
+						<p:column style="width:5px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Tipo" />
 							</f:facet>
@@ -134,12 +134,20 @@ body {
 								<h:outputText value="#{parametro.parameterType}" />
 							</center>
 						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
+						<p:column style="width:30px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Descripción" />
 							</f:facet>
 							<center>
-								<h:outputText value="#{parametro.descripcionParameter}" />
+								<h:outputText value="#{parametro.descriptionParameter}" />
+							</center>
+						</p:column>
+						<p:column style="width:25px;height:3px;font-size:14px">
+							<f:facet name="header">
+								<h:outputText value="Valor Numérico" />
+							</f:facet>
+							<center>
+							<h:outputText value="#{parametro.numberValue}" />
 							</center>
 						</p:column>
 						<p:column style="width:15px;height:3px;font-size:14px">
@@ -149,12 +157,6 @@ body {
 							<center>
 								<h:outputText value="#{parametro.textValue}" />
 							</center>
-						</p:column>
-						<p:column style="width:25px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="Valor Número" />
-							</f:facet>
-							<h:outputText value="#{parametro.numberValue}" />
 						</p:column>
 						<p:column style="width:10px;height:3px;font-size:14px">
 							<f:facet name="header">
