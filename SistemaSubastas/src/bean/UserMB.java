@@ -301,8 +301,9 @@ public class UserMB
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			}
+			audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
 		}
-		audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
+		
 		else
 		{
 				mensajeError = "Contraseña o Usuario inválido";
