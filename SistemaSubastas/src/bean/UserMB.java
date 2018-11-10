@@ -40,11 +40,13 @@ public class UserMB
 	private User userPass = new User();
 	private DataModel listaUser;
 	private DataModel listaProveedor;
+	private DataModel listaSubastas;
 	private String mensajeError;
 	private String email1;
 	private String email2;
 	private Salesueb sale;
 	private String nombre;
+	private Offerersale oferta = new Offerersale();
 
 	public String prepararAdicionarUser()
 	{
@@ -54,6 +56,15 @@ public class UserMB
 		Date now = new Date();
 		user.setDateLastPassword(now);
 		return "/administrador/registrarProvedor.xhtml";
+	}
+	
+	public String prepararAdicionarPostor() {
+		user = new User();
+		user.setActive("ACTIVE");
+		user.setUserType("postor");
+		Date now = new Date();
+		user.setDateLastPassword(now);
+		return "/postor/registrarPostor.xhtml";
 	}
 
 	public String prepararModificarUser()
@@ -89,7 +100,6 @@ public class UserMB
 	public String prepararIngresoProveedor()
 	{
 		UserService service = new UserService();
-		SalesuebService serviceSale = new SalesuebService();
 		user = service.getUser(loginUser.getUserName());
 		listaProveedor = inicializarListaProveedor(loginUser.getUserName());
 		return "/proveedor/indexProveedor";
@@ -400,6 +410,67 @@ public class UserMB
 				sale.getName(), sale.getValueBase());
 		return "/proveedor/indexProveedor";
 	}
+	
+	public void prepararAgregarOferta() {
+		idSale = sale.getId();
+		oferta.setWinner("W");
+		oferta.setDateOffer(new Date());
+		nombre = loginUser.getUserName();
+	}
+
+	public String agregarOferta() {
+		OfferersaleService service = new OfferersaleService();
+		oferta.setIdentification(nombre);
+		if (oferta.getValueOffer() <= sale.getValueCurrent()) {
+			mensajeError = "La oferta debe ser mayor que la oferta actual";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+
+		} else {
+			sale.setValueCurrent(oferta.getValueOffer());
+			modificarSubasta();
+			service.nuevo(oferta);
+		}
+		return "/postor/subasta";
+	}
+	
+	public void adicionarPostor() {
+		UserService service = new UserService();
+		boolean repetido = false;
+		Iterator<User> it = getListarUser().iterator();
+		while (it.hasNext() && repetido == false) {
+			if (it.next().getUserName().equals(user.getUserName())) {
+				repetido = true;
+			}
+		}
+
+		if (repetido == false) {
+			user.setDateLastPassword(new Date());
+			user.setEmailAddress(email1 + email2);
+			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
+			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
+			service.nuevo(user);
+
+			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
+
+		} else if (repetido) {
+			mensajeError = "Ese Usuario ya existe";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		}
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		ec.invalidateSession();
+		try {
+			ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 
 	public User getUsuario()
@@ -516,6 +587,22 @@ public class UserMB
 		this.listaProveedor = listaProveedor;
 	}
 	
+	public DataModel getListaSubastas() {
+		List<Salesueb> lista = new SalesuebService().lista();
+		listaSubastas = new ListDataModel(lista);
+		return listaSubastas;
+	}
+
+	public void setListaSubastas(DataModel listaSubastas) {
+		this.listaSubastas = listaSubastas;
+	}
 	
+	public Offerersale getOferta() {
+		return oferta;
+	}
+
+	public void setOferta(Offerersale oferta) {
+		this.oferta = oferta;
+	}
 
 }
