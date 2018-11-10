@@ -186,7 +186,7 @@ public class UserMB
 		UserService service = new UserService();
 		User usuarioTemp = service.getUser(loginUser.getUserName());
 		ParameterService serviceP= new ParameterService();
-		
+		int dias = (int) ((new Date().getTime()-usuarioTemp.getDateLastPassword().getTime())/86400000);
 		boolean existe = false;
 		
 		Iterator<User> it = getListarUser().iterator();
@@ -202,7 +202,7 @@ public class UserMB
 		if(existe)
 		{
 			
-			if(loginUser.getPassword().endsWith("$"))
+			if(loginUser.getPassword().endsWith("$") || dias >= serviceP.getParameter("Fecha").getNumberValue())
 			{
 				try
 				{
@@ -295,7 +295,7 @@ public class UserMB
 				}
 				
 			}
-			if(usuarioTemp.getFailedAttempts() == serviceP.getParameter("Intentos").getNumberValue() || usuarioTemp.getActive().equals("ACTIVE")) 
+			if(usuarioTemp.getFailedAttempts() == serviceP.getParameter("Intentos").getNumberValue() || usuarioTemp.getActive().equals("INACTIVE")) 
 			{
 				mensajeError = "Su cuenta se encuentra bloqueada, por favor comuniquese con un administrador.";
 				FacesContext context = FacesContext.getCurrentInstance();
