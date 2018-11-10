@@ -302,6 +302,7 @@ public class UserMB
 				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			}
 		}
+		audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
 		else
 		{
 				mensajeError = "Contraseña o Usuario inválido";
@@ -311,7 +312,7 @@ public class UserMB
 			
 		}
 		
-		audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
+		
 
 		
 
