@@ -69,8 +69,10 @@ body {
 					<p:column>
 						<center>
 							<p:password value="#{userMB.loginUser.password}" id="pass"
-								required="true" requiredMessage="Campo requerido"
-								validatorMessage="La contraseña es necesaria para en ingreso" />
+								required="false" requiredMessage="Campo requerido"
+								maxlength="8" validatorMessage="La contraseña debe tener entre 6 y 8 caracteres." >
+								<f:validateLongRange minimum="6" for="pass"/>	
+								</p:password>
 						</center>
 					</p:column>
 				</p:row>
