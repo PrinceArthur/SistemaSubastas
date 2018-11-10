@@ -21,7 +21,7 @@ public class EnviarCorreo
 	public static String sendEmail(String correo)
 	{
 		
-		String passwordInt = "" + (int) (Math.random() * (100000 - 100) + 100) + "$";
+		String passwordInt = "" + (int) (Math.random() * (100000000 - 100) + 100);
 		Properties prop = new Properties();
 		prop.put("mail.smtp.host", "smtp.gmail.com");
 		prop.put("mail.smtp.port", 587);
@@ -35,12 +35,12 @@ public class EnviarCorreo
 		{
 			Message mensaje = new MimeMessage(sesion);
 
-			mensaje.setSubject("ContraseÒa de login");
+			mensaje.setSubject("Nueva contrase√±a - ACME inc");
 			mensaje.setFrom(new InternetAddress("acme.unbosque@gmail.com"));
 			mensaje.addRecipient(Message.RecipientType.TO, new InternetAddress(correo));
 			
 			
-			mensaje.setText("Su nueva contraseÒa es: " + passwordInt);
+			mensaje.setText("Empresas ACME env√≠a su nueva contrase√±a la cual es: " + passwordInt);
 			Transport t = sesion.getTransport("smtp");
 			t.connect("acme.unbosque@gmail.com", "acme12345");
 			t.sendMessage(mensaje, mensaje.getAllRecipients());
@@ -49,6 +49,6 @@ public class EnviarCorreo
 		{
 			System.err.println(me.getMessage());
 		}
-		return "" + passwordInt;
+		return passwordInt;
 	}
 }
