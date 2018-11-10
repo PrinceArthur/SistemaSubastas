@@ -185,8 +185,10 @@ public class UserMB
 		String pagina = "";
 		UserService service = new UserService();
 		User usuarioTemp = service.getUser(loginUser.getUserName());
+		ParameterService serviceP= new ParameterService();
+		
 		boolean existe = false;
-
+		
 		Iterator<User> it = getListarUser().iterator();
 		while (it.hasNext() && existe == false)
 		{
@@ -195,11 +197,12 @@ public class UserMB
 				existe = true;
 			}
 		}
-
-		if (existe)
+		
+		
+		if(existe)
 		{
-
-			if (usuarioTemp.getPassword().endsWith("$"))
+			
+			if(loginUser.getPassword().endsWith("$"))
 			{
 				try
 				{
@@ -216,11 +219,12 @@ public class UserMB
 				} catch (Exception e)
 				{
 				}
-			} else if (usuarioTemp.getPassword()
-					.equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
+			}
+			else if(usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)) && usuarioTemp.getActive().equals("ACTIVE"))
 			{
-
-				if (usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
+				
+				
+				if(usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
 				{
 					try
 					{
@@ -237,7 +241,8 @@ public class UserMB
 					} catch (Exception e)
 					{
 					}
-				} else if (usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
+				}
+				else if(usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
 				{
 					try
 					{
@@ -255,9 +260,10 @@ public class UserMB
 					{
 					}
 				}
-
-			} else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN")
-					&& usuarioTemp.getPassword().equals(loginUser.getPassword()))
+				
+				
+			}
+			else if(usuarioTemp.getUserType().equalsIgnoreCase("ADMIN")&& usuarioTemp.getActive().equals("ACTIVE") && usuarioTemp.getPassword().equals(loginUser.getPassword()))
 			{
 				try
 				{
@@ -266,7 +272,7 @@ public class UserMB
 					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 					if (verify)
 					{
-						pagina = "/administrador/inicioAdmin";
+						pagina = "/administrador/indexAdmin";
 					} else
 					{
 						mensajeError = "Verificación del CAPTCHA invalida";
@@ -275,14 +281,39 @@ public class UserMB
 				{
 				}
 			}
-		} else
+			else if(!usuarioTemp.getPassword().equals(loginUser.getPassword()))
+			{
+				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue()) 
+				{
+					usuarioTemp.setFailedAttempts(usuarioTemp.getFailedAttempts()+1);
+					service.actualizar(usuarioTemp); 
+				}
+				else 
+				{
+					usuarioTemp.setActive("INACTIVE");
+					service.actualizar(usuarioTemp);
+				}
+				
+			}
+			if(usuarioTemp.getFailedAttempts() == serviceP.getParameter("Intentos").getNumberValue() || usuarioTemp.getActive().equals("ACTIVE")) 
+			{
+				mensajeError = "Su cuenta se encuentra bloqueada, por favor comuniquese con un administrador.";
+				FacesContext context = FacesContext.getCurrentInstance();
+				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			}
+		}
+		else
 		{
-			mensajeError = "Contraseña o Usuario inválido";
+				mensajeError = "Contraseña o Usuario inválido";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			
+			
 		}
-
+		
 		audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
+
+		
 
 		return pagina;
 	}
