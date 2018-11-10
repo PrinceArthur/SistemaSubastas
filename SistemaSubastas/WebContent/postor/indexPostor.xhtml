@@ -58,7 +58,8 @@ body {
 
 </h:head>
 <h:body>
-<h:form>
+
+	<h:form>
 
 		<p:panel
 			style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
@@ -66,16 +67,14 @@ body {
 			<p:graphicImage value="/img/Acme-corp.png"
 				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
 
-			<div style="margin-left: 90%">
-				<p:commandButton id="dynaButton" value="#{userMB.usuario.fullName}"
-					type="button" icon="ui-icon-extlink" styleClass="boton" />
-				<p:menu overlay="true" trigger="dynaButton"
-					value="#{userMB.usuario.fullName}"
+			<div style="margin-left: 80%">
+				<p:commandButton id="dynaButton" value="POSTOR" type="button"
+					icon="ui-icon-extlink" styleClass="boton" />
+				<p:menu overlay="true" trigger="dynaButton" value="#{userMB.user.userName}"
 					style="background-color: rgb(203, 216, 237);border:none">
-					<p:menuitem value="Datos personales"
-						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
-					<p:menuitem value="Salir" action="#{userMB.logOut}"
-						icon="ui-icon-power" />
+						<p:menuitem value="Datos personales"
+							 icon="ui-icon-person" />
+						<p:menuitem value="Salir" action="#{userMB.logOut}" icon="ui-icon-power" />
 				</p:menu>
 			</div>
 		</p:panel>
@@ -101,7 +100,7 @@ body {
 						<p:panel header="#{sub.name}"
 							style="text-align:center; width:225px">
 							<h:panelGrid columns="1" style="width:100%">
-								<p:graphicImage value="/img/subastaDefault.jpg"
+								<p:graphicImage value="/img/ImagenSubasta.png"
 									style="width:180px; align: center" />
 
 								<h:outputText value="#{sub.dateStart}" />
@@ -118,6 +117,5 @@ body {
 
 		</p:panel>
 	</h:form>
-
 </h:body>
 </html>

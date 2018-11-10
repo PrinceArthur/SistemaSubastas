@@ -2,8 +2,10 @@ package bean;
 
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
@@ -15,8 +17,9 @@ import service.ParameterService;
 @SessionScoped
 public class ParameterMB
 {
+	private AuditMB audit = new AuditMB();
 	private Parameter parameter;
-	private DataModel<Parameter> listaParametros;
+	private DataModel listaParametros;
 	
 	public String prepararModificarParametro()
 	{
@@ -47,6 +50,11 @@ public class ParameterMB
 			parametroTemp.setState("ACTIVE");
 		}
 	}
+	
+	 public void addMessage(String summary, String detail) {
+	        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
+	        FacesContext.getCurrentInstance().addMessage(null, message);
+	    }
 	
 	public Parameter getParameter()
 	{

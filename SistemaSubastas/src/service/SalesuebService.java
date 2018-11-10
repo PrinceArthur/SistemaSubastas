@@ -15,7 +15,7 @@ public class SalesuebService
 		sales.nuevo(salesueb);
 	}
 	
-	public Salesueb getSalesueb(String userSales)
+	public List<Salesueb> getSalesueb(String userSales)
 	{
 		return sales.getSalesueb(userSales);
 	}

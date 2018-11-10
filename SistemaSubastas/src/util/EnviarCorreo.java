@@ -1,6 +1,5 @@
 package util;
 
-import java.util.Date;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -10,9 +9,6 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import dao.UserDAO;
-import dao.UserDAOImpl;
-import entity.User;
 
 public class EnviarCorreo
 {
@@ -27,7 +23,6 @@ public class EnviarCorreo
 		prop.put("mail.smtp.port", 587);
 		prop.put("mail.smtp.auth", "true");
 		prop.put("mail.smtp.starttls.enable", "true");
-		prop.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 
 		Session sesion = Session.getDefaultInstance(prop, null);
 
@@ -35,12 +30,12 @@ public class EnviarCorreo
 		{
 			Message mensaje = new MimeMessage(sesion);
 
-			mensaje.setSubject("Nueva contraseÃ±a - ACME inc");
+			mensaje.setSubject("Nueva contraseña - ACME inc");
 			mensaje.setFrom(new InternetAddress("acme.unbosque@gmail.com"));
 			mensaje.addRecipient(Message.RecipientType.TO, new InternetAddress(correo));
 			
 			
-			mensaje.setText("Empresas ACME envÃ­a su nueva contraseÃ±a la cual es: " + passwordInt);
+			mensaje.setText("Empresas ACME envía su nueva contraseña la cual es: " + passwordInt);
 			Transport t = sesion.getTransport("smtp");
 			t.connect("acme.unbosque@gmail.com", "acme12345");
 			t.sendMessage(mensaje, mensaje.getAllRecipients());

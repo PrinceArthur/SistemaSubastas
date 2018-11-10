@@ -10,52 +10,74 @@
 body {
 	background-color: rgb(246, 249, 149)
 }
+
 .centered {
 	position: absolute;
-	height: 150px;
+	height: 25%;
 	top: 0;
 	bottom: 0;
 	margin: auto;
-	width: 300px;
+	width: 40%;
 	left: 50%;
-	margin-left: -150px;
-	margin-top:20%;
+	margin-left: -20%;
+	margin-top: 20%;
 	background-color: rgb(246, 249, 149);
+	border: 0px;
 }
 </style>
 </h:head>
 <h:body>
 	<h:form>
-	
-	<p:panel
+
+		<p:panel
 			style="background-color: rgb(246, 249, 149);magine-top:0px;height:130px;border:none">
 
 			<p:graphicImage value="/img/Acme-corp.png"
 				style="width:400px;height:150px;backGround-color: rgb(246, 249, 149);margin-left: 36%" />
 
 		</p:panel>
-			<p:panel id="basic" header="Recuperar contraseña" styleClass="centered">
-				<h:panelGrid columns="1" cellpadding="10" styleClass="table">
-				
+
+
+
+
+		<p:panel id="basic" header="Recuperar contraseña"
+			styleClass="centered">
+			<p:spacer/>
 				<p:row>
 					<p:column>
 						<center>
-							<p:outputLabel value="#{userMB.userPass.userName} su contraseña será enviada a su correo: #{userMB.userPass.emailAddress} " style="font-weight:bold" />
+							<p:outputLabel
+								value="Señor ususario por favor ingrese su correo para verificar el usuario y enviar la contraseña."
+								style="font-weight:bold" />
 						</center>
 					</p:column>
-				</p:row>
 
-				<p:row>
-					<p:column >
+				</p:row>
+			<h:panelGrid columns="3" cellpadding="10" styleClass="table">
 						<center>
-						<p:commandButton value="Enviar" action="#{userMB.cambiarContraseña}"
-							ajax="false" />
+							<p:inputText value="#{userMB.email1}" required="true"
+								requiredMessage="Campo requerido"
+								validatorMessage="Estructura de correo invalida" id="emailTxt">
+								<f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+							</p:inputText>
+							<p:selectOneMenu id="mail" value="#{userMB.email2}"
+								>
+								<f:selectItem itemLabel="Seleccione" itemValue="" />
+								<f:selectItem itemLabel="@gmail.com" itemValue="@gmail.com" />
+								<f:selectItem itemLabel="@hotmail.com" itemValue="@hotmail.com" />
+								<f:selectItem itemLabel="@unbosque.edu.co"
+									itemValue="@unbosque.edu.co" />
+							</p:selectOneMenu>
+						</center>
+
+			</h:panelGrid>
+					<p:column>
+						<center>
+							<p:commandButton value="Enviar"
+								action="#{userMB.cambiarContraseña}" ajax="false" />
 						</center>
 					</p:column>
-				</p:row>
-					
-				</h:panelGrid>
-			</p:panel>
+		</p:panel>
 	</h:form>
 </h:body>
 </html>

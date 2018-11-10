@@ -23,7 +23,7 @@ public class SalesuebDAOImpl implements SalesuebDAO
 	}
 
 	@Override
-	public Salesueb getSalesueb(String userSales)
+	public List<Salesueb> getSalesueb(String userSales)
 	{
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction t = session.beginTransaction();
@@ -35,7 +35,7 @@ public class SalesuebDAOImpl implements SalesuebDAO
 		session.close();
 		if(!lista.isEmpty())
 		{
-			return (Salesueb)lista.get(0);
+			return lista;
 		}
 		else
 		{

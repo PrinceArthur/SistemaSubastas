@@ -11,7 +11,6 @@
 body {
 	background-color: rgb(246, 249, 149)
 }
-
 .centered {
 	position: absolute;
 	height: 380px;
@@ -39,9 +38,9 @@ body {
 		</p:panel>
 
 		<p:panel id="basic" header="Login" styleClass="centered">
-				<p:growl id="growl" showDetail="true" sticky="true" />
 			<h:panelGrid columns="1" cellpadding="10" id="pg" styleClass="table">
 
+				<p:growl id="growl" showDetail="true" sticky="true" />
 
 				<p:row>
 					<p:column>
@@ -53,7 +52,8 @@ body {
 						<center>
 							<p:inputText value="#{userMB.loginUser.userName}" maxlength="12"
 								id="usu" required="false" requiredMessage="Campo requerido"
-								validatorMessage="El Usuario no puede tener simbolos">
+								validatorMessage="El Usuario no puede contener simbolos.">
+								
 								<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
 							</p:inputText>
 						</center>
@@ -70,7 +70,9 @@ body {
 						<center>
 							<p:password value="#{userMB.loginUser.password}" id="pass"
 								required="false" requiredMessage="Campo requerido"
-								validatorMessage="La contraseña es necesaria para en ingreso" />
+								validatorMessage="La contraseña debe tener entre 6 y 8 caracteres." >
+								
+								</p:password>
 						</center>
 					</p:column>
 				</p:row>
@@ -93,9 +95,7 @@ body {
 						</center>
 					</p:column>
 					<center>
-
-						<h:commandLink value="Olvidé mi contraseña" />
-
+						<h:commandLink value="Olvidé mi contraseña" action="#{userMB.prepararRecuperarContraseña}"/>
 					</center>
 					<center>
 
@@ -103,6 +103,8 @@ body {
 							action="#{userMB.prepararAdicionarPostor}" />
 
 					</center>
+					<p:column>
+					</p:column>
 				</p:row>
 
 
@@ -112,6 +114,5 @@ body {
 		</p:panel>
 
 	</h:form>
-					
 </h:body>
 </html>

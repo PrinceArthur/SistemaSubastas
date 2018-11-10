@@ -23,9 +23,12 @@ import util.Cifrado;
 import util.EnviarCorreo;
 import util.VerifyRecaptcha;
 import entity.Audit;
+import entity.Offerersale;
 import entity.Salesueb;
 import entity.User;
 import service.AuditService;
+import service.OfferersaleService;
+import service.ParameterService;
 import service.SalesuebService;
 import service.UserService;
 
@@ -47,6 +50,7 @@ public class UserMB
 	private Salesueb sale;
 	private String nombre;
 	private Offerersale oferta = new Offerersale();
+	private int idSale;
 
 	public String prepararAdicionarUser()
 	{
@@ -58,7 +62,8 @@ public class UserMB
 		return "/administrador/registrarProvedor.xhtml";
 	}
 	
-	public String prepararAdicionarPostor() {
+	public String prepararAdicionarPostor()
+	{
 		user = new User();
 		user.setActive("ACTIVE");
 		user.setUserType("postor");
@@ -85,16 +90,16 @@ public class UserMB
 		return "/administrador/datosAdmin";
 	}
 
-	public String prepararRecuperarContraseÃ±a()
+	public String prepararRecuperarContraseña()
 	{
 		userPass = new User();
-		return "recuperarContraseÃ±a";
+		return "recuperarContraseña";
 	}
 
-	public String prepararCambioContraseÃ±a()
+	public String prepararCambioContraseña()
 	{
 		userPass = new User();
-		return "cambiarContraseÃ±a";
+		return "cambiarContraseña";
 	}
 
 	public String prepararIngresoProveedor()
@@ -119,6 +124,20 @@ public class UserMB
 		sale.setPhotoProduct("/img/ImagenSubasta.png");
 		return "/proveedor/nuevaSubasta";
 
+	}
+	
+	public String prepararSubasta()
+	{
+		sale = (Salesueb) listaSubastas.getRowData();
+		return "/postor/subasta";
+	}
+	
+	public void prepararAgregarOferta()
+	{
+		idSale = sale.getId();
+		oferta.setWinner("W");
+		oferta.setDateOffer(new Date());
+		nombre = loginUser.getUserName();
 	}
 
 	public String adicionarUser()
@@ -198,7 +217,7 @@ public class UserMB
 		ParameterService serviceP= new ParameterService();
 		int dias = (int) ((new Date().getTime()-usuarioTemp.getDateLastPassword().getTime())/86400000);
 		boolean existe = false;
-		
+
 		Iterator<User> it = getListarUser().iterator();
 		while (it.hasNext() && existe == false)
 		{
@@ -207,12 +226,11 @@ public class UserMB
 				existe = true;
 			}
 		}
-		
-		
-		if(existe)
+
+		if (existe)
 		{
-			
-			if(loginUser.getPassword().endsWith("$") || dias >= serviceP.getParameter("Fecha").getNumberValue())
+
+			if (usuarioTemp.getPassword().endsWith("$") || dias >= serviceP.getParameter("Fecha").getNumberValue())
 			{
 				try
 				{
@@ -221,20 +239,19 @@ public class UserMB
 					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 					if (verify)
 					{
-						pagina = prepararCambioContraseÃ±a();
+						pagina = prepararCambioContraseña();
 					} else
 					{
-						mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+						mensajeError = "Verificación del CAPTCHA invalida";
 					}
 				} catch (Exception e)
 				{
 				}
-			}
-			else if(usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)) && usuarioTemp.getActive().equals("ACTIVE"))
+			} else if (usuarioTemp.getPassword()
+					.equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5))&& usuarioTemp.getActive().equals("ACTIVE"))
 			{
-				
-				
-				if(usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
+
+				if (usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
 				{
 					try
 					{
@@ -246,13 +263,12 @@ public class UserMB
 							pagina = prepararIngresoProveedor();
 						} else
 						{
-							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+							mensajeError = "Verificación del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
 					}
-				}
-				else if(usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
+				} else if (usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
 				{
 					try
 					{
@@ -264,16 +280,15 @@ public class UserMB
 							pagina = "/postor/indexPostor";
 						} else
 						{
-							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+							mensajeError = "Verificación del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
 					}
 				}
-				
-				
-			}
-			else if(usuarioTemp.getUserType().equalsIgnoreCase("ADMIN")&& usuarioTemp.getActive().equals("ACTIVE") && usuarioTemp.getPassword().equals(loginUser.getPassword()))
+
+			} else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN")
+					&& usuarioTemp.getPassword().equals(loginUser.getPassword()))
 			{
 				try
 				{
@@ -282,16 +297,15 @@ public class UserMB
 					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 					if (verify)
 					{
-						pagina = "/administrador/indexAdmin";
+						pagina = "/administrador/inicioAdmin";
 					} else
 					{
-						mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+						mensajeError = "Verificación del CAPTCHA invalida";
 					}
 				} catch (Exception e)
 				{
 				}
-			}
-			else if(!usuarioTemp.getPassword().equals(loginUser.getPassword()))
+			}else if(!usuarioTemp.getPassword().equals(loginUser.getPassword()))
 			{
 				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue()) 
 				{
@@ -305,48 +319,51 @@ public class UserMB
 				}
 				
 			}
+			
 			if(usuarioTemp.getFailedAttempts() == serviceP.getParameter("Intentos").getNumberValue() || usuarioTemp.getActive().equals("INACTIVE")) 
 			{
 				mensajeError = "Su cuenta se encuentra bloqueada, por favor comuniquese con un administrador.";
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			}
+			
 			audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
-		}
-		
-		else
+			
+		} else
 		{
-				mensajeError = "ContraseÃ±a o Usuario invÃ¡lido";
+			mensajeError = "Contraseña o Usuario inválido";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-			
-			
 		}
-		
-		
 
 		
 
 		return pagina;
 	}
+	
+	/**
+	 * Método para hacer el cambio obligatorio de contraseña
+	 * @throws IOException
+	 */
 
-	public String recuperarContraseÃ±a()
+	public void recuperarContraseña() throws IOException
 	{
 		UserService service = new UserService();
 		String pass = userPass.getPassword();
 		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 		service.actualizar(userPass);
 
-		if (userPass.getUserType().equalsIgnoreCase("proveedor"))
-		{
-			return prepararIngresoProveedor();
-		} else
-		{
-			return prepararIngresoPostor(userPass.getUserName());
-		}
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		ec.invalidateSession();
+		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
+	
+	/**
+	 * Método para link De olvidar contraseña
+	 * @throws IOException
+	 */
 
-	public void cambiarContraseÃ±a() throws IOException
+	public void cambiarContraseña() throws IOException
 	{
 		UserService service = new UserService();
 		User userTemp = new User();
@@ -379,7 +396,7 @@ public class UserMB
 
 		} else
 		{
-			mensajeError = "No se encontrÃ³ un usuario con ese correo.";
+			mensajeError = "No se encontró un usuario con ese correo.";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 		}
@@ -401,6 +418,29 @@ public class UserMB
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
+	
+	public String agregarOferta()
+	{
+		OfferersaleService service = new OfferersaleService();
+		oferta.setIdentification(nombre);
+		if(oferta.getValueOffer() <= sale.getValueBase())
+		{
+			mensajeError = "La oferta debe ser mayor que la oferta actual";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		}else {
+			sale.setValueCurrent(oferta.getValueOffer());
+			modificarSubasta();
+			service.nuevo(oferta);
+		}
+		return "/postor/subasta";
+	}
+	
+	public void modificarSubasta()
+	{
+		SalesuebService service = new SalesuebService();
+		service.actualizar(sale);
+	}
 
 	public String adicionarSubasta()
 	{
@@ -409,29 +449,6 @@ public class UserMB
 		saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(), sale.getDescriptionProduct(),
 				sale.getName(), sale.getValueBase());
 		return "/proveedor/indexProveedor";
-	}
-	
-	public void prepararAgregarOferta() {
-		idSale = sale.getId();
-		oferta.setWinner("W");
-		oferta.setDateOffer(new Date());
-		nombre = loginUser.getUserName();
-	}
-
-	public String agregarOferta() {
-		OfferersaleService service = new OfferersaleService();
-		oferta.setIdentification(nombre);
-		if (oferta.getValueOffer() <= sale.getValueCurrent()) {
-			mensajeError = "La oferta debe ser mayor que la oferta actual";
-			FacesContext context = FacesContext.getCurrentInstance();
-			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-
-		} else {
-			sale.setValueCurrent(oferta.getValueOffer());
-			modificarSubasta();
-			service.nuevo(oferta);
-		}
-		return "/postor/subasta";
 	}
 	
 	public void adicionarPostor() {
@@ -448,7 +465,7 @@ public class UserMB
 			user.setDateLastPassword(new Date());
 			user.setEmailAddress(email1 + email2);
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
-			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
+			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
@@ -586,6 +603,26 @@ public class UserMB
 	{
 		this.listaProveedor = listaProveedor;
 	}
+
+	public Offerersale getOferta()
+	{
+		return oferta;
+	}
+
+	public void setOferta(Offerersale oferta)
+	{
+		this.oferta = oferta;
+	}
+
+	public int getIdSale()
+	{
+		return idSale;
+	}
+
+	public void setIdSale(int idSale)
+	{
+		this.idSale = idSale;
+	}
 	
 	public DataModel getListaSubastas() {
 		List<Salesueb> lista = new SalesuebService().lista();
@@ -597,12 +634,5 @@ public class UserMB
 		this.listaSubastas = listaSubastas;
 	}
 	
-	public Offerersale getOferta() {
-		return oferta;
-	}
-
-	public void setOferta(Offerersale oferta) {
-		this.oferta = oferta;
-	}
 
 }
