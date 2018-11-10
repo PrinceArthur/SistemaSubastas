@@ -98,8 +98,11 @@ body {
 
 				<p:panel
 					style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%">
-					<p:dataGrid var="sub" value="#{userbMB.listaProveedor}"
-						columns="3" layout="grid" rows="12" paginator="true" id="subastas"
+
+
+
+					<p:dataGrid var="sub" value="#{userMB.listaProveedor}" columns="3"
+						layout="grid" rows="12" paginator="true" id="subastas"
 						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 						rowsPerPageTemplate="6,12,16"
 						style="width:100%;height:100%;align: top" styleClass="myTable">
@@ -110,13 +113,13 @@ body {
 						<p:panel header="#{sub.name}"
 							style="text-align:center; width:200px">
 							<h:panelGrid columns="1" style="width:100%">
-									<p:graphicImage value="/img/subastaDefault.jpg"
-										style="width:180px; align: center" />
+								<p:graphicImage value="/img/ImagenSubasta.png"
+									style="width:180px; align: center" />
 
-									<h:outputText value="#{sub.dateStart}" />
+								<h:outputText value="#{sub.dateStart}" />
 
-									<p:commandLink value="Ver subasta">
-									</p:commandLink>
+								<p:commandLink value="Ver subasta">
+								</p:commandLink>
 							</h:panelGrid>
 
 						</p:panel>
