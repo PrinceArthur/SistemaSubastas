@@ -58,8 +58,7 @@ body {
 
 </h:head>
 <h:body>
-
-	<h:form>
+<h:form>
 
 		<p:panel
 			style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
@@ -68,140 +67,57 @@ body {
 				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
 
 			<div style="margin-left: 90%">
-				<p:commandButton id="dynaButton" value="ADMIN" type="button"
-					icon="ui-icon-extlink" styleClass="boton" />
-				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
+				<p:commandButton id="dynaButton" value="#{userMB.usuario.fullName}"
+					type="button" icon="ui-icon-extlink" styleClass="boton" />
+				<p:menu overlay="true" trigger="dynaButton"
+					value="#{userMB.usuario.fullName}"
 					style="background-color: rgb(203, 216, 237);border:none">
-						<p:menuitem value="Datos personales"
-							action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
-						<p:menuitem value="Salir" action="#{userMB.logOut}" icon="ui-icon-power" />
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+					<p:menuitem value="Salir" action="#{userMB.logOut}"
+						icon="ui-icon-power" />
 				</p:menu>
 			</div>
 		</p:panel>
 
 
-		<p:panel styleClass="centered" >
+		<p:panel styleClass="centered">
 
-			<p:panelGrid columns="2" styleClass="panel" >
 			
-
-				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="LISTADOS"
-						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Usuarios" action="/administrador/indexAdmin.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Auditoria" action="/administrador/indexAudit.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Parametros" action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
-					</p:submenu>
-					<p:submenu label="OPCIONES" style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Registrar Proveedor"
-							action="#{userMB.prepararAdicionarUser}" icon="ui-icon-pin-w" />
-					</p:submenu>
-				</p:menu>
 
 
 
 				<p:panel
 					style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%">
-					<p:dataTable id="tbl" var="usu" value="#{userMB.listarUser}"
-						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
-						paginator="true" rows="5"
-						style="width:100%;height:100%;align: top"
-						styleClass="myTable">
-
+					<p:dataGrid var="sub" value="#{userMB.listaSubastas}" columns="5"
+						layout="grid" rows="12" paginator="true" id="subastas"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="6,12,16"
+						style="width:100%;height:100%;align: top" styleClass="myTable">
 						<f:facet name="header">
-							<h:outputText value="POSTOR" />
+							<h:outputText value="SUBASTAS" />
 						</f:facet>
 
-						<p:column style="width:5px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="Id" />
-							</f:facet>
-							<center>
-								<h:outputText value="#{usu.id}" />
-							</center>
-						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="FullName" />
-							</f:facet>
-							<center>
-								<h:outputText value="#{usu.fullName}" />
-							</center>
-						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="User Name" />
-							</f:facet>
-							<center>
-								<h:outputText value="#{usu.userName}" />
-							</center>
-						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="User Type" />
-							</f:facet>
-							<center>
-								<h:outputText value="#{usu.userType}" />
-							</center>
-						</p:column>
-						<p:column style="width:25px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="Email" />
-							</f:facet>
-							<h:outputText value="#{usu.emailAddress}" />
-						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="Date" />
-							</f:facet>
-							<center>
-								<h:outputText value="#{usu.dateLastPassword}" />
-							</center>
-						</p:column>
-						<p:column style="width:10px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<center>
-									<h:outputText value="Estado" />
-								</center>
-							</f:facet>
-							<h:outputText value="#{usu.active}" />
-						</p:column>
+						<p:panel header="#{sub.name}"
+							style="text-align:center; width:225px">
+							<h:panelGrid columns="1" style="width:100%">
+								<p:graphicImage value="/img/subastaDefault.jpg"
+									style="width:180px; align: center" />
 
-						<p:column style="width:10px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="Acción" />
-							</f:facet>
-							<center>
-								<h:commandLink title="Eliminar" action="#{userMB.eliminarUser}"
-									update="tbl">
-									<h:graphicImage value="/img/delete.png"
-										style="width:14px;height:14px" />
-								</h:commandLink>
-							</center>
-						</p:column>
+								<h:outputText value="#{sub.dateStart}" />
 
-						<p:column style="width:10px;height:3px;font-size:14px">
-							<f:facet name="header">
-								<h:outputText value="Acción" />
-							</f:facet>
-							<center>
-								<h:commandLink title="Modificar"
-									action="#{userMB.prepararModificarUser}" update="tbl">
-									<h:graphicImage value="/img/update.png"
-										style="width:14px;height:14px" />
-								</h:commandLink>
-							</center>
-						</p:column>
+								<p:commandLink value="Ver subasta" action="#{userMB.prepararSubasta}">
+								</p:commandLink>
+							</h:panelGrid>
 
-					</p:dataTable>
+						</p:panel>
+
+					</p:dataGrid>
 				</p:panel>
-
-			</p:panelGrid>
 
 
 		</p:panel>
 	</h:form>
+
 </h:body>
 </html>
