@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputText value="ADMIN" /></title>
+	<style>
+body {
+	background-color: rgb(244, 247, 247)
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.centered {
+	position: absolute;
+	height: 380px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	width: 90%;
+	left: 50%;
+	margin-left: -45%;
+	margin-top: 15%;
+	background-color: rgb(203, 216, 237);
+	border: 0px;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+</style>
+</h:head>
+<h:body>
+
+
+	<h:form>
+
+		<p:panel
+			style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
+
+			<p:graphicImage value="/img/Acme-corp.png"
+				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
+
+			<div style="margin-left: 90%">
+				<p:commandButton id="dynaButton" value="ADMIN" type="button"
+					icon="ui-icon-extlink" styleClass="boton" />
+				<p:menu overlay="true" trigger="dynaButton" value="POSTOR"
+					style="background-color: rgb(203, 216, 237);border:none">
+					<p:menuitem value="Salir" action="#{userMB.logOut}"
+						icon="ui-icon-power" />
+				</p:menu>
+			</div>
+		</p:panel>
+
+
+		<p:panel styleClass="centered">
+
+			<p:panelGrid columns="2" styleClass="panel">
+
+				<p:menu style="background-color: rgb(203, 216, 237);border:none">
+					<p:submenu label="OPCIONES"
+						style="background-color: rgb(179, 185, 242)">
+						<p:menuitem value="Inicio" action="/postor/indexPostor.xhtml"
+							icon="ui-icon-star" />
+						<p:menuitem value="Mis datos" action="/postor/datosPostor"
+							icon="ui-icon-star" />
+					</p:submenu>
+				</p:menu>
+
+
+				<p:panel header="MIS DATOS"
+					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
+
+					<p:dataTable id="tbl" var="ofer" value="#{userMB.listaOfertaPostor}"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+						paginator="true" rows="5"
+						style="width:100%;height:100%;align: top"
+						styleClass="myTable">
+
+						<f:facet name="header">
+							<h:outputText value="LISTADO DE OFERTAS" />
+						</f:facet>
+
+						<p:column style="width:5px;height:3px;font-size:14px">
+							<f:facet name="header">
+								<h:outputText value="Id" />
+							</f:facet>
+							<center>
+								<h:outputText value="#{ofer.id}" />
+							</center>
+						</p:column>
+						<p:column style="width:15px;height:3px;font-size:14px">
+							<f:facet name="header">
+								<h:outputText value="UserName" />
+							</f:facet>
+							<center>
+								<h:outputText value="#{ofer.identification}" />
+							</center>
+						</p:column>
+						<p:column style="width:15px;height:3px;font-size:14px">
+							<f:facet name="header">
+								<h:outputText value="IdSale" />
+							</f:facet>
+							<center>
+								<h:outputText value="#{ofer.idSales}" />
+							</center>
+						</p:column>
+						<p:column style="width:15px;height:3px;font-size:14px">
+							<f:facet name="header">
+								<h:outputText value="Valor" />
+							</f:facet>
+							<center>
+								<h:outputText value="#{ofer.valueOffer}" />
+							</center>
+						</p:column>
+						<p:column style="width:25px;height:3px;font-size:14px">
+							<f:facet name="header">
+								<h:outputText value="Fecha Oferta" />
+							</f:facet>
+							<h:outputText value="#{ofer.dateOffer}" />
+						</p:column>
+						<p:column style="width:15px;height:3px;font-size:14px">
+							<f:facet name="header">
+								<h:outputText value="Ganador" />
+							</f:facet>
+							<center>
+								<h:outputText value="#{ofer.winner}" />
+							</center>
+						</p:column>				
+
+					</p:dataTable>
+
+
+				</p:panel>
+			</p:panelGrid>
+		</p:panel>
+	</h:form>
+
+
+</h:body>
+</html>
