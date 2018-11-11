@@ -44,6 +44,7 @@ public class UserMB
 	private DataModel listaUser;
 	private DataModel listaProveedor;
 	private DataModel listaSubastas;
+	private DataModel listaOfertaPostor;
 	private String mensajeError;
 	private String email1;
 	private String email2;
@@ -111,10 +112,10 @@ public class UserMB
 		return "/proveedor/indexProveedor";
 	}
 
-	public String prepararIngresoPostor(String userName)
-	{
+	public String prepararIngresoPostor() {
 		UserService service = new UserService();
-		user = service.getUser(userName);
+		user = service.getUser(loginUser.getUserName());
+		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
 		return "/postor/indexPostor";
 	}
 
@@ -285,7 +286,7 @@ public class UserMB
 						{
 							usuarioTemp.setFailedAttempts(0);
 						service.actualizar(usuarioTemp);
-							pagina = "/postor/indexPostor";
+							pagina = prepararIngresoPostor();
 						} else
 						{
 							mensajeError = "Verificación del CAPTCHA invalida";
@@ -650,6 +651,20 @@ public class UserMB
 
 	public void setListaSubastas(DataModel listaSubastas) {
 		this.listaSubastas = listaSubastas;
+	}
+	
+	public DataModel inicializarListaOfertaPostor(String postor) {
+		List<Offerersale> lista = new OfferersaleService().getOfferersale(postor);
+		listaOfertaPostor = new ListDataModel(lista);
+		return listaOfertaPostor;
+	}
+
+	public DataModel getListaOfertaPostor() {
+		return listaOfertaPostor;
+	}
+
+	public void setListaOfertaPostor(DataModel listaOfertaPostor) {
+		this.listaOfertaPostor = listaOfertaPostor;
 	}
 	
 
