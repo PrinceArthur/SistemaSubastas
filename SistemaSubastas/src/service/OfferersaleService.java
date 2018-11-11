@@ -15,7 +15,7 @@ public class OfferersaleService
 		offer.nuevo(offerersale);
 	}
 	
-	public Offerersale getOfferersale(String userName)
+	public List<Offerersale> getOfferersale(String userName)
 	{
 		return offer.getOfferersale(userName);
 	}
