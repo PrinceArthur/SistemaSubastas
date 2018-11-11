@@ -52,6 +52,15 @@ public class UserMB
 	private String nombre;
 	private Offerersale oferta = new Offerersale();
 	private int idSale;
+	
+	private static Logger logger = Logger.getLogger(UserMB.class);
+	
+	public UserMB()
+	{
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		URL url = loader.getResource("log4j.properties");
+		PropertyConfigurator.configure(url);
+	}
 
 	public String prepararAdicionarUser()
 	{
@@ -213,6 +222,7 @@ public class UserMB
 
 	public String login()
 	{
+		logger.trace("Método de login");
 
 		String pagina = "";
 		UserService service = new UserService();
