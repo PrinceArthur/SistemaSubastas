@@ -67,6 +67,8 @@ body {
 					icon="ui-icon-extlink" styleClass="boton" />
 				<p:menu overlay="true" trigger="dynaButton" value="POSTOR"
 					style="background-color: rgb(203, 216, 237);border:none">
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararDatosPostor}" icon="ui-icon-person" />
 					<p:menuitem value="Salir" action="#{userMB.logOut}"
 						icon="ui-icon-power" />
 				</p:menu>
@@ -76,43 +78,38 @@ body {
 
 		<p:panel styleClass="centered">
 
-			<p:panelGrid columns="2" styleClass="panel">
 
-				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="OPCIONES"
-						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Inicio" action="/postor/indexPostor.xhtml"
+				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
+					<p:menuitem value="Subastas" action="/postor/indexPostor.xhtml"
 							icon="ui-icon-star" />
-						<p:menuitem value="Mis ofertas" action="/postor/listaOfertaPostor.xhtml"
-							icon="ui-icon-star" />
-					</p:submenu>
-				</p:menu>
+						<p:menuitem value="Mis ofertas"
+							action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
+				</p:menubar>
 
 
 				<p:panel header="MIS DATOS"
-					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
+					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:30%">
 
 					<p:panelGrid columns="2" styleClass="panel" id="pg">
 
 						<h:outputLabel value="Nombre de usuario: "
 							style="font-weight:bold" />
-						<p:outputLabel value="#{userMB.loginUser.userName}" />
+						<p:outputLabel value="#{userMB.usuario.userName}" />
 
 						<p:outputLabel value="Contraseña: " style="font-weight:bold" />
-						<p:outputLabel value="#{userMB.loginUser.password}" />
+						<p:outputLabel value="#{userMB.usuario.password}" />
 
 						<p:outputLabel value="Nombre completo: " style="font-weight:bold" />
-						<p:outputLabel value="#{userMB.loginUser.fullName}" />
+						<p:outputLabel value="#{userMB.usuario.fullName}" />
 
 						<p:outputLabel value="Correo electrónico: "
 							style="font-weight:bold" />
-						<p:outputLabel value="#{userMB.loginUser.emailAddress}" />
+						<p:outputLabel value="#{userMB.usuario.emailAddress}" />
 
 					</p:panelGrid>
 
 
 				</p:panel>
-			</p:panelGrid>
 		</p:panel>
 	</h:form>
 
