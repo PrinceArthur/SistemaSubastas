@@ -23,7 +23,7 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 	}
 
 	@Override
-	public Offerersale getOfferersale(String userName)
+	public List<Offerersale> getOfferersale(String userName)
 	{
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction t = session.beginTransaction();
@@ -35,7 +35,7 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 		session.close();
 		if(!lista.isEmpty())
 		{
-			return (Offerersale)lista.get(0);
+			return lista;
 		}
 		else
 		{
