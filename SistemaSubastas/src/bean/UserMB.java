@@ -120,11 +120,11 @@ public class UserMB
 
 	public String prepararAdicionarSubasta()
 	{
+		ParameterService serviceP= new ParameterService();
 		sale = new Salesueb();
 		nombre = user.getUserName();
-		sale.setPhotoProduct("/img/ImagenSubasta.png");
+		sale.setPhotoProduct(serviceP.getParameter("RutaImagen").getTextValue());
 		return "/proveedor/nuevaSubasta";
-
 	}
 	
 	public String prepararSubasta()
@@ -232,7 +232,7 @@ public class UserMB
 		if (existe)
 		{
 
-			if (usuarioTemp.getPassword().endsWith("$") || dias >= serviceP.getParameter("Fecha").getNumberValue())
+			if (usuarioTemp.getPassword().endsWith("$") || (dias >= serviceP.getParameter("Fecha").getNumberValue() && serviceP.getParameter("Fecha").getState().equalsIgnoreCase("ACTIVE") ))
 			{
 				try
 				{
@@ -316,7 +316,7 @@ public class UserMB
 
 			} else if(!usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
 			{
-				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue()) 
+				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue() && serviceP.getParameter("Intentos").getState().equalsIgnoreCase("ACTIVE") ) 
 				{
 					mensajeError = "Contraseña o Usuario inválido";
 					FacesContext context = FacesContext.getCurrentInstance();
