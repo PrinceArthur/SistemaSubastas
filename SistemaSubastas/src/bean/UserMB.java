@@ -318,8 +318,12 @@ public class UserMB
 			{
 				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue()) 
 				{
+					mensajeError = "Contraseña o Usuario inválido";
+					FacesContext context = FacesContext.getCurrentInstance();
+					context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 					usuarioTemp.setFailedAttempts(usuarioTemp.getFailedAttempts()+1);
 					service.actualizar(usuarioTemp); 
+					audit.adicionarAudit(usuarioTemp.getUserName(), "FAILLOGIN", "User", 0);
 				}
 			}
 			
@@ -358,6 +362,8 @@ public class UserMB
 		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 		userPass.setDateLastPassword(new Date());
 		service.actualizar(userPass);
+		
+		audit.adicionarAudit(userPass.getUserName(), "UPDATE", "User", userPass.getId());
 
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
@@ -400,6 +406,8 @@ public class UserMB
 			userTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			userTemp.setFailedAttempts(0);
 			service.actualizar(userTemp);
+			
+			audit.adicionarAudit(userTemp.getUserName(), "UPDATE", "User", userTemp.getId());
 
 		} else
 		{
@@ -439,6 +447,8 @@ public class UserMB
 			sale.setValueCurrent(oferta.getValueOffer());
 			modificarSubasta();
 			service.nuevo(oferta);
+			audit.adicionarAudit(nombre, "CREATE", "Offerersales", 0);
+			audit.adicionarAudit(nombre, "UPDATE", "Salesueb", sale.getId());
 		}
 		return "/postor/subasta";
 	}
@@ -455,6 +465,7 @@ public class UserMB
 		
 		saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(), sale.getDescriptionProduct(),
 				sale.getName(), sale.getValueBase());
+		audit.adicionarAudit(nombre, "CREATE", "Salesueb", sale.getId());
 		return "/proveedor/indexProveedor";
 	}
 	
