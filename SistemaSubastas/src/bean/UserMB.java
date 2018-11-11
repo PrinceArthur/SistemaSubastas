@@ -69,6 +69,8 @@ public class UserMB
 		user.setUserType("proveedor");
 		Date now = new Date();
 		user.setDateLastPassword(now);
+		email1 = "";
+		email2 = "";
 		return "/administrador/registrarProvedor.xhtml";
 	}
 	
@@ -169,11 +171,13 @@ public class UserMB
 		UserService service = new UserService();
 		user.setEmailAddress(email1 + email2);
 		boolean repetido = false;
-		Iterator<User> it = listaUser.iterator();
+		Iterator<User> it = getListarUser().iterator();
 		while (it.hasNext() && repetido == false)
 		{
-			if (it.next().getUserName().equals(user.getUserName())
-					|| it.next().getEmailAddress().equals(user.getEmailAddress()))
+			User x = it.next();
+			
+			if (x.getUserName().equals(user.getUserName())
+					|| x.getEmailAddress().equals(email1 + email2))
 			{
 				repetido = true;
 			}
