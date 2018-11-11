@@ -57,14 +57,12 @@ body {
 				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
 
 			<div style="margin-left: 90%">
-				<p:commandButton id="dynaButton" value="ADMIN" type="button"
+				<p:commandButton id="dynaButton" value="#{userMB.usuario.fullName}" type="button"
 					icon="ui-icon-extlink" styleClass="boton" />
-				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
+				<p:menu overlay="true" trigger="dynaButton" value="#{userMB.usuario.fullName}"
 					style="background-color: rgb(203, 216, 237);border:none">
 					<p:menuitem value="Datos personales"
 						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
-					<p:menuitem value="Registrar Proveedor"
-						action="#{userMB.prepararAdicionarUser}" icon="ui-icon-pin-w" />
 					<p:menuitem value="Salir" action="#{userMB.logOut}"
 						icon="ui-icon-power" />
 				</p:menu>
@@ -75,18 +73,14 @@ body {
 		<p:panel styleClass="centered">
 
 
-			<p:panelGrid columns="2" styleClass="panel">
 
-				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="MENÚ"
-						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Mis Subastas"
-							action="/usuarios/indexProveedor.xhtml" icon="ui-icon-star" />
-					</p:submenu>
-				</p:menu>
+				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
+						<p:menuitem value="Mis Subastas" action="/proveedor/indexProveedor.xhtml"
+							icon="ui-icon-star" />
+				</p:menubar>
 
 				<p:panel header="Crear Subasta"
-					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:500px;margin-top:10%;margin-left:40%">
+					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:30%">
 
 					<h:form>
 						<p:growl id="growl" showDetail="true" sticky="true" />
@@ -102,10 +96,10 @@ body {
 
 							<p:outputLabel value="Descripción del producto: "
 								style="font-weight:bold" />
-							<p:inputText value="#{userMB.sale.descriptionProduct}"
+							<p:inputTextarea value="#{userMB.sale.descriptionProduct}"
 								required="true" requiredMessage="Campo requerido" id="nTxt"
 								validatorMessage="Solo puede contener letras">
-							</p:inputText>
+							</p:inputTextarea>
 
 							<p:outputLabel value="Valor inicial: " style="font-weight:bold" />
 							<p:inputText value="#{userMB.sale.valueBase}" required="true"
@@ -123,16 +117,13 @@ body {
 							<p:calendar id="popup2" value="#{userMB.sale.dateEnd}"
 								 />
 
-							<center>
 								<p:commandButton value="Registrar"
 									action="#{userMB.adicionarSubasta}" update="growl" />
 								<p:button value="Cancelar" outcome="/proveedor/indexProveedor"/>
-							</center>
 						</p:panelGrid>
 					</h:form>
 
 				</p:panel>
-			</p:panelGrid>
 		</p:panel>
 	</h:form>
 </h:body>
