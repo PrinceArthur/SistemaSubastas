@@ -12,6 +12,7 @@ body {
 	background-color: rgb(244, 247, 247)
 }
 
+
 .panel tr, .panel td {
 	background: none;
 	border: none !important;
@@ -63,10 +64,12 @@ body {
 				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
 
 			<div style="margin-left: 90%">
-				<p:commandButton id="dynaButton" value="ADMIN" type="button"
+				<p:commandButton id="dynaButton" value="#{userMB.usuario.userName}" type="button"
 					icon="ui-icon-extlink" styleClass="boton" />
-				<p:menu overlay="true" trigger="dynaButton" value="POSTOR"
+				<p:menu overlay="true" trigger="dynaButton" value="#{userMB.usuario.userName}"
 					style="background-color: rgb(203, 216, 237);border:none">
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararDatosPostor}" icon="ui-icon-person" />
 					<p:menuitem value="Salir" action="#{userMB.logOut}"
 						icon="ui-icon-power" />
 				</p:menu>
@@ -76,27 +79,23 @@ body {
 
 		<p:panel styleClass="centered">
 
-			<p:panelGrid columns="2" styleClass="panel">
 
-				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="OPCIONES"
-						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Inicio" action="/postor/indexPostor.xhtml"
+				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
+						<p:menuitem value="Subastas" action="/postor/indexPostor.xhtml"
 							icon="ui-icon-star" />
-						<p:menuitem value="Mis datos" action="/postor/datosPostor"
-							icon="ui-icon-star" />
-					</p:submenu>
-				</p:menu>
+						<p:menuitem value="Mis ofertas"
+							action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
+				</p:menubar>
 
 
-				<p:panel header="MIS DATOS"
-					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
+				<p:panel
+					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:30%">
 
 					<p:dataTable id="tbl" var="ofer" value="#{userMB.listaOfertaPostor}"
 						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
 						paginator="true" rows="5"
 						style="width:100%;height:100%;align: top"
-						styleClass="myTable">
+						>
 
 						<f:facet name="header">
 							<h:outputText value="LISTADO DE OFERTAS" />
@@ -110,7 +109,7 @@ body {
 								<h:outputText value="#{ofer.id}" />
 							</center>
 						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
+						<p:column style="width:30px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="UserName" />
 							</f:facet>
@@ -126,7 +125,7 @@ body {
 								<h:outputText value="#{ofer.idSales}" />
 							</center>
 						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
+						<p:column style="width:25px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Valor" />
 							</f:facet>
@@ -134,13 +133,13 @@ body {
 								<h:outputText value="#{ofer.valueOffer}" />
 							</center>
 						</p:column>
-						<p:column style="width:25px;height:3px;font-size:14px">
+						<p:column style="width:50px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Fecha Oferta" />
 							</f:facet>
 							<h:outputText value="#{ofer.dateOffer}" />
 						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
+						<p:column style="width:30px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Ganador" />
 							</f:facet>
@@ -153,7 +152,6 @@ body {
 
 
 				</p:panel>
-			</p:panelGrid>
 		</p:panel>
 	</h:form>
 
