@@ -63,7 +63,7 @@ body {
 				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
 					style="background-color: rgb(203, 216, 237);border:none">
 					<p:menuitem value="Datos personales"
-						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+						action="#{userMB.prepararDatosPostor}" icon="ui-icon-person" />
 					<p:menuitem value="Salir" action="#{userMB.logOut}"
 						icon="ui-icon-power" />
 				</p:menu>
@@ -74,19 +74,18 @@ body {
 		<p:panel styleClass="centered">
 
 
-			<p:panelGrid columns="2" styleClass="panel">
 
-				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="OPCIONES"
-						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Inicio" action="/postor/indexPostor.xhtml"
+				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
+						<p:menuitem value="Subastas" action="/postor/indexPostor.xhtml"
 							icon="ui-icon-star" />
-					</p:submenu>
-				</p:menu>
+						<p:menuitem value="Mis ofertas"
+							action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
+						
+				</p:menubar>
 
 
 				<p:panel header="SUBASTA"
-					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
+					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:30%">
 					<p:growl id="growl" showDetail="true" sticky="true" />
 					<p:panelGrid columns="2" styleClass="panel" id="pg">
 
@@ -117,7 +116,6 @@ body {
 
 
 				</p:panel>
-			</p:panelGrid>
 		</p:panel>
 	</h:form>
 
