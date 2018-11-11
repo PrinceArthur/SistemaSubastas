@@ -90,16 +90,16 @@ public class UserMB
 		return "/administrador/datosAdmin";
 	}
 
-	public String prepararRecuperarContraseña()
+	public String prepararRecuperarContraseÃ±a()
 	{
 		userPass = new User();
-		return "recuperarContraseña";
+		return "recuperarContraseÃ±a";
 	}
 
-	public String prepararCambioContraseña()
+	public String prepararCambioContraseÃ±a()
 	{
 		userPass = new User();
-		return "cambiarContraseña";
+		return "cambiarContraseÃ±a";
 	}
 
 	public String prepararIngresoProveedor()
@@ -239,10 +239,10 @@ public class UserMB
 					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 					if (verify)
 					{
-						pagina = prepararCambioContraseña();
+						pagina = prepararCambioContraseÃ±a();
 					} else
 					{
-						mensajeError = "Verificación del CAPTCHA invalida";
+						mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
 					}
 				} catch (Exception e)
 				{
@@ -263,7 +263,7 @@ public class UserMB
 							pagina = prepararIngresoProveedor();
 						} else
 						{
-							mensajeError = "Verificación del CAPTCHA invalida";
+							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
@@ -280,32 +280,31 @@ public class UserMB
 							pagina = "/postor/indexPostor";
 						} else
 						{
-							mensajeError = "Verificación del CAPTCHA invalida";
+							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
+						}
+					} catch (Exception e)
+					{
+					}
+				}else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN"))
+				{
+					try
+					{
+						String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
+								.getRequestParameterMap().get("g-recaptcha-response");
+						boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
+						if (verify)
+						{
+							pagina = "/administrador/inicioAdmin";
+						} else
+						{
+							mensajeError = "VerificaciÃ³n del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
 					}
 				}
 
-			} else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN")
-					&& usuarioTemp.getPassword().equals(loginUser.getPassword()))
-			{
-				try
-				{
-					String gRecaptchaResponse = FacesContext.getCurrentInstance().getExternalContext()
-							.getRequestParameterMap().get("g-recaptcha-response");
-					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
-					if (verify)
-					{
-						pagina = "/administrador/inicioAdmin";
-					} else
-					{
-						mensajeError = "Verificación del CAPTCHA invalida";
-					}
-				} catch (Exception e)
-				{
-				}
-			}else if(!usuarioTemp.getPassword().equals(loginUser.getPassword()))
+			} else if(!usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
 			{
 				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue()) 
 				{
@@ -331,7 +330,7 @@ public class UserMB
 			
 		} else
 		{
-			mensajeError = "Contraseña o Usuario inválido";
+			mensajeError = "ContraseÃ±a o Usuario invÃ¡lido";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 		}
@@ -342,11 +341,11 @@ public class UserMB
 	}
 	
 	/**
-	 * Método para hacer el cambio obligatorio de contraseña
+	 * MÃ©todo para hacer el cambio obligatorio de contraseÃ±a
 	 * @throws IOException
 	 */
 
-	public void recuperarContraseña() throws IOException
+	public void recuperarContraseÃ±a() throws IOException
 	{
 		UserService service = new UserService();
 		String pass = userPass.getPassword();
@@ -359,11 +358,11 @@ public class UserMB
 	}
 	
 	/**
-	 * Método para link De olvidar contraseña
+	 * MÃ©todo para link De olvidar contraseÃ±a
 	 * @throws IOException
 	 */
 
-	public void cambiarContraseña() throws IOException
+	public void cambiarContraseÃ±a() throws IOException
 	{
 		UserService service = new UserService();
 		User userTemp = new User();
@@ -396,7 +395,7 @@ public class UserMB
 
 		} else
 		{
-			mensajeError = "No se encontró un usuario con ese correo.";
+			mensajeError = "No se encontrÃ³ un usuario con ese correo.";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 		}
