@@ -203,6 +203,7 @@ public class UserMB
 		{
 			String pass = EnviarCorreo.sendEmail(usuarioTemp.getEmailAddress());
 			usuarioTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
+			usuarioTemp.setFailedAttempts(0);
 			usuarioTemp.setDateLastPassword(now);
 			usuarioTemp.setActive("ACTIVE");
 		}
@@ -240,6 +241,8 @@ public class UserMB
 					boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 					if (verify)
 					{
+						usuarioTemp.setFailedAttempts(0);
+						service.actualizar(usuarioTemp);
 						pagina = prepararCambioContraseña();
 					} else
 					{
@@ -261,6 +264,8 @@ public class UserMB
 						boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 						if (verify)
 						{
+							usuarioTemp.setFailedAttempts(0);
+						service.actualizar(usuarioTemp);
 							pagina = prepararIngresoProveedor();
 						} else
 						{
@@ -278,6 +283,8 @@ public class UserMB
 						boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 						if (verify)
 						{
+							usuarioTemp.setFailedAttempts(0);
+						service.actualizar(usuarioTemp);
 							pagina = "/postor/indexPostor";
 						} else
 						{
@@ -295,6 +302,8 @@ public class UserMB
 						boolean verify = VerifyRecaptcha.verify(gRecaptchaResponse);
 						if (verify)
 						{
+							usuarioTemp.setFailedAttempts(0);
+						service.actualizar(usuarioTemp);
 							pagina = "/administrador/inicioAdmin";
 						} else
 						{
@@ -393,6 +402,7 @@ public class UserMB
 			String pass = EnviarCorreo.sendEmail(userTemp.getEmailAddress());
 			userTemp.setDateLastPassword(date);
 			userTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
+			userTemp.setFailedAttempts(0);
 			service.actualizar(userTemp);
 
 		} else
