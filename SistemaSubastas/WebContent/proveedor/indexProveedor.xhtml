@@ -42,7 +42,7 @@ body {
 
 .centered {
 	position: absolute;
-	height: 80%;
+	height: 90%;
 	top: 0;
 	bottom: 0;
 	margin: auto;
@@ -73,7 +73,7 @@ body {
 					value="#{userMB.usuario.fullName}"
 					style="background-color: rgb(203, 216, 237);border:none">
 					<p:menuitem value="Datos personales"
-						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+						action="#{userMB.prepararDatosProveedor}" icon="ui-icon-person" />
 					<p:menuitem value="Salir" action="#{userMB.logOut}"
 						icon="ui-icon-power" />
 				</p:menu>
@@ -83,16 +83,14 @@ body {
 
 		<p:panel styleClass="centered">
 
-			<p:panelGrid columns="2" styleClass="panel">
 
 
-				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="MENÚ"
-						style="background-color: rgb(179, 185, 242)">
+				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
 						<p:menuitem value="Nuevo"
 							action="#{userMB.prepararAdicionarSubasta}" icon="ui-icon-star" />
-					</p:submenu>
-				</p:menu>
+						<p:menuitem value="Mis Subastas"
+							action="/usuarios/indexProveedor.xhtml" icon="ui-icon-star" />
+				</p:menubar>
 
 
 
@@ -102,24 +100,28 @@ body {
 
 
 					<p:dataGrid var="sub" value="#{userMB.listaProveedor}" columns="3"
-						layout="grid" rows="12" paginator="true" id="subastas"
+						layout="grid" rows="1" paginator="true" id="subastas"
 						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-						rowsPerPageTemplate="6,12,16"
 						style="width:100%;height:100%;align: top" styleClass="myTable">
 						<f:facet name="header">
 							<h:outputText value="SUBASTAS" />
 						</f:facet>
 
 						<p:panel header="#{sub.name}"
-							style="text-align:center; width:200px">
+							style="text-align:center; width:300px">
 							<h:panelGrid columns="1" style="width:100%">
 								<p:graphicImage value="/img/ImagenSubasta.png"
 									style="width:180px; align: center" />
-
+								<h:panelGrid columns="2" style="width:100%">
+								<p:outputLabel value="Descripción:"/>
+								<h:outputText value="#{sub.descriptionProduct}" />
+								<p:outputLabel value="Valor Base:"/>
+								<h:outputText value="#{sub.valueBase}" />
+								<p:outputLabel value="Inicia:"/>
 								<h:outputText value="#{sub.dateStart}" />
-
-								<p:commandLink value="Ver subasta">
-								</p:commandLink>
+								<p:outputLabel value="Termina: "/>
+								<h:outputText value="#{sub.dateEnd}" />
+								</h:panelGrid>
 							</h:panelGrid>
 
 						</p:panel>
@@ -127,7 +129,6 @@ body {
 					</p:dataGrid>
 				</p:panel>
 
-			</p:panelGrid>
 
 
 		</p:panel>
