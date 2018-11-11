@@ -98,7 +98,8 @@ public class UserMB
 
 	public String prepararCambioContraseña()
 	{
-		userPass = new User();
+		UserService service = new UserService();
+		userPass = service.getUser(loginUser.getUserName());
 		return "cambiarContraseña";
 	}
 
@@ -350,6 +351,7 @@ public class UserMB
 		UserService service = new UserService();
 		String pass = userPass.getPassword();
 		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
+		userPass.setDateLastPassword(new Date());
 		service.actualizar(userPass);
 
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
