@@ -321,16 +321,12 @@ public class UserMB
 					usuarioTemp.setFailedAttempts(usuarioTemp.getFailedAttempts()+1);
 					service.actualizar(usuarioTemp); 
 				}
-				else 
-				{
-					usuarioTemp.setActive("INACTIVE");
-					service.actualizar(usuarioTemp);
-				}
-				
 			}
 			
 			if(usuarioTemp.getFailedAttempts() == serviceP.getParameter("Intentos").getNumberValue() || usuarioTemp.getActive().equals("INACTIVE")) 
 			{
+				usuarioTemp.setActive("INACTIVE");
+				service.actualizar(usuarioTemp);
 				mensajeError = "Su cuenta se encuentra bloqueada, por favor comuniquese con un administrador.";
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
