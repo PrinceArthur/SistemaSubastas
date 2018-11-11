@@ -121,11 +121,24 @@ public class UserMB
 		return "/proveedor/indexProveedor";
 	}
 
+	public String prepararDatosProveedor()
+	{
+		UserService service = new UserService();
+		user = service.getUser(loginUser.getUserName());
+		return "/proveedor/datosProveedor";
+	}
 	public String prepararIngresoPostor() {
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
 		return "/postor/indexPostor";
+	}
+	
+	public String prepararDatosPostor()
+	{
+		UserService service = new UserService();
+		user = service.getUser(loginUser.getUserName());
+		return "/postor/datosPostor";
 	}
 
 	public String prepararAdicionarSubasta()
@@ -675,6 +688,14 @@ public class UserMB
 
 	public void setListaOfertaPostor(DataModel listaOfertaPostor) {
 		this.listaOfertaPostor = listaOfertaPostor;
+	}
+	
+	public DataModel getListaOfertaPostor()
+	{
+		UserService service = new UserService();
+		user = service.getUser(loginUser.getUserName());
+		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
+		return listaOfertaPostor;
 	}
 	
 
