@@ -17,7 +17,7 @@ body {
 	bottom: 0;
 	margin: auto;
 	width: 300px;
-	left: 50%;
+	left: 37%;
 	margin-left: -150px;
 	margin-top: 20%;
 	background-color: rgb(246, 249, 149);
@@ -34,11 +34,11 @@ body {
 				style="width:400px;height:150px;backGround-color: rgb(246, 249, 149);margin-left: 36%" />
 
 		</p:panel>
-		<p:panel id="basic" styleClass="centered">
+		<p:panel id="basic" styleClass="centered" style="height:200px;width:700px">
 
 			<p:growl id="growl" showDetail="true" sticky="true" />
 
-			<p:panelGrid columns="3" styleClass="panel" id="pg">
+			<h:panelGrid columns="3" styleClass="table" id="pg">
 
 
 				<h:outputLabel value="Nombre de usuario: " style="font-weight:bold"
@@ -62,7 +62,7 @@ body {
 				<p:inputText value="#{userMB.email1}" required="true"
 					requiredMessage="Campo requerido"
 					validatorMessage="Estructura de correo invalida" id="emailTxt">
-					<f:validateRegex pattern="^([a-zA-Z0-9]+[_-])*[a-zA-Z0-9]+$" />
+					<f:validateRegex pattern="[a-zA-Z]*" />
 				</p:inputText>
 				<p:selectOneMenu id="mail" value="#{userMB.email2}"
 					style="width:125px">
@@ -76,8 +76,9 @@ body {
 				<center>
 					<p:commandButton value="Registrar" action="#{userMB.adicionarPostor}"
 						update="growl" />
+					<p:button value="Cancelar" outcome="/login" />
 				</center>
-			</p:panelGrid>
+			</h:panelGrid>
 		</p:panel>
 	</h:form>
 </h:body>
