@@ -1,19 +1,20 @@
 package bean;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
+import com.itextpdf.text.log.SysoCounter;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -22,11 +23,9 @@ import javax.faces.application.FacesMessage;
 import util.Cifrado;
 import util.EnviarCorreo;
 import util.VerifyRecaptcha;
-import entity.Audit;
 import entity.Offerersale;
 import entity.Salesueb;
 import entity.User;
-import service.AuditService;
 import service.OfferersaleService;
 import service.ParameterService;
 import service.SalesuebService;
@@ -61,7 +60,7 @@ public class UserMB
 		URL url = loader.getResource("log4j.properties");
 		PropertyConfigurator.configure(url);
 	}
-
+	
 	public String prepararAdicionarUser()
 	{
 		user = new User();
@@ -73,6 +72,8 @@ public class UserMB
 		email2 = "";
 		return "/administrador/registrarProvedor.xhtml";
 	}
+	
+	
 	
 	public String prepararAdicionarPostor()
 	{
@@ -122,14 +123,16 @@ public class UserMB
 		listaProveedor = inicializarListaProveedor(loginUser.getUserName());
 		return "/proveedor/indexProveedor";
 	}
-
+	
 	public String prepararDatosProveedor()
 	{
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		return "/proveedor/datosProveedor";
 	}
-	public String prepararIngresoPostor() {
+	
+	public String prepararIngresoPostor()
+	{
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
@@ -150,6 +153,7 @@ public class UserMB
 		nombre = user.getUserName();
 		sale.setPhotoProduct(serviceP.getParameter("RutaImagen").getTextValue());
 		return "/proveedor/nuevaSubasta";
+
 	}
 	
 	public String prepararSubasta()
@@ -170,6 +174,7 @@ public class UserMB
 	{
 		UserService service = new UserService();
 		user.setEmailAddress(email1 + email2);
+		System.out.println(email1 + "            " + email2);
 		boolean repetido = false;
 		Iterator<User> it = getListarUser().iterator();
 		while (it.hasNext() && repetido == false)
@@ -190,6 +195,7 @@ public class UserMB
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
 			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
+			
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
 
@@ -239,6 +245,7 @@ public class UserMB
 
 	public String login()
 	{
+		
 		logger.trace("Método de login");
 
 		String pagina = "";
@@ -259,8 +266,8 @@ public class UserMB
 
 		if (existe)
 		{
-
-			if (usuarioTemp.getPassword().endsWith("$") || (dias >= serviceP.getParameter("Fecha").getNumberValue() && serviceP.getParameter("Fecha").getState().equalsIgnoreCase("ACTIVE") ))
+			
+			if (usuarioTemp.getPassword().endsWith("$") || (dias >= serviceP.getParameter("Fecha").getNumberValue() && serviceP.getParameter("Fecha").getState().equalsIgnoreCase("ACTIVE")))
 			{
 				try
 				{
@@ -293,7 +300,7 @@ public class UserMB
 						if (verify)
 						{
 							usuarioTemp.setFailedAttempts(0);
-						service.actualizar(usuarioTemp);
+							service.actualizar(usuarioTemp);
 							pagina = prepararIngresoProveedor();
 						} else
 						{
@@ -312,7 +319,7 @@ public class UserMB
 						if (verify)
 						{
 							usuarioTemp.setFailedAttempts(0);
-						service.actualizar(usuarioTemp);
+							service.actualizar(usuarioTemp);
 							pagina = prepararIngresoPostor();
 						} else
 						{
@@ -331,7 +338,8 @@ public class UserMB
 						if (verify)
 						{
 							usuarioTemp.setFailedAttempts(0);
-						service.actualizar(usuarioTemp);
+							service.actualizar(usuarioTemp);
+							logger.trace("Ingresa el administrador");
 							pagina = "/administrador/inicioAdmin";
 						} else
 						{
@@ -344,7 +352,7 @@ public class UserMB
 
 			} else if(!usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
 			{
-				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue() && serviceP.getParameter("Intentos").getState().equalsIgnoreCase("ACTIVE") ) 
+				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue() && serviceP.getParameter("Intentos").getState().equalsIgnoreCase("ACTIVE")) 
 				{
 					mensajeError = "Contraseña o Usuario inválido";
 					FacesContext context = FacesContext.getCurrentInstance();
@@ -359,6 +367,7 @@ public class UserMB
 			{
 				usuarioTemp.setActive("INACTIVE");
 				service.actualizar(usuarioTemp);
+				audit.adicionarAudit(usuarioTemp.getUserName(), "DELETELOGIN", "User", 0);
 				mensajeError = "Su cuenta se encuentra bloqueada, por favor comuniquese con un administrador.";
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
@@ -371,6 +380,7 @@ public class UserMB
 			mensajeError = "Contraseña o Usuario inválido";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			logger.warn("Está ingresando un usuario que no está registrado");
 		}
 
 		
@@ -407,7 +417,6 @@ public class UserMB
 	{
 		UserService service = new UserService();
 		User userTemp = new User();
-		userPass = service.getUser(loginUser.getUserName());
 		userPass.setEmailAddress(email1 + email2);
 		Date date = new Date();
 		String usu = "";
@@ -466,6 +475,9 @@ public class UserMB
 	{
 		OfferersaleService service = new OfferersaleService();
 		oferta.setIdentification(nombre);
+		
+		
+		
 		if(oferta.getValueOffer() <= sale.getValueBase())
 		{
 			mensajeError = "La oferta debe ser mayor que la oferta actual";
@@ -473,6 +485,7 @@ public class UserMB
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 		}else {
 			sale.setValueCurrent(oferta.getValueOffer());
+			oferta.setIdSales(sale.getId());
 			modificarSubasta();
 			service.nuevo(oferta);
 			audit.adicionarAudit(nombre, "CREATE", "Offerersales", 0);
@@ -490,11 +503,19 @@ public class UserMB
 	public String adicionarSubasta()
 	{
 		SalesuebMB saleB = new SalesuebMB();
-		
-		saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(), sale.getDescriptionProduct(),
-				sale.getName(), sale.getValueBase());
-		audit.adicionarAudit(nombre, "CREATE", "Salesueb", sale.getId());
-		return "/proveedor/indexProveedor";
+		if(sale.getDateStart().getDay() >= sale.getDateEnd().getDay())
+		{
+			mensajeError = "La fecha de inicio debe ser menor que la fecha final";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			return "";
+		}
+		else {
+			saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(), sale.getDescriptionProduct(),
+					sale.getName(), sale.getValueBase());
+			audit.adicionarAudit(nombre, "CREATE", "Salesueb", sale.getId());			
+			return "/proveedor/indexProveedor";
+		}
 	}
 	
 	public void adicionarPostor() {
@@ -642,6 +663,9 @@ public class UserMB
 	
 	public DataModel getListaProveedor()
 	{
+		UserService service = new UserService();
+		user = service.getUser(loginUser.getUserName());
+		listaProveedor = inicializarListaProveedor(loginUser.getUserName());
 		return listaProveedor;
 	}
 
@@ -679,18 +703,15 @@ public class UserMB
 	public void setListaSubastas(DataModel listaSubastas) {
 		this.listaSubastas = listaSubastas;
 	}
-	
+
 	public DataModel inicializarListaOfertaPostor(String postor) {
 		List<Offerersale> lista = new OfferersaleService().getOfferersale(postor);
 		listaOfertaPostor = new ListDataModel(lista);
 		return listaOfertaPostor;
 	}
 
-	public DataModel getListaOfertaPostor() {
-		return listaOfertaPostor;
-	}
-
-	public void setListaOfertaPostor(DataModel listaOfertaPostor) {
+	public void setListaOfertaPostor(DataModel listaOfertaPostor)
+	{
 		this.listaOfertaPostor = listaOfertaPostor;
 	}
 	
@@ -701,6 +722,5 @@ public class UserMB
 		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
 		return listaOfertaPostor;
 	}
-	
 
 }
