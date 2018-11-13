@@ -34,4 +34,9 @@ public class OfferersaleService
 	{
 		return offer.lista();
 	}
+	
+	public List<Offerersale> getOfertaDeSubasta(int idSales)
+	{
+		return offer.getOfertaDeSubasta(idSales);
+	}
 }
