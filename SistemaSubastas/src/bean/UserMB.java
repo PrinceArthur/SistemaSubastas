@@ -13,7 +13,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.swing.plaf.ActionMapUIResource;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -54,6 +53,12 @@ import service.ParameterService;
 import service.SalesuebService;
 import service.UserService;
 
+/**
+ * 
+ * @author estef
+ *
+ */
+
 @ManagedBean
 @SessionScoped
 public class UserMB
@@ -75,16 +80,16 @@ public class UserMB
 	private String nombre;
 	private Offerersale oferta = new Offerersale();
 	private int idSale;
-	
+
 	private static Logger logger = Logger.getLogger(UserMB.class);
-	
+
 	public UserMB()
 	{
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		URL url = loader.getResource("log4j.properties");
 		PropertyConfigurator.configure(url);
 	}
-	
+
 	public String prepararAdicionarUser()
 	{
 		user = new User();
@@ -96,9 +101,7 @@ public class UserMB
 		email2 = "";
 		return "/administrador/registrarProvedor.xhtml";
 	}
-	
-	
-	
+
 	public String prepararAdicionarPostor()
 	{
 		user = new User();
@@ -147,14 +150,14 @@ public class UserMB
 		listaProveedor = inicializarListaProveedor(loginUser.getUserName());
 		return "/proveedor/indexProveedor";
 	}
-	
+
 	public String prepararDatosProveedor()
 	{
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		return "/proveedor/datosProveedor";
 	}
-	
+
 	public String prepararIngresoPostor()
 	{
 		UserService service = new UserService();
@@ -162,7 +165,7 @@ public class UserMB
 		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
 		return "/postor/indexPostor";
 	}
-	
+
 	public String prepararDatosPostor()
 	{
 		UserService service = new UserService();
@@ -172,24 +175,23 @@ public class UserMB
 
 	public String prepararAdicionarSubasta()
 	{
-		ParameterService serviceP= new ParameterService();
+		ParameterService serviceP = new ParameterService();
 		sale = new Salesueb();
 		nombre = user.getUserName();
 		sale.setPhotoProduct(serviceP.getParameter("RutaImagen").getTextValue());
 		return "/proveedor/nuevaSubasta";
 
 	}
-	
+
 	public String prepararSubasta()
 	{
 		sale = (Salesueb) listaSubastas.getRowData();
 		return "/postor/subasta";
 	}
-	
+
 	public void prepararAgregarOferta()
 	{
 		idSale = sale.getId();
-		oferta.setWinner("W");
 		oferta.setDateOffer(new Date());
 		nombre = loginUser.getUserName();
 	}
@@ -204,9 +206,8 @@ public class UserMB
 		while (it.hasNext() && repetido == false)
 		{
 			User x = it.next();
-			
-			if (x.getUserName().equals(user.getUserName())
-					|| x.getEmailAddress().equals(email1 + email2))
+
+			if (x.getUserName().equals(user.getUserName()) || x.getEmailAddress().equals(email1 + email2))
 			{
 				repetido = true;
 			}
@@ -219,7 +220,6 @@ public class UserMB
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
 			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
-			
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
 
@@ -269,14 +269,14 @@ public class UserMB
 
 	public String login()
 	{
-		
+
 		logger.trace("Método de login");
 
 		String pagina = "";
 		UserService service = new UserService();
 		User usuarioTemp = service.getUser(loginUser.getUserName());
-		ParameterService serviceP= new ParameterService();
-		int dias = (int) ((new Date().getTime()-usuarioTemp.getDateLastPassword().getTime())/86400000);
+		ParameterService serviceP = new ParameterService();
+		int dias = (int) ((new Date().getTime() - usuarioTemp.getDateLastPassword().getTime()) / 86400000);
 		boolean existe = false;
 
 		Iterator<User> it = getListarUser().iterator();
@@ -290,8 +290,9 @@ public class UserMB
 
 		if (existe)
 		{
-			
-			if (usuarioTemp.getPassword().endsWith("$") || (dias >= serviceP.getParameter("Fecha").getNumberValue() && serviceP.getParameter("Fecha").getState().equalsIgnoreCase("ACTIVE")))
+
+			if (usuarioTemp.getPassword().endsWith("$") || (dias >= serviceP.getParameter("Fecha").getNumberValue()
+					&& serviceP.getParameter("Fecha").getState().equalsIgnoreCase("ACTIVE")))
 			{
 				try
 				{
@@ -311,7 +312,8 @@ public class UserMB
 				{
 				}
 			} else if (usuarioTemp.getPassword()
-					.equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5))&& usuarioTemp.getActive().equals("ACTIVE"))
+					.equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5))
+					&& usuarioTemp.getActive().equals("ACTIVE"))
 			{
 
 				if (usuarioTemp.getUserType().equalsIgnoreCase("PROVEEDOR"))
@@ -352,7 +354,7 @@ public class UserMB
 					} catch (Exception e)
 					{
 					}
-				}else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN"))
+				} else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN"))
 				{
 					try
 					{
@@ -374,20 +376,23 @@ public class UserMB
 					}
 				}
 
-			} else if(!usuarioTemp.getPassword().equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
+			} else if (!usuarioTemp.getPassword()
+					.equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5)))
 			{
-				if(usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue() && serviceP.getParameter("Intentos").getState().equalsIgnoreCase("ACTIVE")) 
+				if (usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue()
+						&& serviceP.getParameter("Intentos").getState().equalsIgnoreCase("ACTIVE"))
 				{
 					mensajeError = "Contraseña o Usuario inválido";
 					FacesContext context = FacesContext.getCurrentInstance();
 					context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-					usuarioTemp.setFailedAttempts(usuarioTemp.getFailedAttempts()+1);
-					service.actualizar(usuarioTemp); 
+					usuarioTemp.setFailedAttempts(usuarioTemp.getFailedAttempts() + 1);
+					service.actualizar(usuarioTemp);
 					audit.adicionarAudit(usuarioTemp.getUserName(), "FAILLOGIN", "User", 0);
 				}
 			}
-			
-			if(usuarioTemp.getFailedAttempts() == serviceP.getParameter("Intentos").getNumberValue() || usuarioTemp.getActive().equals("INACTIVE")) 
+
+			if (usuarioTemp.getFailedAttempts() == serviceP.getParameter("Intentos").getNumberValue()
+					|| usuarioTemp.getActive().equals("INACTIVE"))
 			{
 				usuarioTemp.setActive("INACTIVE");
 				service.actualizar(usuarioTemp);
@@ -396,9 +401,9 @@ public class UserMB
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			}
-			
+
 			audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN", "---", 0);
-			
+
 		} else
 		{
 			mensajeError = "Contraseña o Usuario inválido";
@@ -407,13 +412,12 @@ public class UserMB
 			logger.warn("Está ingresando un usuario que no está registrado");
 		}
 
-		
-
 		return pagina;
 	}
-	
+
 	/**
 	 * Método para hacer el cambio obligatorio de contraseña
+	 * 
 	 * @throws IOException
 	 */
 
@@ -424,16 +428,17 @@ public class UserMB
 		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 		userPass.setDateLastPassword(new Date());
 		service.actualizar(userPass);
-		
+
 		audit.adicionarAudit(userPass.getUserName(), "UPDATE", "User", userPass.getId());
 
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
-	
+
 	/**
 	 * Método para link De olvidar contraseña
+	 * 
 	 * @throws IOException
 	 */
 
@@ -467,7 +472,7 @@ public class UserMB
 			userTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			userTemp.setFailedAttempts(0);
 			service.actualizar(userTemp);
-			
+
 			audit.adicionarAudit(userTemp.getUserName(), "UPDATE", "User", userTemp.getId());
 
 		} else
@@ -494,22 +499,23 @@ public class UserMB
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 	}
-	
+
 	public String agregarOferta()
 	{
 		OfferersaleService service = new OfferersaleService();
 		oferta.setIdentification(nombre);
-		
-		
-		
-		if(oferta.getValueOffer() <= sale.getValueBase() && oferta.getValueOffer() <= sale.getValueCurrent())
+
+		if (oferta.getValueOffer() <= sale.getValueBase()  && oferta.getValueOffer() <= sale.getValueCurrent())
 		{
 			mensajeError = "La oferta debe ser mayor que la oferta actual";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-		}else {
+		} else
+		{
 			sale.setValueCurrent(oferta.getValueOffer());
 			oferta.setIdSales(sale.getId());
+			oferta.setWinner("WINNER");
+			actualizarOfertas(sale.getId());
 			modificarSubasta();
 			service.nuevo(oferta);
 			audit.adicionarAudit(nombre, "CREATE", "Offerersales", 0);
@@ -518,6 +524,21 @@ public class UserMB
 		return "/postor/subasta";
 	}
 	
+	public void actualizarOfertas(int idSales)
+	{
+		OfferersaleService service = new OfferersaleService();
+		List<Offerersale> listaOfertas = new OfferersaleService().getOfertaDeSubasta(idSales);
+		
+		Iterator<Offerersale> it = listaOfertas.iterator();
+		while(it.hasNext())
+		{
+			Offerersale m = it.next();
+			m.setWinner("LOSER");
+			service.actualizar(m);
+		}
+		
+	}
+
 	public void modificarSubasta()
 	{
 		SalesuebService service = new SalesuebService();
@@ -527,32 +548,37 @@ public class UserMB
 	public String adicionarSubasta()
 	{
 		SalesuebMB saleB = new SalesuebMB();
-		if(sale.getDateStart().getDay() >= sale.getDateEnd().getDay())
+
+		if (sale.getDateStart().getDay() >= sale.getDateEnd().getDay())
 		{
 			mensajeError = "La fecha de inicio debe ser menor que la fecha final";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			return "";
-		}
-		else {
-			saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(), sale.getDescriptionProduct(),
-					sale.getName(), sale.getValueBase());
-			audit.adicionarAudit(nombre, "CREATE", "Salesueb", sale.getId());			
+		} else
+		{
+			saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(),
+					sale.getDescriptionProduct(), sale.getName(), sale.getValueBase());
+			audit.adicionarAudit(nombre, "CREATE", "Salesueb", sale.getId());
 			return "/proveedor/indexProveedor";
 		}
 	}
-	
-	public void adicionarPostor() {
+
+	public void adicionarPostor()
+	{
 		UserService service = new UserService();
 		boolean repetido = false;
 		Iterator<User> it = getListarUser().iterator();
-		while (it.hasNext() && repetido == false) {
-			if (it.next().getUserName().equals(user.getUserName())) {
+		while (it.hasNext() && repetido == false)
+		{
+			if (it.next().getUserName().equals(user.getUserName()))
+			{
 				repetido = true;
 			}
 		}
 
-		if (repetido == false) {
+		if (repetido == false)
+		{
 			user.setDateLastPassword(new Date());
 			user.setEmailAddress(email1 + email2);
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
@@ -561,7 +587,8 @@ public class UserMB
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
 
-		} else if (repetido) {
+		} else if (repetido)
+		{
 			mensajeError = "Ese Usuario ya existe";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
@@ -572,85 +599,230 @@ public class UserMB
 
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
-		try {
+		try
+		{
 			ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
-		} catch (IOException e) {
+		} catch (IOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void archivoExcelOfertas() throws FileNotFoundException, DocumentException
 	{
-		
+
 		OfferersaleService service = new OfferersaleService();
 		List<Offerersale> oferta = service.getOfferersale(loginUser.getUserName());
-		
-		
-		
-        HSSFWorkbook libro = new HSSFWorkbook();
 
-        HSSFSheet hoja = libro.createSheet();
+		HSSFWorkbook libro = new HSSFWorkbook();
 
-        HSSFRow fila = hoja.createRow(0);
+		HSSFSheet hoja = libro.createSheet();
 
+		HSSFRow fila = hoja.createRow(0);
 
-        // Se crea una celda dentro de la fila
-        HSSFCell id = fila.createCell((short) 0);
-        HSSFCell operationCrud = fila.createCell((short) 1);
-        HSSFCell tableName = fila.createCell((short) 2);
-        HSSFCell tableId = fila.createCell((short) 3);
-        HSSFCell createDate = fila.createCell((short) 4);
-        HSSFCell addressIP = fila.createCell((short) 5);
+		// Se crea una celda dentro de la fila
+		HSSFCell id = fila.createCell((short) 0);
+		HSSFCell operationCrud = fila.createCell((short) 1);
+		HSSFCell tableName = fila.createCell((short) 2);
+		HSSFCell tableId = fila.createCell((short) 3);
+		HSSFCell createDate = fila.createCell((short) 4);
 
-        id.setCellValue(new HSSFRichTextString("ID"));
-        operationCrud.setCellValue(new HSSFRichTextString("Usuario de subasta"));
-        tableName.setCellValue(new HSSFRichTextString("Valor Oferta"));
-        tableId.setCellValue(new HSSFRichTextString("Fecha oferta"));
-        createDate.setCellValue(new HSSFRichTextString("Ganador"));
-        for (int i = 0; i < oferta.size(); ++i) {
-            HSSFRow dataRow = hoja.createRow(i + 1);
-
-            dataRow.createCell(0).setCellValue(oferta.get(i).getId());
-            dataRow.createCell(1).setCellValue(oferta.get(i).getIdSales());
-            dataRow.createCell(2).setCellValue(oferta.get(i).getValueOffer());
-            dataRow.createCell(3).setCellValue(oferta.get(i).getDateOffer().toString());
-            dataRow.createCell(4).setCellValue(oferta.get(i).getWinner());
-        }
-		
-
-        try {
-            FileOutputStream elFichero = new FileOutputStream("C://ReportesGeneradosSistemaSubastas/Reporte de ofertas - "+user.getUserName()+".xls");
-            libro.write(elFichero);
-          //  Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+crud+".xls"));
-            elFichero.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-	}
-	
-	public void pdfOfertas() throws FileNotFoundException, DocumentException
+		id.setCellValue(new HSSFRichTextString("ID"));
+		operationCrud.setCellValue(new HSSFRichTextString("Usuario de subasta"));
+		tableName.setCellValue(new HSSFRichTextString("Valor Oferta"));
+		tableId.setCellValue(new HSSFRichTextString("Fecha oferta"));
+		createDate.setCellValue(new HSSFRichTextString("Ganador"));
+		for (int i = 0; i < oferta.size(); ++i)
 		{
+			HSSFRow dataRow = hoja.createRow(i + 1);
+
+			dataRow.createCell(0).setCellValue(oferta.get(i).getId());
+			dataRow.createCell(1).setCellValue(oferta.get(i).getIdSales());
+			dataRow.createCell(2).setCellValue(oferta.get(i).getValueOffer());
+			dataRow.createCell(3).setCellValue(oferta.get(i).getDateOffer().toString());
+			dataRow.createCell(4).setCellValue(oferta.get(i).getWinner());
+		}
+
+		try
+		{
+			FileOutputStream elFichero = new FileOutputStream(
+					"C://ReportesGeneradosSistemaSubastas/Reporte de ofertas - " + user.getUserName() + ".xls");
+			libro.write(elFichero);
+			// Desktop.getDesktop().open(new
+			// File("C://ReportesGeneradosSistemaSubastas/"+crud+".xls"));
+			elFichero.close();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void archivoExcelSubastas() throws FileNotFoundException, DocumentException
+	{
+
+		SalesuebService service = new SalesuebService();
+		List<Salesueb> subasta = service.getSalesueb(loginUser.getUserName());
+
+		HSSFWorkbook libro = new HSSFWorkbook();
+
+		HSSFSheet hoja = libro.createSheet();
+
+		HSSFRow fila = hoja.createRow(0);
+
+		// Se crea una celda dentro de la fila
+		HSSFCell id = fila.createCell((short) 0);
+		HSSFCell name = fila.createCell((short) 1);
+		HSSFCell descripcion = fila.createCell((short) 2);
+		HSSFCell base = fila.createCell((short) 3);
+		HSSFCell current = fila.createCell((short) 4);
+		HSSFCell fechaStar = fila.createCell((short) 5);
+		HSSFCell fechaEnd = fila.createCell((short) 6);
+
+		id.setCellValue(new HSSFRichTextString("ID"));
+		name.setCellValue(new HSSFRichTextString("Producto"));
+		descripcion.setCellValue(new HSSFRichTextString("Descripción"));
+		base.setCellValue(new HSSFRichTextString("Valor base"));
+		current.setCellValue(new HSSFRichTextString("Valor ofertado"));
+		fechaStar.setCellValue(new HSSFRichTextString("Fecha inicio"));
+		fechaEnd.setCellValue(new HSSFRichTextString("Fecha fin"));
+		for (int i = 0; i < subasta.size(); ++i)
+		{
+			HSSFRow dataRow = hoja.createRow(i + 1);
+
+			dataRow.createCell(0).setCellValue(subasta.get(i).getId());
+			dataRow.createCell(1).setCellValue(subasta.get(i).getName());
+			dataRow.createCell(2).setCellValue(subasta.get(i).getDescriptionProduct());
+			dataRow.createCell(3).setCellValue(subasta.get(i).getValueBase());
+			dataRow.createCell(4).setCellValue(subasta.get(i).getValueCurrent());
+			dataRow.createCell(5).setCellValue(subasta.get(i).getDateStart());
+			dataRow.createCell(6).setCellValue(subasta.get(i).getDateEnd());
+		}
+
+		try
+		{
+			FileOutputStream elFichero = new FileOutputStream(
+					"C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".xls");
+			libro.write(elFichero);
+			// Desktop.getDesktop().open(new
+			// File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".xls"));
+			elFichero.close();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void pdfSubastas() throws FileNotFoundException, DocumentException
+	{
+
+//		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+//		URL url = loader.getResource("Acme-corp.png");
+		Document pdfDoc = new Document(PageSize.A4);
+
+		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
+				"C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".pdf"));
+
+		pdfDoc.open();
+
+		PdfPTable tableUsuario = new PdfPTable(5);
+		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE DE MIS SUBASTAS : " + loginUser.getUserName()));
+		titulo.setColspan(7);
+		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
+		titulo.setBorderWidth(0);
+		titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableUsuario.addCell(titulo);
+		addTableHeaderSub(tableUsuario);
+		addRowsUserSub(tableUsuario);
+		pdfDoc.add(tableUsuario);
+//		try
+//		{
+////			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".pdf"));
+//		} catch (IOException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		pdfDoc.close();
+		m.close();
+
+	}
+
+	public void addTableHeaderSub(PdfPTable table)
+	{
+		Stream.of("ID", "Producto", "Descripción", "Valor base", "Valor ofertado", "Fecha inicio","Fecha fin").forEach(columnTitle ->
+		{
+			PdfPCell header = new PdfPCell();
+			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			header.setBorderWidth(0);
+			header.setHorizontalAlignment(Element.ALIGN_CENTER);
+			header.setPhrase(new Phrase(columnTitle));
+			table.addCell(header);
+		});
+	}
+
+	public void addRowsUserSub(PdfPTable table)
+	{
+		Iterator it = getListaSubastas().iterator();
+
+		Salesueb x;
+
+		while (it.hasNext())
+		{
+			x = (Salesueb) it.next();
+			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
+			PdfPCell Name = new PdfPCell(new Phrase(x.getName()));
+			PdfPCell descripcion = new PdfPCell(new Phrase("" + x.getDescriptionProduct()));
+			PdfPCell base = new PdfPCell(new Phrase("" + x.getValueBase()));
+			PdfPCell actual = new PdfPCell(new Phrase("" + x.getValueCurrent()));
+			PdfPCell fIncio = new PdfPCell(new Phrase(x.getDateStart().toString()));
+			PdfPCell fFin = new PdfPCell(new Phrase(x.getDateEnd().toString()));
+			id.setBorder(Rectangle.NO_BORDER);
+			id.setHorizontalAlignment(Element.ALIGN_CENTER);
+			Name.setBorder(Rectangle.NO_BORDER);
+			Name.setHorizontalAlignment(Element.ALIGN_CENTER);
+			descripcion.setBorder(Rectangle.NO_BORDER);
+			descripcion.setHorizontalAlignment(Element.ALIGN_CENTER);
+			base.setBorder(Rectangle.NO_BORDER);
+			base.setHorizontalAlignment(Element.ALIGN_CENTER);
+			actual.setBorder(Rectangle.NO_BORDER);
+			actual.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fIncio.setBorder(Rectangle.NO_BORDER);
+			fIncio.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fFin.setBorder(Rectangle.NO_BORDER);
+			fFin.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(id);
+			table.addCell(Name);
+			table.addCell(descripcion);
+			table.addCell(base);
+			table.addCell(actual);
+			table.addCell(fIncio);
+			table.addCell(fFin);
+		}
+	}
+
+	public void pdfOfertas() throws FileNotFoundException, DocumentException
+	{
 
 //			ClassLoader loader = Thread.currentThread().getContextClassLoader();
 //			URL url = loader.getResource("Acme-corp.png");
-			Document pdfDoc = new Document(PageSize.A4);
+		Document pdfDoc = new Document(PageSize.A4);
 
-			PdfWriter m = PdfWriter.getInstance(pdfDoc,
-					new FileOutputStream("C://ReportesGeneradosSistemaSubastas/Reporte de ofertas - " + loginUser.getUserName() + ".pdf"));
+		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
+				"C://ReportesGeneradosSistemaSubastas/Reporte de ofertas - " + loginUser.getUserName() + ".pdf"));
 
-			pdfDoc.open();
+		pdfDoc.open();
 
-			PdfPTable tableUsuario = new PdfPTable(5);
-			PdfPCell titulo = new PdfPCell(new Phrase("REPORTE DE MIS OFERTAS : "  + loginUser.getUserName() ));
-			titulo.setColspan(5);
-			titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
-			titulo.setBorderWidth(0);
-			titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
-			tableUsuario.addCell(titulo);
-			addTableHeaderCrud(tableUsuario);
-			addRowsUserCrud(tableUsuario);
-			pdfDoc.add(tableUsuario);
+		PdfPTable tableUsuario = new PdfPTable(5);
+		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE DE MIS OFERTAS : " + loginUser.getUserName()));
+		titulo.setColspan(5);
+		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
+		titulo.setBorderWidth(0);
+		titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableUsuario.addCell(titulo);
+		addTableHeaderCrud(tableUsuario);
+		addRowsUserCrud(tableUsuario);
+		pdfDoc.add(tableUsuario);
 //			try
 //			{
 ////				Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+crud+".pdf"));
@@ -659,11 +831,11 @@ public class UserMB
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-			pdfDoc.close();
-			m.close();
+		pdfDoc.close();
+		m.close();
 
-		}
-	
+	}
+
 	public void addTableHeaderCrud(PdfPTable table)
 	{
 		Stream.of("ID", "Usuario de subasta", "Valor Oferta", "Fecha oferta", "Ganador").forEach(columnTitle ->
@@ -731,7 +903,6 @@ public class UserMB
 			}
 		}
 	}
-
 
 	public User getUsuario()
 	{
@@ -836,7 +1007,7 @@ public class UserMB
 		listaProveedor = new ListDataModel<>(lista);
 		return listaProveedor;
 	}
-	
+
 	public DataModel getListaProveedor()
 	{
 		UserService service = new UserService();
@@ -869,19 +1040,22 @@ public class UserMB
 	{
 		this.idSale = idSale;
 	}
-	
-	public DataModel getListaSubastas() {
+
+	public DataModel getListaSubastas()
+	{
 		actualizarSubastas();
 		List<Salesueb> lista = new SalesuebService().lista();
 		listaSubastas = new ListDataModel(lista);
 		return listaSubastas;
 	}
 
-	public void setListaSubastas(DataModel listaSubastas) {
+	public void setListaSubastas(DataModel listaSubastas)
+	{
 		this.listaSubastas = listaSubastas;
 	}
 
-	public DataModel inicializarListaOfertaPostor(String postor) {
+	public DataModel inicializarListaOfertaPostor(String postor)
+	{
 		List<Offerersale> lista = new OfferersaleService().getOfferersale(postor);
 		listaOfertaPostor = new ListDataModel(lista);
 		return listaOfertaPostor;
@@ -891,7 +1065,7 @@ public class UserMB
 	{
 		this.listaOfertaPostor = listaOfertaPostor;
 	}
-	
+
 	public DataModel getListaOfertaPostor()
 	{
 		UserService service = new UserService();
@@ -910,7 +1084,4 @@ public class UserMB
 	public void setListaSubastasActivas(DataModel listaSubastasActivas) {
 		this.listaSubastasActivas = listaSubastasActivas;
 	}
-	
-	
-
 }
