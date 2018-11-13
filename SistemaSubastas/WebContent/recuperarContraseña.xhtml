@@ -53,6 +53,7 @@ body {
 					</p:column>
 
 				</p:row>
+				<p:growl id="growl" showDetail="true" sticky="true" />
 			<h:panelGrid columns="3" cellpadding="10" styleClass="table">
 						<center>
 							<p:inputText value="#{userMB.email1}" required="true"
@@ -74,7 +75,7 @@ body {
 					<p:column>
 						<center>
 							<p:commandButton value="Enviar"
-								action="#{userMB.cambiarContraseña}" ajax="false" />
+								action="#{userMB.cambiarContraseña}" update="growl" />
 						</center>
 					</p:column>
 		</p:panel>

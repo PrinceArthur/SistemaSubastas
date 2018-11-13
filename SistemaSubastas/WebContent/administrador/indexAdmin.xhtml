@@ -33,7 +33,6 @@ body {
 	border: none !important;
 }
 
-
 .boton {
 	background-color: transparent !important;
 	background: transparent !important;
@@ -72,31 +71,38 @@ body {
 					icon="ui-icon-extlink" styleClass="boton" />
 				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
 					style="background-color: rgb(203, 216, 237);border:none">
-						<p:menuitem value="Datos personales"
-							action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
-						<p:menuitem value="Salir" action="#{userMB.logOut}" icon="ui-icon-power" />
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+					<p:menuitem value="Salir" action="#{userMB.logOut}"
+						icon="ui-icon-power" />
 				</p:menu>
 			</div>
 		</p:panel>
 
 
-		<p:panel styleClass="centered" >
+		<p:panel styleClass="centered">
 
-			<p:panelGrid columns="2" styleClass="panel" >
-			
+			<p:panelGrid columns="2" styleClass="panel">
+
 
 				<p:menu style="background-color: rgb(203, 216, 237);border:none">
 					<p:submenu label="LISTADOS"
 						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Usuarios" action="/administrador/indexAdmin.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Auditoria" action="/administrador/indexAudit.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Parámetros" action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Usuarios"
+							action="/administrador/indexAdmin.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Auditoria"
+							action="/administrador/indexAudit.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Parámetros"
+							action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Subastas"
-							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star"  />
+							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Ofertas"
+							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Reportes"
+							action="/administrador/reportes.xhtml" icon="ui-icon-star" />
 					</p:submenu>
-					<p:submenu label="OPCIONES" style="background-color: rgb(179, 185, 242)">
+					<p:submenu label="OPCIONES"
+						style="background-color: rgb(179, 185, 242)">
 						<p:menuitem value="Registrar Proveedor"
 							action="#{userMB.prepararAdicionarUser}" icon="ui-icon-pin-w" />
 					</p:submenu>
@@ -106,11 +112,13 @@ body {
 
 				<p:panel
 					style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%">
+
 					<p:dataTable id="tbl" var="usu" value="#{userMB.listarUser}"
-						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
 						paginator="true" rows="5"
-						style="width:100%;height:100%;align: top"
-						styleClass="myTable">
+						style="width:100%;height:100%;align: top" styleClass="myTable">
+
+						
 
 						<f:facet name="header">
 							<h:outputText value="LISTADO USUARIOS" />

@@ -75,6 +75,7 @@ body {
 						<p:menuitem value="Datos personales"
 							action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
 						<p:menuitem value="Salir" action="#{userMB.logOut}" icon="ui-icon-power" />
+						
 				</p:menu>
 			</div>
 		</p:panel>
@@ -92,7 +93,12 @@ body {
 							icon="ui-icon-star" />
 						<p:menuitem value="Auditoria" action="/administrador/indexAudit.xhtml"
 							icon="ui-icon-star" />
-						<p:menuitem value="Parametros" action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Parámetros" action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Subastas"
+							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star"  />
+						<p:menuitem value="Ofertas" 
+							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Reportes" action="/administrador/reportes.xhtml" icon="ui-icon-star" />
 					</p:submenu>
 				</p:menu>
 
@@ -107,7 +113,7 @@ body {
 						styleClass="myTable">
 
 						<f:facet name="header">
-							<h:outputText value="LISTADO PARAMETROS" />
+							<h:outputText value="LISTADO PARÁMETROS" />
 						</f:facet>
 
 						<p:column style="width:5px;height:3px;font-size:14px">

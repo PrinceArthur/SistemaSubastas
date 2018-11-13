@@ -112,7 +112,7 @@ body {
 						requiredMessage="Nombre requerido" id="nTxt"
 						validatorMessage="El nombre solo puede contener letras"
 						placeholder="#{userMB.usuario.fullName}">
-						<f:validateRegex pattern="[a-zA-Z]*" />
+						<f:validateRegex pattern="[a-zA-Z ]*" />
 					</p:inputText>
 					<h:panelGroup />
 
@@ -122,7 +122,7 @@ body {
 						requiredMessage="Campo requerido"
 						validatorMessage="Estructura de correo invalida" id="emailTxt"
 						placeholder="#{userMB.email1}">
-						<f:validateRegex pattern="^[a-zA-Z0-9]+$" />
+						<f:validateRegex pattern="^([a-zA-Z0-9]+[_-])*[a-zA-Z0-9]+$" />
 					</p:inputText>
 					<p:selectOneMenu required="true" id="mail" value="#{userMB.email2}"
 						style="width:125px">

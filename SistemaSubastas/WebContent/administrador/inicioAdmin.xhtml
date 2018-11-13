@@ -40,6 +40,21 @@ body {
 	font-weight: normal;
 }
 
+.panel x 
+{
+	position: absolute;
+	height: 380px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	width: 95%;
+	left: 50%;
+	margin-left: -48%;
+	margin-top: 15%;
+	background-color: rgb(203, 216, 237);
+	border: 0px;
+}
+
 .centered {
 	position: absolute;
 	height: 380px;
@@ -70,28 +85,33 @@ body {
 					icon="ui-icon-extlink" styleClass="boton" />
 				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
 					style="background-color: rgb(203, 216, 237);border:none">
-						<p:menuitem value="Datos personales"
-							action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
-						<p:menuitem value="Salir" action="#{userMB.logOut}" icon="ui-icon-power" />
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+					<p:menuitem value="Salir" action="#{userMB.logOut}"
+						icon="ui-icon-power" />
 				</p:menu>
 			</div>
 		</p:panel>
 
 
-		<p:panel styleClass="centered" >
+		<p:panel styleClass="centered">
 
 			<p:panelGrid columns="2" styleClass="panel">
 
 				<p:menu style="background-color: rgb(203, 216, 237);border:none">
 					<p:submenu label="OPCIONES"
 						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Usuarios" action="/administrador/indexAdmin.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Auditoria" action="/administrador/indexAudit.xhtml"
-							icon="ui-icon-star" />
-							<p:menuitem value="Parámetros" action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Usuarios"
+							action="/administrador/indexAdmin.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Auditoria"
+							action="/administrador/indexAudit.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Parámetros"
+							action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Subastas"
-							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star"  />
+							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Ofertas"
+							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Reportes" action="/administrador/reportes.xhtml" icon="ui-icon-star" />
 					</p:submenu>
 				</p:menu>
 
@@ -100,17 +120,19 @@ body {
 
 				<p:panel
 					style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%;margin-top:20%;margin-left:30%">
-				
-				<p:outputLabel value="¡Bienvenido #{userMB.loginUser.userName}!" style="font-size:70px"/>
-				
+
+					<p:outputLabel value="¡Bienvenido #{userMB.loginUser.userName}!"
+						style="font-size:70px" />
+
 				</p:panel>
 
 			</p:panelGrid>
 
 
 		</p:panel>
-
-
+		
+		<p:panel>
+		</p:panel>
 	</h:form>
 
 

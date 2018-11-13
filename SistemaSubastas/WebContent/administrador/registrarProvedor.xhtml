@@ -88,6 +88,7 @@ body {
 						value="Ingrese todos los datos para registrar el nuevo Proveedor"
 						style="font-weight:bold" />
 				</center>
+				
 
 				<p:panelGrid columns="3" styleClass="panel" id="pg"
 					style="margin-top:7%">
@@ -106,7 +107,7 @@ body {
 					<p:inputText value="#{userMB.usuario.fullName}" required="true"
 						requiredMessage="Nombre requerido" id="nTxt"
 						validatorMessage="Solo puede contener letras">
-						<f:validateRegex pattern="[a-zA-Z]*" />
+						<f:validateRegex pattern="[a-zA-Z ]*" />
 					</p:inputText>
 					<h:panelGroup />
 

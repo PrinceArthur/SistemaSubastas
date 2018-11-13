@@ -70,26 +70,34 @@ body {
 					icon="ui-icon-extlink" styleClass="boton" />
 				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
 					style="background-color: rgb(203, 216, 237);border:none">
-						<p:menuitem value="Datos personales"
-							action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
-						<p:menuitem value="Salir" action="#{userMB.logOut}" icon="ui-icon-power" />
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+					<p:menuitem value="Salir" action="#{userMB.logOut}"
+						icon="ui-icon-power" />
 				</p:menu>
 			</div>
 		</p:panel>
 
 
-		<p:panel styleClass="centered" >
+		<p:panel styleClass="centered">
 
 			<p:panelGrid columns="2" styleClass="panel">
 
 				<p:menu style="background-color: rgb(203, 216, 237);border:none">
 					<p:submenu label="LISTADOS"
 						style="background-color: rgb(179, 185, 242)">
-						<p:menuitem value="Usuarios" action="/administrador/indexAdmin.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Auditoria" action="/administrador/indexAudit.xhtml"
-							icon="ui-icon-star" />
-							<p:menuitem value="Parámetros" action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Usuarios"
+							action="/administrador/indexAdmin.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Auditoria"
+							action="/administrador/indexAudit.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Parámetros"
+							action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Subastas"
+							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Ofertas"
+							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
+						<p:menuitem value="Reportes"
+							action="/administrador/reportes.xhtml" icon="ui-icon-star" />
 					</p:submenu>
 				</p:menu>
 
@@ -101,50 +109,63 @@ body {
 					<p:dataTable id="tbl" var="au" value="#{auditMB.listarAuditorias}"
 						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
 						paginator="true" rows="5"
-						style="width:100%;height:100%;align: top"
-						styleClass="myTable">
+						style="width:100%;height:100%;align: top" styleClass="myTable">
 
 						<f:facet name="header">
 							<h:outputText value="LISTADO AUDITORIA" />
 						</f:facet>
 
-						<p:column style="width:5px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.id}" headerText="Id" filterMatchMode="contains" >
+						<p:column style="width:5px;height:3px;font-size:14px"
+							filterStyle="width:60px;" filterBy="#{au.id}" headerText="Id"
+							filterMatchMode="contains">
 							<center>
 								<h:outputText value="#{au.id}" />
 							</center>
 						</p:column>
 
-						<p:column style="width:5px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.userName}" headerText="UserName" filterMatchMode="contains">
+						<p:column style="width:5px;height:3px;font-size:14px"
+							filterStyle="width:60px;" filterBy="#{au.userName}"
+							headerText="UserName" filterMatchMode="contains">
 							<center>
 								<h:outputText value="#{au.userName}" />
 							</center>
 						</p:column>
 
-						<p:column style="width:10px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.operationCrud}" headerText="Operación" filterMatchMode="contains" >
+						<p:column style="width:10px;height:3px;font-size:14px"
+							filterStyle="width:60px;" filterBy="#{au.operationCrud}"
+							headerText="Operación" filterMatchMode="contains">
 							<center>
 								<h:outputText value="#{au.operationCrud}" />
 							</center>
 						</p:column>
 
-						<p:column style="width:10px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.tableName}" headerText="Nombre Tabla" filterMatchMode="contains" >
+						<p:column style="width:10px;height:3px;font-size:14px"
+							filterStyle="width:60px;" filterBy="#{au.tableName}"
+							headerText="Nombre Tabla" filterMatchMode="contains">
 							<center>
 								<h:outputText value="#{au.tableName}" />
 							</center>
 						</p:column>
 
-						<p:column style="width:5px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.tableId}" headerText="Id Tabla" filterMatchMode="contains" >
+						<p:column style="width:5px;height:3px;font-size:14px"
+							filterStyle="width:60px;" filterBy="#{au.tableId}"
+							headerText="Id Tabla" filterMatchMode="contains">
 							<center>
 								<h:outputText value="#{au.tableId}" />
 							</center>
 						</p:column>
 
-						<p:column style="width:15px;height:3px;font-size:14px" filterStyle="width: 60px;" filterBy="#{au.createDate}" headerText="Fecha" filterMatchMode="contains">
+						<p:column style="width:15px;height:3px;font-size:14px"
+							filterStyle="width: 60px;" filterBy="#{au.createDate}"
+							headerText="Fecha" filterMatchMode="contains">
 							<center>
-							<h:outputText value="#{au.createDate}" />
+								<h:outputText value="#{au.createDate}" />
 							</center>
 						</p:column>
 
-						<p:column style="width:15px;height:3px;font-size:14px" filterStyle="width:60px;" filterBy="#{au.addressIP}" headerText="IP" filterMatchMode="contains">
+						<p:column style="width:15px;height:3px;font-size:14px"
+							filterStyle="width:60px;" filterBy="#{au.addressIP}"
+							headerText="IP" filterMatchMode="contains">
 							<center>
 								<h:outputText value="#{au.addressIP}" />
 							</center>
