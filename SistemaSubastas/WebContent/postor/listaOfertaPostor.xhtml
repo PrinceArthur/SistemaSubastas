@@ -85,6 +85,12 @@ body {
 							icon="ui-icon-star" />
 						<p:menuitem value="Mis ofertas"
 							action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
+					<p:submenu label="Opciones">
+							<p:menuitem value="Generar PDF" action="#{userMB.pdfOfertas}"
+							icon="ui-icon-star" />
+							<p:menuitem value="Generar EXCEL" action="#{userMB.archivoExcelOfertas}"
+							icon="ui-icon-star" />
+						</p:submenu>
 				</p:menubar>
 
 
