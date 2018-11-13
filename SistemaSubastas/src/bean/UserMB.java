@@ -555,6 +555,135 @@ public class UserMB
 			e.printStackTrace();
 		}
 	}
+	
+	public void archivoExcelOfertas() throws FileNotFoundException, DocumentException
+	{
+		
+		OfferersaleService service = new OfferersaleService();
+		List<Offerersale> oferta = service.getOfferersale(loginUser.getUserName());
+		
+		
+		
+        HSSFWorkbook libro = new HSSFWorkbook();
+
+        HSSFSheet hoja = libro.createSheet();
+
+        HSSFRow fila = hoja.createRow(0);
+
+
+        // Se crea una celda dentro de la fila
+        HSSFCell id = fila.createCell((short) 0);
+        HSSFCell operationCrud = fila.createCell((short) 1);
+        HSSFCell tableName = fila.createCell((short) 2);
+        HSSFCell tableId = fila.createCell((short) 3);
+        HSSFCell createDate = fila.createCell((short) 4);
+        HSSFCell addressIP = fila.createCell((short) 5);
+
+        id.setCellValue(new HSSFRichTextString("ID"));
+        operationCrud.setCellValue(new HSSFRichTextString("Usuario de subasta"));
+        tableName.setCellValue(new HSSFRichTextString("Valor Oferta"));
+        tableId.setCellValue(new HSSFRichTextString("Fecha oferta"));
+        createDate.setCellValue(new HSSFRichTextString("Ganador"));
+        for (int i = 0; i < oferta.size(); ++i) {
+            HSSFRow dataRow = hoja.createRow(i + 1);
+
+            dataRow.createCell(0).setCellValue(oferta.get(i).getId());
+            dataRow.createCell(1).setCellValue(oferta.get(i).getIdSales());
+            dataRow.createCell(2).setCellValue(oferta.get(i).getValueOffer());
+            dataRow.createCell(3).setCellValue(oferta.get(i).getDateOffer().toString());
+            dataRow.createCell(4).setCellValue(oferta.get(i).getWinner());
+        }
+		
+
+        try {
+            FileOutputStream elFichero = new FileOutputStream("C://ReportesGeneradosSistemaSubastas/Reporte de ofertas - "+user.getUserName()+".xls");
+            libro.write(elFichero);
+          //  Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+crud+".xls"));
+            elFichero.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+	
+	public void pdfOfertas() throws FileNotFoundException, DocumentException
+		{
+
+//			ClassLoader loader = Thread.currentThread().getContextClassLoader();
+//			URL url = loader.getResource("Acme-corp.png");
+			Document pdfDoc = new Document(PageSize.A4);
+
+			PdfWriter m = PdfWriter.getInstance(pdfDoc,
+					new FileOutputStream("C://ReportesGeneradosSistemaSubastas/Reporte de ofertas - " + loginUser.getUserName() + ".pdf"));
+
+			pdfDoc.open();
+
+			PdfPTable tableUsuario = new PdfPTable(5);
+			PdfPCell titulo = new PdfPCell(new Phrase("REPORTE DE MIS OFERTAS : "  + loginUser.getUserName() ));
+			titulo.setColspan(5);
+			titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			titulo.setBorderWidth(0);
+			titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tableUsuario.addCell(titulo);
+			addTableHeaderCrud(tableUsuario);
+			addRowsUserCrud(tableUsuario);
+			pdfDoc.add(tableUsuario);
+//			try
+//			{
+////				Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+crud+".pdf"));
+//			} catch (IOException e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			pdfDoc.close();
+			m.close();
+
+		}
+	
+	public void addTableHeaderCrud(PdfPTable table)
+	{
+		Stream.of("ID", "Usuario de subasta", "Valor Oferta", "Fecha oferta", "Ganador").forEach(columnTitle ->
+		{
+			PdfPCell header = new PdfPCell();
+			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			header.setBorderWidth(0);
+			header.setHorizontalAlignment(Element.ALIGN_CENTER);
+			header.setPhrase(new Phrase(columnTitle));
+			table.addCell(header);
+		});
+	}
+
+	public void addRowsUserCrud(PdfPTable table)
+	{
+		Iterator it = getListaOfertaPostor().iterator();
+
+		Offerersale x;
+
+		while (it.hasNext())
+		{
+			x = (Offerersale) it.next();
+			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
+			PdfPCell userName = new PdfPCell(new Phrase(x.getIdentification()));
+			PdfPCell valor = new PdfPCell(new Phrase("" + x.getValueOffer()));
+			PdfPCell fecha = new PdfPCell(new Phrase("" + x.getDateOffer()));
+			PdfPCell ganador = new PdfPCell(new Phrase("" + x.getWinner()));
+			id.setBorder(Rectangle.NO_BORDER);
+			id.setHorizontalAlignment(Element.ALIGN_CENTER);
+			userName.setBorder(Rectangle.NO_BORDER);
+			userName.setHorizontalAlignment(Element.ALIGN_CENTER);
+			valor.setBorder(Rectangle.NO_BORDER);
+			valor.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fecha.setBorder(Rectangle.NO_BORDER);
+			fecha.setHorizontalAlignment(Element.ALIGN_CENTER);
+			ganador.setBorder(Rectangle.NO_BORDER);
+			ganador.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(id);
+			table.addCell(userName);
+			table.addCell(valor);
+			table.addCell(fecha);
+			table.addCell(ganador);
+		}
+	}
 
 
 	public User getUsuario()
