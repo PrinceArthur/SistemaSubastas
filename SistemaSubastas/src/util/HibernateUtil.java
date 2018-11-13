@@ -9,14 +9,30 @@ import entity.Parameter;
 import entity.Salesueb;
 import entity.User;
 
+/**
+ * Clase de Hibernate
+ * @author Guillermo Marcano, Richard Mora y Estefanía Pérez
+ *
+ */
 public class HibernateUtil {
 
+	/**
+	 * Sesión 
+	 */
 	private static SessionFactory sessionFactory;
 
+	/**
+	 * Constructor
+	 */
 	private HibernateUtil() {
 
 	}
 
+	/**
+	 * Configura el hibernate
+	 * @return sessionFactory
+	*/
+	
 	@SuppressWarnings("deprecation")
 	public static SessionFactory getSessionFactory() {
 

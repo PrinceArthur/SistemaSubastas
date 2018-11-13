@@ -9,11 +9,21 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * 
+ * Clase para enviar correo
+ * @author Guillermo Marcano, Richard Mora y Estefanía Pérez
+ *
+ */
 
 public class EnviarCorreo
 {
 	
-	
+	/**
+	 * Método para enviar el correo y generar la nueva constraseña del usuario
+	 * @param correo
+	 * @return contraseña nueva
+	 */
 	public static String sendEmail(String correo)
 	{
 		
@@ -42,7 +52,6 @@ public class EnviarCorreo
 			t.close();
 		} catch (MessagingException me)
 		{
-			System.err.println(me.getMessage());
 		}
 		return passwordInt;
 	}
