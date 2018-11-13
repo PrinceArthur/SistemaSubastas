@@ -11,4 +11,5 @@ public interface SalesuebDAO
 	public void actualizar(Salesueb salesueb);
 	public void eliminar(Salesueb salesueb);
 	public List<Salesueb> lista();
+	public List<Salesueb> listaActivas();
 }
