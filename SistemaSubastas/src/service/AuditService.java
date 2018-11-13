@@ -15,9 +15,14 @@ public class AuditService
 		audit.nuevo(auditoria);
 	}
 	
-	public Audit getAudit(int id)
+	public List<Audit> auditUser(String userName)
 	{
-		return audit.getAudit(id);
+		return audit.getAuditUser(userName);
+	}
+	
+	public List<Audit> auditCrud(String operationCrud)
+	{
+		return audit.getAuditCrud(operationCrud);
 	}
 	
 	public void actualizar(Audit auditoria)
