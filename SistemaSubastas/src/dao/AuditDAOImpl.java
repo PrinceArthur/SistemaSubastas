@@ -21,18 +21,41 @@ public class AuditDAOImpl implements AuditDAO{
 	}
 
 	@Override
-	public Audit getAudit(int id) {
+	public List<Audit> getAuditUser(String userName) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction t = session.beginTransaction();
 		
-		Query q=session.createQuery("from Audit where id = :id");
-		q.setParameter("id", id);
+		Query q=session.createQuery("from Audit where userName = :userName");
+		q.setParameter("userName", userName);
 		List lista = q.list();
 		t.commit();
 		session.close();
 		if(!lista.isEmpty())
 		{
-			return (Audit)lista.get(0);
+			return lista;
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	
+
+	@Override
+	public List<Audit> getAuditCrud(String operationCrud)
+	{
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		
+		Query q=session.createQuery("from Audit where operationCrud = :operationCrud");
+		q.setParameter("operationCrud", operationCrud);
+		List lista = q.list();
+		t.commit();
+		session.close();
+		if(!lista.isEmpty())
+		{
+			return lista;
 		}
 		else
 		{
