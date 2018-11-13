@@ -11,20 +11,24 @@
 body {
 	background-color: rgb(244, 247, 247)
 }
+
 .panel tr, .panel td {
 	background: none;
 	border: none !important;
 }
+
 .boton {
 	background-color: transparent !important;
 	background: transparent !important;
 	border: rbg(5, 5, 5);
 	font-weight: normal;
 }
+
 .panel tr, .panel td {
 	background: none;
 	border: none !important;
 }
+
 .centered {
 	position: absolute;
 	height: 600px;
@@ -38,6 +42,7 @@ body {
 	background-color: rgb(203, 216, 237);
 	border: 0px;
 }
+
 .boton {
 	background-color: transparent !important;
 	background: transparent !important;
@@ -48,83 +53,81 @@ body {
 </h:head>
 <h:body>
 
+	<h:form> <p:panel
+		style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
+
+		<p:graphicImage value="/img/Acme-corp.png"
+			style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
+
+		<div style="margin-left: 90%">
+			<p:commandButton id="dynaButton" value="#{userMB.usuario.fullName}"
+				type="button" icon="ui-icon-extlink" styleClass="boton" />
+			<p:menu overlay="true" trigger="dynaButton"
+				value="#{userMB.usuario.fullName}"
+				style="background-color: rgb(203, 216, 237);border:none">
+				<p:menuitem value="Datos personales"
+					action="#{userMB.prepararDatosProveedor}" icon="ui-icon-person" />
+				<p:menuitem value="Salir" action="#{userMB.logOut}"
+					icon="ui-icon-power" />
+			</p:menu>
+		</div>
+	</p:panel> 
+	</h:form>
 	<h:form>
+	<p:panel styleClass="centered">
 
-		<p:panel
-			style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
 
-			<p:graphicImage value="/img/Acme-corp.png"
-				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
+	
+		<p:menubar style="background-color: rgb(203, 216, 237);border:none">		
+		</p:menubar>
+		
 
-			<div style="margin-left: 90%">
-				<p:commandButton id="dynaButton" value="#{userMB.usuario.fullName}" type="button"
-					icon="ui-icon-extlink" styleClass="boton" />
-				<p:menu overlay="true" trigger="dynaButton" value="#{userMB.usuario.fullName}"
-					style="background-color: rgb(203, 216, 237);border:none">
-					<p:menuitem value="Datos personales"
-						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
-					<p:menuitem value="Salir" action="#{userMB.logOut}"
-						icon="ui-icon-power" />
-				</p:menu>
-			</div>
+
+
+		<p:panel header="Crear Subasta"
+			style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:30%">
+
+			<h:form>
+				<p:growl id="growl" showDetail="true" sticky="true" />
+				<p:panelGrid columns="2" styleClass="panel" id="pg" cellpadding="1">
+
+
+					<h:outputLabel value="Nombre del producto: "
+						style="font-weight:bold" for="unTxt" />
+					<p:inputText value="#{userMB.sale.name}" required="true"
+						maxlength="12" requiredMessage="Campo requerido"
+						validatorMessage="No puede tener símbolos" id="unTxt">
+					</p:inputText>
+
+					<p:outputLabel value="Descripción del producto: "
+						style="font-weight:bold" />
+					<p:inputTextarea value="#{userMB.sale.descriptionProduct}"
+						required="true" requiredMessage="Campo requerido" id="nTxt"
+						validatorMessage="Solo puede contener letras">
+					</p:inputTextarea>
+
+					<p:outputLabel value="Valor inicial: " style="font-weight:bold" />
+					<p:inputText value="#{userMB.sale.valueBase}" required="true"
+						requiredMessage="Campo requerido"
+						validatorMessage="Estructura de correo invalida" id="emailTxt">
+					</p:inputText>
+
+					<p:outputLabel value="Fecha de inicio: " style="font-weight:bold"
+						for="popup" />
+					<p:calendar id="popup" value="#{userMB.sale.dateStart}" />
+
+					<p:outputLabel value="Fecha final: " style="font-weight:bold"
+						for="popup2" />
+					<p:calendar id="popup2" value="#{userMB.sale.dateEnd}" />
+
+					<p:commandButton value="Registrar"
+						action="#{userMB.adicionarSubasta}" update="growl" />
+					<p:button value="Cancelar" outcome="/proveedor/indexProveedor" />
+				</p:panelGrid>
+			</h:form>
+
 		</p:panel>
-
-
-		<p:panel styleClass="centered">
-
-
-
-				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
-						<p:menuitem value="Mis Subastas" action="/proveedor/indexProveedor.xhtml"
-							icon="ui-icon-star" />
-				</p:menubar>
-
-				<p:panel header="Crear Subasta"
-					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:30%">
-
-					<h:form>
-						<p:growl id="growl" showDetail="true" sticky="true" />
-						<p:panelGrid columns="2" styleClass="panel" id="pg" cellpadding="1" >
-
-
-							<h:outputLabel value="Nombre del producto: "
-								style="font-weight:bold" for="unTxt" />
-							<p:inputText value="#{userMB.sale.name}" required="true"
-								maxlength="12" requiredMessage="Campo requerido"
-								validatorMessage="No puede tener símbolos" id="unTxt">
-							</p:inputText>
-
-							<p:outputLabel value="Descripción del producto: "
-								style="font-weight:bold" />
-							<p:inputTextarea value="#{userMB.sale.descriptionProduct}"
-								required="true" requiredMessage="Campo requerido" id="nTxt"
-								validatorMessage="Solo puede contener letras">
-							</p:inputTextarea>
-
-							<p:outputLabel value="Valor inicial: " style="font-weight:bold" />
-							<p:inputText value="#{userMB.sale.valueBase}" required="true"
-								requiredMessage="Campo requerido"
-								validatorMessage="Estructura de correo invalida" id="emailTxt">
-							</p:inputText>
-
-							<p:outputLabel value="Fecha de inicio: " style="font-weight:bold"
-								for="popup" />
-							<p:calendar id="popup" value="#{userMB.sale.dateStart}"
-								 />
-
-							<p:outputLabel value="Fecha final: " style="font-weight:bold"
-								for="popup2" />
-							<p:calendar id="popup2" value="#{userMB.sale.dateEnd}"
-								 />
-
-								<p:commandButton value="Registrar"
-									action="#{userMB.adicionarSubasta}" update="growl" />
-								<p:button value="Cancelar" outcome="/proveedor/indexProveedor"/>
-						</p:panelGrid>
-					</h:form>
-
-				</p:panel>
-		</p:panel>
+	</p:panel>
 	</h:form>
 </h:body>
 </html>
