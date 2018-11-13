@@ -1,10 +1,13 @@
 package bean;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -13,8 +16,25 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.lf5.viewer.LogFactor5InputDialog;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.hibernate.engine.jdbc.connections.internal.UserSuppliedConnectionProviderImpl;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.log.SysoCounter;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -23,9 +43,11 @@ import javax.faces.application.FacesMessage;
 import util.Cifrado;
 import util.EnviarCorreo;
 import util.VerifyRecaptcha;
+import entity.Audit;
 import entity.Offerersale;
 import entity.Salesueb;
 import entity.User;
+import service.AuditService;
 import service.OfferersaleService;
 import service.ParameterService;
 import service.SalesuebService;
