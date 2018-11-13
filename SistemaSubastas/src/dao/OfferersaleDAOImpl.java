@@ -42,6 +42,27 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 			return null;
 		}
 	}
+	
+	@Override
+	public List<Offerersale> getOfertaDeSubasta(int idSales)
+	{
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		
+		Query q=session.createQuery("from Offerersale where idSales = :idSales");
+		q.setParameter("idSales", idSales);
+		List lista = q.list();
+		t.commit();
+		session.close();
+		if(!lista.isEmpty())
+		{
+			return lista;
+		}
+		else
+		{
+			return null;
+		}
+	}
 
 	@Override
 	public void actualizar(Offerersale offerersale)
