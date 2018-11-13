@@ -34,4 +34,9 @@ public class SalesuebService
 	{
 		return sales.lista();
 	}
+	
+	public List<Salesueb> listaActivas()
+	{
+		return sales.listaActivas();
+	}
 }
