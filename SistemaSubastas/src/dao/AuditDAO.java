@@ -8,7 +8,8 @@ import entity.Audit;
 public interface AuditDAO {
 	
 	public void nuevo(Audit auditoria);
-	public Audit getAudit(int id);
+	public List<Audit> getAuditUser(String userName);
+	public List<Audit> getAuditCrud(String operationCrud);
 	public void actualizar(Audit auditoria);
 	public void eliminar(Audit auditoria);
 	public List<Audit> lista();
