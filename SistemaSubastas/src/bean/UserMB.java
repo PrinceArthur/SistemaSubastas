@@ -55,7 +55,8 @@ import service.UserService;
 
 /**
  * 
- * @author estef
+ * @author Guillermo Marcano, Richard Mora y Estefanía Pérez
+ * Managed Bean que se encarga de gestionar los usuarios y egenrar reportes.
  *
  */
 
@@ -63,27 +64,99 @@ import service.UserService;
 @SessionScoped
 public class UserMB
 {
+	/**
+	 * Instancia de el bean de Auditorias
+	 */
 	private AuditMB audit = new AuditMB();
+	
+	/**
+	 * Usuario principal
+	 */
 	private User user;
+	
+	/**
+	 * Usuario que se utiliza al realizar un login
+	 */
 	private User loginUser = new User();
+	
+	/**
+	 * Usuario administrador
+	 */
 	private User userAdmin = new User();
+	
+	/**
+	 * Usuario oara generar nueva contraseña
+	 */
 	private User userPass = new User();
+	
+	/**
+	 * DataModel que lista los usaurios del sistema
+	 */
 	private DataModel listaUser;
+	
+	/**
+	 * DataModel que lista los usuarios de tipo proveedor.
+	 */
 	private DataModel listaProveedor;
+	
+	/**
+	 * DataModel que lista las subastas en el sistema
+	 */
 	private DataModel listaSubastas;
+	
+	/**
+	 * DataModel que lista las ofertas hechas por un postor especificado
+	 */
 	private DataModel listaOfertaPostor;
+	
+	/**
+	 * DataModel que lista las subastas en estado activo
+	 */
 	private DataModel listaSubastasActivas;
+	
+	/**
+	 * Mensaje de error para los validaciones del cliente
+	 */
 	private String mensajeError;
+	
+	/**
+	 * Primera parte del email
+	 */
 	private String email1;
+	
+	/**
+	 * Segunda parte del email
+	 */
 	private String email2;
+	
+	/**
+	 * Subasta utilizada en el sistema
+	 */
 	private Salesueb sale;
+	
+	/**
+	 * Para obtener el userName de un usuario
+	 */
 	private String nombre;
+	
+	/**
+	 * Instancia del bean de ofertas
+	 */
 	private Offerersale oferta = new Offerersale();
+	
+	/**
+	 * Para obtener la id de la subasta.
+	 */
 	private int idSale;
 
-
+	/**
+	 * Logger del sistema
+	 */
 	private static Logger logger = Logger.getLogger(UserMB.class);
 
+	/**
+	 * Construstor de la clase
+	 */
 	public UserMB()
 	{
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -91,6 +164,10 @@ public class UserMB
 		PropertyConfigurator.configure(url);
 	}
 
+	/**
+	 * Método que inicializa el usuario para ser adicionado
+	 * @return redirección de la página
+	 */
 	public String prepararAdicionarUser()
 	{
 		logger.trace("Entra al método prepararAdicionarUser");
@@ -105,6 +182,10 @@ public class UserMB
 		return "/administrador/registrarProvedor.xhtml";
 	}
 
+	/**
+	 * Método que inicializa el usuario postor para ser adicionado
+	 * @return redirección de la página
+	 */
 	public String prepararAdicionarPostor()
 	{
 		logger.trace("Entra al método prepararAdicionarPostor");
@@ -117,6 +198,10 @@ public class UserMB
 		return "/postor/registrarPostor.xhtml";
 	}
 
+	/**
+	 * Método que inicializa el usuario desde la lista para ser modificado
+	 * @return redirección de la página
+	 */
 	public String prepararModificarUser()
 	{
 		logger.trace("Entra al método prepararModificarUser");
@@ -129,6 +214,10 @@ public class UserMB
 		return "/administrador/modificarProveedor";
 	}
 
+	/**
+	 * Método que inicializa el usuario administrador para obtener sus datos
+	 * @return redirección de la página
+	 */
 	public String prepararAdmin()
 	{
 		logger.trace("Entra al método prepararAdmin");
@@ -138,6 +227,10 @@ public class UserMB
 		return "/administrador/datosAdmin";
 	}
 
+	/**
+	 * Método que inicializa el userPass para recuperar la contraseña
+	 * @return redirección de la página
+	 */
 	public String prepararRecuperarContraseña()
 	{
 		logger.trace("Entra al método prepararRecuperarContraseña");
@@ -146,6 +239,10 @@ public class UserMB
 		return "recuperarContraseña";
 	}
 
+	/**
+	 * Método que inicializa el userPass desde a lista para cambiar su contraseña
+	 * @return redirección de la página
+	 */
 	public String prepararCambioContraseña()
 	{
 		logger.trace("Entra al método prepararCambioContraseña");
@@ -155,6 +252,10 @@ public class UserMB
 		return "cambiarContraseña";
 	}
 
+	/**
+	 * Método que inicializa el usuario proveedor desde la lista para su ingreso
+	 * @return redirección de la página
+	 */
 	public String prepararIngresoProveedor()
 	{
 		logger.trace("Entra al método prepararIngresoProveedor");
@@ -165,6 +266,10 @@ public class UserMB
 		return "/proveedor/indexProveedor";
 	}
 
+	/**
+	 * Método que inicializa el usuario proveedor desde las lista para obtener sus datos
+	 * @return redirección de la página
+	 */
 	public String prepararDatosProveedor()
 	{
 		logger.trace("Entra al método prepararDatosProveedor");
@@ -174,6 +279,10 @@ public class UserMB
 		return "/proveedor/datosProveedor";
 	}
 
+	/**
+	 * Método que inicializa el usuario postor desde la lista para su ingreso
+	 * @return redirección de la página
+	 */
 	public String prepararIngresoPostor()
 	{
 		logger.trace("Entra al método prepararIngresoPostor");
@@ -184,6 +293,10 @@ public class UserMB
 		return "/postor/indexPostor";
 	}
 
+	/**
+	 * Método que inicializa el usuario para ser adicionado
+	 * @return redirección de la página
+	 */
 	public String prepararDatosPostor()
 	{
 		logger.trace("Entra al método prepararDatosPostor");
@@ -193,6 +306,10 @@ public class UserMB
 		return "/postor/datosPostor";
 	}
 
+	/**
+	 * Método que inicializa la subasta para ser adicionada
+	 * @return redirección de la página
+	 */
 	public String prepararAdicionarSubasta()
 	{
 		logger.trace("Entra a método prepararAdicionarSubasta");
@@ -205,6 +322,10 @@ public class UserMB
 
 	}
 
+	/**
+	 * Método que inicializa la subasta desde la lista para obtener sus datos
+	 * @return redirección de la página
+	 */
 	public String prepararSubasta()
 	{
 		logger.trace("Entra al método prepararSubasta");
@@ -213,6 +334,10 @@ public class UserMB
 		return "/postor/subasta";
 	}
 
+	/**
+	 * Método que inicializa la oferta para ser adicionada
+	 * @return redirección de la página
+	 */
 	public void prepararAgregarOferta()
 	{
 		logger.trace("Entra al método prepararAgregarOferta");
@@ -222,6 +347,10 @@ public class UserMB
 		logger.info("Se incializa el objeto idSale con el id de la subasta, se asigna la fefcha a la oferta y asignamos a la variable nombre el valor del userName de loginUser.");
 	}
 
+	/**
+	 * Método que adiciona los usuarios administrador y proveedor
+	 * @return redirección de la página
+	 */
 	public String adicionarUser()
 	{
 		logger.trace("Entra al método adicionarUser");
@@ -266,6 +395,10 @@ public class UserMB
 		return "/administrador/indexAdmin";
 	}
 
+	/**
+	 * Método que modifica los usuarios
+	 * @return redirección de la página
+	 */
 	public String modificarUser()
 	{
 		logger.trace("Entra al método modificarUser");
@@ -277,6 +410,10 @@ public class UserMB
 		return "/administrador/indexAdmin";
 	}
 
+	/**
+	 * Método que elimina los usuarios
+	 * @return redirección de la página
+	 */
 	public void eliminarUser()
 	{
 		logger.trace("Entramos al método eliminarUser");
@@ -300,6 +437,10 @@ public class UserMB
 		service.actualizar(usuarioTemp);
 	}
 
+	/**
+	 * Método para iniciar sesión
+	 * @return redirección de la página
+	 */
 	public String login()
 	{
 
@@ -538,6 +679,9 @@ public class UserMB
 
 	}
 
+	/**
+	 * Método que cierra la sesión de un usuario
+	 */
 	public void logOut() throws IOException
 	{
 
@@ -555,6 +699,10 @@ public class UserMB
 		logger.info("El usuario cierra seción");
 	}
 
+	/**
+	 * Método que crea una oferta nueva
+	 * @return redirección de la página
+	 */
 	public String agregarOferta()
 	{
 		logger.trace("Entra al método agregarOferta");
@@ -582,6 +730,10 @@ public class UserMB
 		return "/postor/subasta";
 	}
 	
+	/**
+	 * Método que actualiza las ofertas
+	 * @return redirección de la página
+	 */
 	public void actualizarOfertas(int idSales)
 	{
 		logger.trace("Entra al método actualizarOfertas");
@@ -600,6 +752,10 @@ public class UserMB
 		
 	}
 
+	/**
+	 * Método que modifica las subastas
+	 * @return redirección de la página
+	 */
 	public void modificarSubasta()
 	{
 		logger.trace("Entra al método modificarSubasta");
@@ -608,6 +764,10 @@ public class UserMB
 		logger.info("Se modifica la subasta");
 	}
 
+	/**
+	 * Método que crea las subastas
+	 * @return redirección de la página
+	 */
 	public String adicionarSubasta()
 	{
 		logger.trace("Entra al método adicionarSubasta");
@@ -630,6 +790,9 @@ public class UserMB
 		}
 	}
 
+	/**
+	 * Método que crea un usuario postor
+	 */
 	public void adicionarPostor()
 	{
 		logger.trace("Entra al método adicionarPostor");
@@ -681,6 +844,11 @@ public class UserMB
 		}
 	}
 
+	/**
+	 * Método que genera el reporte en formato excel de las ofertas
+	 * @throws FileNotFoundException
+	 * @throws DocumentException
+	 */
 	public void archivoExcelOfertas() throws FileNotFoundException, DocumentException
 	{
 		logger.trace("Entra al método archivoExcelOfertas");
@@ -736,6 +904,11 @@ public class UserMB
 		logger.info("Se genera el archivo excel de las ofertas");
 	}
 
+	/**
+	 * Método que genera el reporte en formato excel de las subastas
+	 * @throws FileNotFoundException
+	 * @throws DocumentException
+	 */
 	public void archivoExcelSubastas() throws FileNotFoundException, DocumentException
 	{
 		logger.trace("Entra al método archivoExcelSubastas");
@@ -799,6 +972,11 @@ public class UserMB
 		
 	}
 
+	/**
+	 * Método que genera el reporte en formato pdf de las subastas
+	 * @throws FileNotFoundException
+	 * @throws DocumentException
+	 */
 	public void pdfSubastas() throws FileNotFoundException, DocumentException
 	{
 		logger.trace("Entra en el método pdfSubastas");
@@ -840,6 +1018,10 @@ public class UserMB
 
 	}
 
+	/**
+	 * Método que agrega los encabezados del archivo pdf de reporte de susbastas
+	 * @param table
+	 */
 	public void addTableHeaderSub(PdfPTable table)
 	{
 		Stream.of("ID", "Producto", "Descripción", "Valor base", "Valor ofertado", "Fecha inicio","Fecha fin").forEach(columnTitle ->
@@ -853,6 +1035,10 @@ public class UserMB
 		});
 	}
 
+	/**
+	 * Método qe agrega las filas del archivo pdf de reporte de subastas
+	 * @param table
+	 */
 	public void addRowsUserSub(PdfPTable table)
 	{
 		Iterator it = getListaSubastas().iterator();
@@ -893,6 +1079,11 @@ public class UserMB
 		}
 	}
 
+	/**
+	 * Método para generar el documento PDF de las ofertas
+	 * @throws FileNotFoundException
+	 * @throws DocumentException
+	 */
 	public void pdfOfertas() throws FileNotFoundException, DocumentException
 	{
 
@@ -924,8 +1115,6 @@ public class UserMB
 ////				Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+crud+".pdf"));
 //			} catch (IOException e)
 //			{
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
 //			}
 		pdfDoc.close();
 		m.close();
@@ -934,6 +1123,10 @@ public class UserMB
 
 	}
 
+	/**
+	 * Método para agregar el encabezado del reporte PDF del CRUD
+	 * @param table 
+	 */
 	public void addTableHeaderCrud(PdfPTable table)
 	{
 		Stream.of("ID", "Usuario de subasta", "Valor Oferta", "Fecha oferta", "Ganador").forEach(columnTitle ->
@@ -947,6 +1140,10 @@ public class UserMB
 		});
 	}
 
+	/**
+	 * Método para agregar las filas al reporte pdf del CRUD
+	 * @param table
+	 */
 	public void addRowsUserCrud(PdfPTable table)
 	{
 		Iterator it = getListaOfertaPostor().iterator();
@@ -979,6 +1176,9 @@ public class UserMB
 		}
 	}
 	
+	/**
+	 * Método para actualizar todas las ofertas cuando ingrese un usuario
+	 */
 	public void actualizarSubastas()
 	{
 		
@@ -1006,36 +1206,64 @@ public class UserMB
 		logger.info("El estado de las subastas ha sido actualizado a LOSER");
 	}
 
+	/**
+	 * Getter de user
+	 * @return user
+	 */
 	public User getUsuario()
 	{
 		return user;
 	}
 
+	/**
+	 * Setter de user
+	 * @param user
+	 */
 	public void setUsuario(User usuario)
 	{
 		this.user = usuario;
 	}
 
+	/**
+	 * getter de loginUser
+	 * @return loginUser
+	 */
 	public User getLoginUser()
 	{
 		return loginUser;
 	}
 
+	/**
+	 * Setter de loginUser
+	 * @param loginUser
+	 */
 	public void setLoginUser(User loginUser)
 	{
 		this.loginUser = loginUser;
 	}
 
+	/**
+	 * Getter de userAdmin
+	 * @return userAdmin
+	 */
 	public User getUserAdmin()
 	{
 		return userAdmin;
 	}
 
+	/**
+	 * Setter de userAdmin
+	 * @param userAdmin
+	 */
 	public void setUserAdmin(User userAdmin)
 	{
 		this.userAdmin = userAdmin;
 	}
 
+	/**
+	 * Getter de listaUser
+	 * @return listaUser
+	 */
 	public DataModel getListarUser()
 	{
 		List<User> lista = new UserService().lista();
@@ -1043,66 +1271,119 @@ public class UserMB
 		return listaUser;
 	}
 
+	/**
+	 * Getter de userPass
+	 * @return userPass
+	 */
 	public User getUserPass()
 	{
 		return userPass;
 	}
 
+	/**
+	 * Setter de userPass
+	 * @param userPass
+	 */
 	public void setUserPass(User userPass)
 	{
 		this.userPass = userPass;
 	}
 
+	/**
+	 * Getter de mensaje Error
+	 * @return mensajeError
+	 */
 	public String getMensajeError()
 	{
 		return mensajeError;
 	}
 
+	/**
+	 * Setter de mensajeError
+	 * @param mensajeError
+	 */
 	public void setMensajeError(String mensajeError)
 	{
 		this.mensajeError = mensajeError;
 	}
 
+	/**
+	 * Getter de email1
+	 * @return email1
+	 */
 	public String getEmail1()
 	{
 		return email1;
 	}
 
+	/**
+	 * Setter de email1
+	 * @param email1
+	 */
 	public void setEmail1(String email1)
 	{
 		this.email1 = email1;
 	}
 
+	/**
+	 * Getter de email2
+	 * @return email2
+	 */
 	public String getEmail2()
 	{
 		return email2;
 	}
 
+	/**
+	 * Setter de email2
+	 * @param email2
+	 */
 	public void setEmail2(String email2)
 	{
 		this.email2 = email2;
 	}
 
+	/**
+	 * Getter de sale
+	 * @return sale
+	 */
 	public Salesueb getSale()
 	{
 		return sale;
 	}
 
+	/**
+	 * Setter de sale
+	 * @param sale
+	 */
 	public void setSale(Salesueb sale)
 	{
 		this.sale = sale;
 	}
 
+	/**
+	 * Getter de nombre
+	 * @return nombre
+	 */
 	public String getNombre()
 	{
 		return nombre;
 	}
 
+	/**
+	 * Setter de nombre
+	 * @param nombre
+	 */
 	public void setNombre(String nombre)
 	{
 		this.nombre = nombre;
 	}
 
+	/**
+	 * Método que inicializa la listaProveedor
+	 * @param userSales
+	 * @return listaProveedor
+	 */
 	public DataModel inicializarListaProveedor(String userSales)
 	{
 		logger.trace("Entra al método inicializarListaProveedor");
@@ -1112,6 +1393,10 @@ public class UserMB
 		return listaProveedor;
 	}
 
+	/**
+	 * Getter de listaProveedor
+	 * @return listaProveedor
+	 */
 	public DataModel getListaProveedor()
 	{
 		UserService service = new UserService();
@@ -1120,31 +1405,55 @@ public class UserMB
 		return listaProveedor;
 	}
 
+	/**
+	 * Setter de listaProveedor
+	 * @param listaProveedor
+	 */
 	public void setListaProveedor(DataModel listaProveedor)
 	{
 		this.listaProveedor = listaProveedor;
 	}
 
+	/**
+	 * Getter de oferta
+	 * @return oferta
+	 */
 	public Offerersale getOferta()
 	{
 		return oferta;
 	}
 
+	/**
+	 * Setter de oferta
+	 * @param oferta
+	 */
 	public void setOferta(Offerersale oferta)
 	{
 		this.oferta = oferta;
 	}
 
+	/**
+	 * Getter de idSale
+	 * @return
+	 */
 	public int getIdSale()
 	{
 		return idSale;
 	}
 
+	/**
+	 * Setter de idSale
+	 * @param idSale
+	 */
 	public void setIdSale(int idSale)
 	{
 		this.idSale = idSale;
 	}
 
+	/**
+	 * Getter de listaSubastas
+	 * @return listaSubastas
+	 */
 	public DataModel getListaSubastas()
 	{
 		actualizarSubastas();
@@ -1153,11 +1462,20 @@ public class UserMB
 		return listaSubastas;
 	}
 
+	/**
+	 * Getter de listaSubastas
+	 * @param listaSubastas
+	 */
 	public void setListaSubastas(DataModel listaSubastas)
 	{
 		this.listaSubastas = listaSubastas;
 	}
 
+	/**
+	 * Método que inicializa la listaOfertaPostor
+	 * @param postor
+	 * @return listaOfertaPostor
+	 */
 	public DataModel inicializarListaOfertaPostor(String postor)
 	{
 		
@@ -1168,11 +1486,19 @@ public class UserMB
 		return listaOfertaPostor;
 	}
 
+	/**
+	 * Setter de listaOfertaPostor
+	 * @param listaOfertaPostor
+	 */
 	public void setListaOfertaPostor(DataModel listaOfertaPostor)
 	{
 		this.listaOfertaPostor = listaOfertaPostor;
 	}
 
+	/**
+	 * Getter de listaOfertaPostor
+	 * @return listaOfertaPostor
+	 */
 	public DataModel getListaOfertaPostor()
 	{
 		UserService service = new UserService();
@@ -1181,13 +1507,21 @@ public class UserMB
 		return listaOfertaPostor;
 	}
 
+	/**
+	 * Getter de listaSubastaActivas
+	 * @return listaSubastasActivas
+	 */
 	public DataModel getListaSubastasActivas() {
 		actualizarSubastas();
 		List<Salesueb> lista = new SalesuebService().listaActivas();
-		listaSubastas = new ListDataModel(lista);
-		return listaSubastas;
+		listaSubastasActivas = new ListDataModel(lista);
+		return listaSubastasActivas;
 	}
 
+	/**
+	 * Setter de listaSubastasActivas
+	 * @param listaSubastasActivas
+	 */
 	public void setListaSubastasActivas(DataModel listaSubastasActivas) {
 		this.listaSubastasActivas = listaSubastasActivas;
 	}
