@@ -89,6 +89,27 @@ public class AuditDAOImpl implements AuditDAO{
 		t.commit();
 		return lista;
 	}
+	
+	@Override
+	public List<Audit> listaRegistrosPostor(String createDate)
+	{
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		
+		Query q=session.createQuery("from Audit where createDate = :createDate");
+		q.setParameter("createDate", createDate);
+		List lista = q.list();
+		t.commit();
+		session.close();
+		if(!lista.isEmpty())
+		{
+			return lista;
+		}
+		else
+		{
+			return null;
+		}
+	}
 
 
 }
