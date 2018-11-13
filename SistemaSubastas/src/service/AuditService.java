@@ -39,4 +39,9 @@ public class AuditService
 	{
 		return audit.lista();
 	}
+	
+	public List<Audit> listaFecha(String fecha)
+	{
+		return audit.listaRegistrosPostor(fecha);
+	}
 }
