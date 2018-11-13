@@ -71,4 +71,24 @@ public class SalesuebDAOImpl implements SalesuebDAO
 		return lista;
 	}
 
+	@Override
+	public List<Salesueb> listaActivas() {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		
+		Query q=session.createQuery("from Salesueb where state = :state");
+		q.setParameter("state", "ACTIVE");
+		List lista = q.list();
+		t.commit();
+		session.close();
+		if(!lista.isEmpty())
+		{
+			return lista;
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 }
