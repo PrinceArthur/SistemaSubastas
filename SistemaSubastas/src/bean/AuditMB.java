@@ -1,7 +1,9 @@
 package bean;
 
+import java.awt.Desktop;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -20,6 +22,11 @@ import javax.faces.bean.SessionScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.primefaces.model.DefaultStreamedContent;
 
 import com.itextpdf.text.Rectangle;
@@ -50,12 +57,9 @@ public class AuditMB
 
 	private Audit auditoria;
 	private DataModel listaAudit;
-	private static List listaUsuario;
-	private static List listaCrud;
-	private static String usuario;
-	private static String crud;
+	private List listaUsuario;
+	private List listaCrud;
 	private String operacion;
-
 	private String usu;
 
 	public AuditMB()
@@ -84,24 +88,112 @@ public class AuditMB
 		}
 	}
 	
-	public void archivoPorCrud()
+	public void archivoExcelPorCrud() throws FileNotFoundException, DocumentException
 	{
-		crud = operacion;
+		AuditService service = new AuditService();
 		
-		try
-		{
-			pdfCrud("Algo");
-		} catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (DocumentException e)
-		{
-			e.printStackTrace();
-		}
+		List<Audit> audit = service.auditCrud(operacion);
 		
+		
+		
+        HSSFWorkbook libro = new HSSFWorkbook();
+
+        HSSFSheet hoja = libro.createSheet();
+
+        HSSFRow fila = hoja.createRow(0);
+
+
+        // Se crea una celda dentro de la fila
+        HSSFCell id = fila.createCell((short) 0);
+        HSSFCell operationCrud = fila.createCell((short) 1);
+        HSSFCell tableName = fila.createCell((short) 2);
+        HSSFCell tableId = fila.createCell((short) 3);
+        HSSFCell createDate = fila.createCell((short) 4);
+        HSSFCell addressIP = fila.createCell((short) 5);
+
+        id.setCellValue(new HSSFRichTextString("ID"));
+        operationCrud.setCellValue(new HSSFRichTextString("OperationCrud"));
+        tableName.setCellValue(new HSSFRichTextString("TableName"));
+        tableId.setCellValue(new HSSFRichTextString("TableId"));
+        createDate.setCellValue(new HSSFRichTextString("CreateDate"));
+        addressIP.setCellValue(new HSSFRichTextString("AddressIP"));
+        
+        for (int i = 0; i < audit.size(); ++i) {
+            HSSFRow dataRow = hoja.createRow(i + 1);
+
+            dataRow.createCell(0).setCellValue(audit.get(i).getId());
+            dataRow.createCell(1).setCellValue(audit.get(i).getOperationCrud());
+            dataRow.createCell(2).setCellValue(audit.get(i).getTableName());
+            dataRow.createCell(3).setCellValue(audit.get(i).getTableId());
+            dataRow.createCell(4).setCellValue(audit.get(i).getCreateDate().toString());
+            dataRow.createCell(5).setCellValue(audit.get(i).getAddressIP());
+        }
+		
+
+        try {
+            FileOutputStream elFichero = new FileOutputStream("C://ReportesGeneradosSistemaSubastas/Reporte de operación - "+operacion+".xls");
+            libro.write(elFichero);
+          //  Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+operacion+".xls"));
+            elFichero.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 	}
 	
-	public static void pdfCrud(String algo) throws FileNotFoundException, DocumentException
+	public void archivoExcelPorUsuario() throws FileNotFoundException, DocumentException
+	{
+		AuditService service = new AuditService();
+		
+		List<Audit> audit = service.auditUser(usu);
+		
+		
+		
+        HSSFWorkbook libro = new HSSFWorkbook();
+
+        HSSFSheet hoja = libro.createSheet();
+
+        HSSFRow fila = hoja.createRow(0);
+
+
+        // Se crea una celda dentro de la fila
+        HSSFCell id = fila.createCell((short) 0);
+        HSSFCell operationCrud = fila.createCell((short) 1);
+        HSSFCell tableName = fila.createCell((short) 2);
+        HSSFCell tableId = fila.createCell((short) 3);
+        HSSFCell createDate = fila.createCell((short) 4);
+        HSSFCell addressIP = fila.createCell((short) 5);
+
+        id.setCellValue(new HSSFRichTextString("ID"));
+        operationCrud.setCellValue(new HSSFRichTextString("OperationCrud"));
+        tableName.setCellValue(new HSSFRichTextString("TableName"));
+        tableId.setCellValue(new HSSFRichTextString("TableId"));
+        createDate.setCellValue(new HSSFRichTextString("CreateDate"));
+        addressIP.setCellValue(new HSSFRichTextString("AddressIP"));
+        
+        for (int i = 0; i < audit.size(); ++i) {
+            HSSFRow dataRow = hoja.createRow(i + 1);
+
+            dataRow.createCell(0).setCellValue(audit.get(i).getId());
+            dataRow.createCell(1).setCellValue(audit.get(i).getOperationCrud());
+            dataRow.createCell(2).setCellValue(audit.get(i).getTableName());
+            dataRow.createCell(3).setCellValue(audit.get(i).getTableId());
+            dataRow.createCell(4).setCellValue(audit.get(i).getCreateDate().toString());
+            dataRow.createCell(5).setCellValue(audit.get(i).getAddressIP());
+        }
+		
+
+        try {
+            FileOutputStream elFichero = new FileOutputStream("C://ReportesGeneradosSistemaSubastas/Reporte de usuario "+usu+".xls");
+            libro.write(elFichero);
+          //  Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+usu+".xls"));
+            elFichero.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
+	
+	
+	public void pdfCrud() throws FileNotFoundException, DocumentException
 		{
 
 //			ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -109,12 +201,12 @@ public class AuditMB
 			Document pdfDoc = new Document(PageSize.A4);
 
 			PdfWriter m = PdfWriter.getInstance(pdfDoc,
-					new FileOutputStream("C://ReportesGeneradosSistemaSubastas/" + crud + ".pdf"));
+					new FileOutputStream("C://ReportesGeneradosSistemaSubastas/" + operacion + ".pdf"));
 
 			pdfDoc.open();
 
 			PdfPTable tableUsuario = new PdfPTable(7);
-			PdfPCell titulo = new PdfPCell(new Phrase("REPORTE POR OPERACIÓN : "  + crud ));
+			PdfPCell titulo = new PdfPCell(new Phrase("REPORTE POR OPERACIÓN : "  + operacion ));
 			titulo.setColspan(7);
 			titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
 			titulo.setBorderWidth(0);
@@ -123,13 +215,20 @@ public class AuditMB
 			addTableHeaderCrud(tableUsuario);
 			addRowsUserCrud(tableUsuario);
 			pdfDoc.add(tableUsuario);
-
+//			try
+//			{
+////				Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+operacion+".pdf"));
+//			} catch (IOException e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			pdfDoc.close();
 			m.close();
 
 		}
 
-		public static void addTableHeaderCrud(PdfPTable table)
+		public void addTableHeaderCrud(PdfPTable table)
 		{
 			Stream.of("ID", "Usuario", "Tabla", "ID Tabla", "Operación", "Fecha", "Dirección IP").forEach(columnTitle ->
 			{
@@ -142,7 +241,7 @@ public class AuditMB
 			});
 		}
 
-		public static void addRowsUserCrud(PdfPTable table)
+		public void addRowsUserCrud(PdfPTable table)
 		{
 			Iterator it = getListaCrud().iterator();
 
@@ -182,39 +281,18 @@ public class AuditMB
 			}
 		}
 
-	public void archivoPorUsuario()
+	public void archivoPorUsuario() throws FileNotFoundException, DocumentException
 	{
 
-		usuario = getUsu();
-
-		try
-		{
-			archivoPorUsuario("Reporte por usuario");
-		} catch (FileNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (DocumentException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public static void archivoPorUsuario(String fileName) throws FileNotFoundException, DocumentException
-	{
-
-//		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-//		URL url = loader.getResource("Acme-corp.png");
 		Document pdfDoc = new Document(PageSize.A4);
 
 		PdfWriter m = PdfWriter.getInstance(pdfDoc,
-				new FileOutputStream("C://ReportesGeneradosSistemaSubastas/" + usuario + ".pdf"));
+				new FileOutputStream("C://ReportesGeneradosSistemaSubastas/" + usu + ".pdf"));
 
 		pdfDoc.open();
 
 		PdfPTable tableUsuario = new PdfPTable(7);
-		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE POR USUARIO: "  + usuario ));
+		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE POR USUARIO: "  + usu ));
 		titulo.setColspan(7);
 		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
 		titulo.setBorderWidth(0);
@@ -223,13 +301,20 @@ public class AuditMB
 		addTableHeader(tableUsuario);
 		addRowsUser(tableUsuario);
 		pdfDoc.add(tableUsuario);
-
+//		try
+//		{
+////			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+usu+".pdf"));
+//		} catch (IOException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		pdfDoc.close();
 		m.close();
 
 	}
 
-	public static void addTableHeader(PdfPTable table)
+	public void addTableHeader(PdfPTable table)
 	{
 		Stream.of("ID", "Usuario", "Tabla", "ID Tabla", "Operación", "Fecha", "Dirección IP").forEach(columnTitle ->
 		{
@@ -242,7 +327,7 @@ public class AuditMB
 		});
 	}
 
-	public static void addRowsUser(PdfPTable table)
+	public void addRowsUser(PdfPTable table)
 	{
 		Iterator it = getListaUsuario().iterator();
 
@@ -299,19 +384,10 @@ public class AuditMB
 		return listaAudit;
 	}
 
-	public String getUsuario()
-	{
-		return usuario;
-	}
 
-	public void setUsuario(String usuario)
+	public List getListaUsuario()
 	{
-		this.usuario = usuario;
-	}
-
-	public static List getListaUsuario()
-	{
-		listaUsuario = new AuditService().auditUser(usuario);
+		listaUsuario = new AuditService().auditUser(usu);
 		return listaUsuario;
 	}
 
@@ -320,19 +396,10 @@ public class AuditMB
 		this.listaUsuario = listaUsuario;
 	}
 
-	public String getCrud()
-	{
-		return crud;
-	}
 
-	public void setCrud(String crud)
+	public List getListaCrud()
 	{
-		this.crud = crud;
-	}
-
-	public static List getListaCrud()
-	{
-		listaCrud = new AuditService().auditCrud(crud);
+		listaCrud = new AuditService().auditCrud(operacion);
 		return listaCrud;
 	}
 
