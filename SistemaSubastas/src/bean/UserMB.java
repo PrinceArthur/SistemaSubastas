@@ -81,6 +81,7 @@ public class UserMB
 	private Offerersale oferta = new Offerersale();
 	private int idSale;
 
+
 	private static Logger logger = Logger.getLogger(UserMB.class);
 
 	public UserMB()
@@ -92,6 +93,7 @@ public class UserMB
 
 	public String prepararAdicionarUser()
 	{
+		logger.trace("Entra al método prepararAdicionarUser");
 		user = new User();
 		user.setActive("ACTIVE");
 		user.setUserType("proveedor");
@@ -99,108 +101,132 @@ public class UserMB
 		user.setDateLastPassword(now);
 		email1 = "";
 		email2 = "";
+		logger.info("Objeto user inicializado para agregar Proveedor y nos dirige a /administrador/registrarProvedor.xhtml");
 		return "/administrador/registrarProvedor.xhtml";
 	}
 
 	public String prepararAdicionarPostor()
 	{
+		logger.trace("Entra al método prepararAdicionarPostor");
 		user = new User();
 		user.setActive("ACTIVE");
 		user.setUserType("postor");
 		Date now = new Date();
 		user.setDateLastPassword(now);
+		logger.info("Objeto user inicializado para agregar Postor y nos dirige a /postor/registrarPostor.xhtml");
 		return "/postor/registrarPostor.xhtml";
 	}
 
 	public String prepararModificarUser()
 	{
+		logger.trace("Entra al método prepararModificarUser");
 		user = (User) (listaUser.getRowData());
 		String correo = user.getEmailAddress();
 		String[] x = correo.split("@");
 		email1 = x[0];
 		email2 = x[1];
+		logger.info("Objeto user inicializado con la fila de la listaUser y nos dirige a la página /administrador/modificarProveedor");
 		return "/administrador/modificarProveedor";
 	}
 
 	public String prepararAdmin()
 	{
+		logger.trace("Entra al método prepararAdmin");
 		UserService service = new UserService();
 		userAdmin = service.getUser("admin");
-
+		logger.info("objeto userAdmin iniicializado con el usuario de tipo admin y nos dirige a /administrador/datosAdmin");
 		return "/administrador/datosAdmin";
 	}
 
 	public String prepararRecuperarContraseña()
 	{
+		logger.trace("Entra al método prepararRecuperarContraseña");
 		userPass = new User();
+		logger.info("Objeto userPass inicializado y nos dirige a la página recuperarContraseña");
 		return "recuperarContraseña";
 	}
 
 	public String prepararCambioContraseña()
 	{
+		logger.trace("Entra al método prepararCambioContraseña");
 		UserService service = new UserService();
 		userPass = service.getUser(loginUser.getUserName());
+		logger.info("Objeto userPass inicializado con el user de loginUser y nos dirige a cambiarContraseña");
 		return "cambiarContraseña";
 	}
 
 	public String prepararIngresoProveedor()
 	{
+		logger.trace("Entra al método prepararIngresoProveedor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		listaProveedor = inicializarListaProveedor(loginUser.getUserName());
+		logger.info("Objeto user inicializado por el user de loginUser y listaProveedor incializada. Nos dirige a /proveedor/indexProveedor");
 		return "/proveedor/indexProveedor";
 	}
 
 	public String prepararDatosProveedor()
 	{
+		logger.trace("Entra al método prepararDatosProveedor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
+		logger.info("Objeto user inicializado al user de loginUser y  nos dirige a la página /proveedor/datosProveedor");
 		return "/proveedor/datosProveedor";
 	}
 
 	public String prepararIngresoPostor()
 	{
+		logger.trace("Entra al método prepararIngresoPostor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
+		logger.info("Objeto user inicializado al user de loginUser y listaOfertaPostor inicializadas a la página /postor/indexPostor");
 		return "/postor/indexPostor";
 	}
 
 	public String prepararDatosPostor()
 	{
+		logger.trace("Entra al método prepararDatosPostor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
+		logger.info("Ojeto user inicializado con el user de loginUser y nos dirige a la página /postor/datosPostor");
 		return "/postor/datosPostor";
 	}
 
 	public String prepararAdicionarSubasta()
 	{
+		logger.trace("Entra a método prepararAdicionarSubasta");
 		ParameterService serviceP = new ParameterService();
 		sale = new Salesueb();
 		nombre = user.getUserName();
 		sale.setPhotoProduct(serviceP.getParameter("RutaImagen").getTextValue());
+		logger.info("Objeto sale inicializado con Salesueb, objeto nombre inicializado con el userName de user y cambiamos la ruta de la imagen con el para metro 'Ruta imagen'. Nos dirige a la página /proveedor/nuevaSubasta ");
 		return "/proveedor/nuevaSubasta";
 
 	}
 
 	public String prepararSubasta()
 	{
+		logger.trace("Entra al método prepararSubasta");
 		sale = (Salesueb) listaSubastas.getRowData();
+		logger.info("Objeto sale inicializado con la columna de la lista y nos dirige a la página /postor/subasta ");
 		return "/postor/subasta";
 	}
 
 	public void prepararAgregarOferta()
 	{
+		logger.trace("Entra al método prepararAgregarOferta");
 		idSale = sale.getId();
 		oferta.setDateOffer(new Date());
 		nombre = loginUser.getUserName();
+		logger.info("Se incializa el objeto idSale con el id de la subasta, se asigna la fefcha a la oferta y asignamos a la variable nombre el valor del userName de loginUser.");
 	}
 
 	public String adicionarUser()
 	{
+		logger.trace("Entra al método adicionarUser");
 		UserService service = new UserService();
 		user.setEmailAddress(email1 + email2);
-		System.out.println(email1 + "            " + email2);
 		boolean repetido = false;
 		Iterator<User> it = getListarUser().iterator();
 		while (it.hasNext() && repetido == false)
@@ -220,6 +246,8 @@ public class UserMB
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
 			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
+			
+			logger.info("Usuario agregado a la base de datos");
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
 
@@ -228,6 +256,7 @@ public class UserMB
 			mensajeError = "Ese Usuario ya existe";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			logger.warn("El usuario ya existe.");
 			return "";
 		}
 
@@ -239,16 +268,18 @@ public class UserMB
 
 	public String modificarUser()
 	{
+		logger.trace("Entra al método modificarUser");
 		UserService service = new UserService();
 		user.setEmailAddress(email1 + email2);
 		service.actualizar(user);
 		audit.adicionarAudit("Admin", "UPDATE", "User", user.getId());
-
+		logger.info("Actualizamos el usuario en la base de datos ");
 		return "/administrador/indexAdmin";
 	}
 
 	public void eliminarUser()
 	{
+		logger.trace("Entramos al método eliminarUser");
 		User usuarioTemp = (User) (listaUser.getRowData());
 		UserService service = new UserService();
 		Date now = new Date();
@@ -256,6 +287,7 @@ public class UserMB
 		{
 			usuarioTemp.setActive("INACTIVE");
 			audit.adicionarAudit("Admin", "DELETE", "User", usuarioTemp.getId());
+			logger.info("Estado del usuario cambiado a INACTIVO");
 		} else if (usuarioTemp.getActive().equalsIgnoreCase("INACTIVE"))
 		{
 			String pass = EnviarCorreo.sendEmail(usuarioTemp.getEmailAddress());
@@ -263,6 +295,7 @@ public class UserMB
 			usuarioTemp.setFailedAttempts(0);
 			usuarioTemp.setDateLastPassword(now);
 			usuarioTemp.setActive("ACTIVE");
+			logger.info("Estado del usuario cambiado a ACTIVO");
 		}
 		service.actualizar(usuarioTemp);
 	}
@@ -288,8 +321,12 @@ public class UserMB
 			}
 		}
 
+		
+		
 		if (existe)
 		{
+			
+			logger.info("El usuario si existe");
 
 			if (usuarioTemp.getPassword().endsWith("$") || (dias >= serviceP.getParameter("Fecha").getNumberValue()
 					&& serviceP.getParameter("Fecha").getState().equalsIgnoreCase("ACTIVE")))
@@ -303,13 +340,16 @@ public class UserMB
 					{
 						usuarioTemp.setFailedAttempts(0);
 						service.actualizar(usuarioTemp);
+						logger.info("El usuario debe cambiar la contrasela por ingrresar con constraseña generada por el administrador o por que se vencio el tiempo para el cambio.");
 						pagina = prepararCambioContraseña();
 					} else
 					{
 						mensajeError = "Verificación del CAPTCHA invalida";
+						logger.error("Validación del CAPTCHA incorrecta");
 					}
 				} catch (Exception e)
 				{
+					logger.error("Validación del CAPTCHA incorrecta");
 				}
 			} else if (usuarioTemp.getPassword()
 					.equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5))
@@ -327,6 +367,7 @@ public class UserMB
 						{
 							usuarioTemp.setFailedAttempts(0);
 							service.actualizar(usuarioTemp);
+							logger.info("Ingresa un usuario de tipo PROVEEDOR");
 							pagina = prepararIngresoProveedor();
 						} else
 						{
@@ -334,6 +375,7 @@ public class UserMB
 						}
 					} catch (Exception e)
 					{
+						logger.error("Validación del CAPTCHA incorrecta");
 					}
 				} else if (usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
 				{
@@ -346,6 +388,7 @@ public class UserMB
 						{
 							usuarioTemp.setFailedAttempts(0);
 							service.actualizar(usuarioTemp);
+							logger.info("Ingresa un usuario de tipo POSTOR");
 							pagina = prepararIngresoPostor();
 						} else
 						{
@@ -353,6 +396,7 @@ public class UserMB
 						}
 					} catch (Exception e)
 					{
+						logger.error("Validación del CAPTCHA incorrecta");
 					}
 				} else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN"))
 				{
@@ -365,7 +409,7 @@ public class UserMB
 						{
 							usuarioTemp.setFailedAttempts(0);
 							service.actualizar(usuarioTemp);
-							logger.trace("Ingresa el administrador");
+							logger.trace("Ingresa el ADMINISTRADOR");
 							pagina = "/administrador/inicioAdmin";
 						} else
 						{
@@ -373,6 +417,7 @@ public class UserMB
 						}
 					} catch (Exception e)
 					{
+						logger.error("Validación del CAPTCHA incorrecta");
 					}
 				}
 
@@ -387,6 +432,7 @@ public class UserMB
 					context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 					usuarioTemp.setFailedAttempts(usuarioTemp.getFailedAttempts() + 1);
 					service.actualizar(usuarioTemp);
+					logger.warn("El usuario ingreso mal su contraseña");
 					audit.adicionarAudit(usuarioTemp.getUserName(), "FAILLOGIN", "User", 0);
 				}
 			}
@@ -399,6 +445,7 @@ public class UserMB
 				audit.adicionarAudit(usuarioTemp.getUserName(), "DELETELOGIN", "User", 0);
 				mensajeError = "Su cuenta se encuentra bloqueada, por favor comuniquese con un administrador.";
 				FacesContext context = FacesContext.getCurrentInstance();
+				logger.warn("El usuario se ha bloquedo por exceder intentos de ingreso");
 				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			}
 
@@ -423,10 +470,12 @@ public class UserMB
 
 	public void recuperarContraseña() throws IOException
 	{
+		logger.trace("Entra la método recuperarContraseña");
 		UserService service = new UserService();
 		String pass = userPass.getPassword();
 		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 		userPass.setDateLastPassword(new Date());
+		logger.info("Sele genera una nueva contraseña al usuario y es enviada al correo que está registrado");
 		service.actualizar(userPass);
 
 		audit.adicionarAudit(userPass.getUserName(), "UPDATE", "User", userPass.getId());
@@ -444,6 +493,7 @@ public class UserMB
 
 	public void cambiarContraseña() throws IOException
 	{
+		logger.trace("Entramos al método cambiarContraseña");
 		UserService service = new UserService();
 		User userTemp = new User();
 		userPass.setEmailAddress(email1 + email2);
@@ -472,7 +522,7 @@ public class UserMB
 			userTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			userTemp.setFailedAttempts(0);
 			service.actualizar(userTemp);
-
+			logger.info("El usuario fue encontrado por su correo y se le ha enviado la nueva contraseña la correo.");
 			audit.adicionarAudit(userTemp.getUserName(), "UPDATE", "User", userTemp.getId());
 
 		} else
@@ -480,6 +530,7 @@ public class UserMB
 			mensajeError = "No se encontró un usuario con ese correo.";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			logger.warn("No se encontró ningun usuario por ese correo");
 		}
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
@@ -490,6 +541,8 @@ public class UserMB
 	public void logOut() throws IOException
 	{
 
+		logger.trace("Entra al método logOut");
+		
 		UserService service = new UserService();
 		User usuarioTemp = service.getUser(loginUser.getUserName());
 
@@ -498,10 +551,13 @@ public class UserMB
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
+		
+		logger.info("El usuario cierra seción");
 	}
 
 	public String agregarOferta()
 	{
+		logger.trace("Entra al método agregarOferta");
 		OfferersaleService service = new OfferersaleService();
 		oferta.setIdentification(nombre);
 
@@ -510,6 +566,7 @@ public class UserMB
 			mensajeError = "La oferta debe ser mayor que la oferta actual";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			logger.warn("La oferta ingresada no es valida por ser menor al valor base o el valor actual");
 		} else
 		{
 			sale.setValueCurrent(oferta.getValueOffer());
@@ -520,12 +577,14 @@ public class UserMB
 			service.nuevo(oferta);
 			audit.adicionarAudit(nombre, "CREATE", "Offerersales", 0);
 			audit.adicionarAudit(nombre, "UPDATE", "Salesueb", sale.getId());
+			logger.info("Se crea una nueva oferta y se actualiza el valor actual en la subasta");
 		}
 		return "/postor/subasta";
 	}
 	
 	public void actualizarOfertas(int idSales)
 	{
+		logger.trace("Entra al método actualizarOfertas");
 		OfferersaleService service = new OfferersaleService();
 		List<Offerersale> listaOfertas = new OfferersaleService().getOfertaDeSubasta(idSales);
 		
@@ -537,16 +596,21 @@ public class UserMB
 			service.actualizar(m);
 		}
 		
+		logger.info("Actualiza el estado de todas las oferta a LOSER para que la nueva oferta sea la gabadora");
+		
 	}
 
 	public void modificarSubasta()
 	{
+		logger.trace("Entra al método modificarSubasta");
 		SalesuebService service = new SalesuebService();
 		service.actualizar(sale);
+		logger.info("Se modifica la subasta");
 	}
 
 	public String adicionarSubasta()
 	{
+		logger.trace("Entra al método adicionarSubasta");
 		SalesuebMB saleB = new SalesuebMB();
 
 		if (sale.getDateStart().getDay() >= sale.getDateEnd().getDay())
@@ -554,18 +618,21 @@ public class UserMB
 			mensajeError = "La fecha de inicio debe ser menor que la fecha final";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			logger.warn("La fecha final de la Subasta debe ser mayor que la de inicio");
 			return "";
 		} else
 		{
 			saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(),
 					sale.getDescriptionProduct(), sale.getName(), sale.getValueBase());
 			audit.adicionarAudit(nombre, "CREATE", "Salesueb", sale.getId());
+			logger.info("Se crea una nueva subasta");
 			return "/proveedor/indexProveedor";
 		}
 	}
 
 	public void adicionarPostor()
 	{
+		logger.trace("Entra al método adicionarPostor");
 		UserService service = new UserService();
 		boolean repetido = false;
 		Iterator<User> it = getListarUser().iterator();
@@ -577,6 +644,8 @@ public class UserMB
 			}
 		}
 
+		logger.info("Verifica si el usuario no está registrado en el sistema");
+		
 		if (repetido == false)
 		{
 			user.setDateLastPassword(new Date());
@@ -584,11 +653,14 @@ public class UserMB
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
 			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
+			
+			logger.info("Se ha enviado contraseña del nuevo usuario a su correo");
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
 
 		} else if (repetido)
 		{
+			logger.warn("El usuario ya se encuentra en el sistema y no se puede resitrar");
 			mensajeError = "Ese Usuario ya existe";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
@@ -611,7 +683,7 @@ public class UserMB
 
 	public void archivoExcelOfertas() throws FileNotFoundException, DocumentException
 	{
-
+		logger.trace("Entra al método archivoExcelOfertas");
 		OfferersaleService service = new OfferersaleService();
 		List<Offerersale> oferta = service.getOfferersale(loginUser.getUserName());
 
@@ -656,10 +728,17 @@ public class UserMB
 		{
 			e.printStackTrace();
 		}
+		
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		
+		logger.info("Se genera el archivo excel de las ofertas");
 	}
 
 	public void archivoExcelSubastas() throws FileNotFoundException, DocumentException
 	{
+		logger.trace("Entra al método archivoExcelSubastas");
 
 		SalesuebService service = new SalesuebService();
 		List<Salesueb> subasta = service.getSalesueb(loginUser.getUserName());
@@ -698,6 +777,10 @@ public class UserMB
 			dataRow.createCell(5).setCellValue(subasta.get(i).getDateStart());
 			dataRow.createCell(6).setCellValue(subasta.get(i).getDateEnd());
 		}
+		
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 
 		try
 		{
@@ -711,13 +794,15 @@ public class UserMB
 		{
 			e.printStackTrace();
 		}
+		
+		logger.info("Se ha generado el arhcivo correctamente");
+		
 	}
 
 	public void pdfSubastas() throws FileNotFoundException, DocumentException
 	{
+		logger.trace("Entra en el método pdfSubastas");
 
-//		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-//		URL url = loader.getResource("Acme-corp.png");
 		Document pdfDoc = new Document(PageSize.A4);
 
 		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
@@ -735,6 +820,11 @@ public class UserMB
 		addTableHeaderSub(tableUsuario);
 		addRowsUserSub(tableUsuario);
 		pdfDoc.add(tableUsuario);
+		
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		
 //		try
 //		{
 ////			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".pdf"));
@@ -745,6 +835,8 @@ public class UserMB
 //		}
 		pdfDoc.close();
 		m.close();
+		
+		logger.info("Se ha generado correctamente el archivo");
 
 	}
 
@@ -804,8 +896,7 @@ public class UserMB
 	public void pdfOfertas() throws FileNotFoundException, DocumentException
 	{
 
-//			ClassLoader loader = Thread.currentThread().getContextClassLoader();
-//			URL url = loader.getResource("Acme-corp.png");
+		logger.trace("Entra al método pdfOfertas");
 		Document pdfDoc = new Document(PageSize.A4);
 
 		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
@@ -823,6 +914,11 @@ public class UserMB
 		addTableHeaderCrud(tableUsuario);
 		addRowsUserCrud(tableUsuario);
 		pdfDoc.add(tableUsuario);
+		
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		
 //			try
 //			{
 ////				Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+crud+".pdf"));
@@ -833,6 +929,8 @@ public class UserMB
 //			}
 		pdfDoc.close();
 		m.close();
+		
+		logger.info("Se genera correctamente el archivo");
 
 	}
 
@@ -883,12 +981,14 @@ public class UserMB
 	
 	public void actualizarSubastas()
 	{
+		
+		logger.trace("Entra al método actualizarSubastas");
+		
 		List<Salesueb> lista = new SalesuebService().lista();
 		Date actual = new Date();
 		for(int i = 0; i < lista.size(); i++)
 		{
 			sale = lista.get(i);
-			System.out.println(sale.getName());
 			
 			if(lista.get(i).getDateStart().before(actual) || lista.get(i).getDateStart().equals(actual))
 			{
@@ -902,6 +1002,8 @@ public class UserMB
 				modificarSubasta();
 			}
 		}
+		
+		logger.info("El estado de las subastas ha sido actualizado a LOSER");
 	}
 
 	public User getUsuario()
@@ -1003,8 +1105,10 @@ public class UserMB
 
 	public DataModel inicializarListaProveedor(String userSales)
 	{
+		logger.trace("Entra al método inicializarListaProveedor");
 		List<Salesueb> lista = new SalesuebService().getSalesueb(userSales);
 		listaProveedor = new ListDataModel<>(lista);
+		logger.info("La lista de proveedor ha sido inicializada con sus subastas correspondientes");
 		return listaProveedor;
 	}
 
@@ -1056,8 +1160,11 @@ public class UserMB
 
 	public DataModel inicializarListaOfertaPostor(String postor)
 	{
+		
+		logger.trace("Entra al método inicializarListaOfertaPostor");
 		List<Offerersale> lista = new OfferersaleService().getOfferersale(postor);
 		listaOfertaPostor = new ListDataModel(lista);
+		logger.info("Lista de ofertas está inicializada");
 		return listaOfertaPostor;
 	}
 
@@ -1084,4 +1191,6 @@ public class UserMB
 	public void setListaSubastasActivas(DataModel listaSubastasActivas) {
 		this.listaSubastasActivas = listaSubastasActivas;
 	}
+
+	
 }
