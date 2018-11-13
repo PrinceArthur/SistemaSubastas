@@ -281,7 +281,7 @@ public class AuditMB
 			}
 		}
 
-	public void archivoPorUsuario() throws FileNotFoundException, DocumentException
+	public void archivoPdfUsuario() throws FileNotFoundException, DocumentException
 	{
 
 		Document pdfDoc = new Document(PageSize.A4);
