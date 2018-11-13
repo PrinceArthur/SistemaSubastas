@@ -8,6 +8,7 @@ public interface OfferersaleDAO
 {
 	public void nuevo(Offerersale offerersale);
 	public List<Offerersale> getOfferersale(String userName);
+	public List<Offerersale> getOfertaDeSubasta(int idSubasta);
 	public void actualizar(Offerersale offerersale);
 	public void eliminar(Offerersale oferrersale);
 	public List<Offerersale> lista();
