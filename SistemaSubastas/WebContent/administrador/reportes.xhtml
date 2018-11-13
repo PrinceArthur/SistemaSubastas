@@ -67,8 +67,6 @@ body {
 					icon="ui-icon-extlink" styleClass="boton" />
 				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
 					style="background-color: rgb(203, 216, 237);border:none">
-					<p:menuitem value="Datos personales"
-						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
 					<p:menuitem value="Salir" action="#{userMB.logOut}"
 						icon="ui-icon-power" />
 				</p:menu>
@@ -87,62 +85,55 @@ body {
 							action="/administrador/indexAdmin.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Auditoria"
 							action="/administrador/indexAudit.xhtml" icon="ui-icon-star" />
-						<p:menuitem value="Parámetros"
+						<p:menuitem value="Parametros"
 							action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Subastas"
-							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star" />
-						<p:menuitem value="Ofertas"
-							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
+							action="/administrador/indexSubata.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Reportes"
 							action="/administrador/reportes.xhtml" icon="ui-icon-star" />
 					</p:submenu>
 				</p:menu>
 
-				<p:panel
+			<p:panel
 					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
-					<p:growl id="growl" showDetail="true" sticky="true" />
-
-					<p:panelGrid columns="2" styleClass="panel" id="pg">
+				<p:growl id="growl" showDetail="true" sticky="true" />
+				
+					<p:panelGrid columns="3" styleClass="panel" id="pg">
 
 						<h:outputLabel value="Generar reporte por usuario: "
 							style="font-weight:bold" />
 
 						<h:outputLabel value="Generar reporte por operación - CRUD: "
 							style="font-weight:bold" />
+							
+						<h:outputLabel value="Generar reporte por fecha de regitro de postores: "
+							style="font-weight:bold" />
 
-						<p:inputText value="#{auditMB.usu}" />
+						<p:inputText value="#{auditMB.usu}" placeholder="UserName" />
 
-						<p:selectOneMenu required="true"
-							validatorMessage="Debe seleccionar una opción CRUD"
-							id="mail" value="#{userMB.email2}" style="width:125px">
-							<f:selectItem itemLabel="Seleccione" itemValue="" />
-							<f:selectItem itemLabel="CREATE" itemValue="CREATE" />
-							<f:selectItem itemLabel="DELETE" itemValue="DELETE" />
-							<f:selectItem itemLabel="UPDATE" itemValue="UPDATE" />
-							<f:selectItem itemLabel="INGRESA" itemValue="INGRESA" />
-							<f:selectItem itemLabel="SALE" itemValue="SALE" />
-						</p:selectOneMenu>
-
-
+						<p:inputText value="#{auditMB.operacion}" />
+						
+						<p:calendar id="popup" value="#{auditMB.fecha}" />
+						
 						<p:panelGrid columns="2">
-							<p:commandButton value="PDF"
-								action="#{auditMB.archivoPdfUsuario}" />
-							<p:commandButton value="EXCEL"
-								action="#{auditMB.archivoExcelPorUsuario}" />
+							<p:commandButton value="PDF" action="#{auditMB.archivoPdfUsuario}"/>
+							<p:commandButton value="EXCEL" action="#{auditMB.archivoExcelPorUsuario}" />
 						</p:panelGrid>
-
+						
 						<p:panelGrid columns="2">
-							<p:commandButton value="PDF" action="#{auditMB.pdfCrud}" />
-							<p:commandButton value="EXCEL"
-								action="#{auditMB.archivoExcelPorCrud}" />
+							<p:commandButton value="PDF" action="#{auditMB.pdfCrud}"/>
+							<p:commandButton value="EXCEL" action="#{auditMB.archivoExcelPorCrud}" />
 						</p:panelGrid>
-
-
-
+						
+						<p:panelGrid columns="2">
+							<p:commandButton value="PDF" action="#{auditMB.archivoPdfFecha}" />
+							<p:commandButton value="EXCEL" action="#{auditMB.archivoExcelPorFecha}" />
+						</p:panelGrid>
+						
 
 					</p:panelGrid>
 				</p:panel>
-
+				
 			</p:panelGrid>
 		</p:panel>
 	</h:form>
