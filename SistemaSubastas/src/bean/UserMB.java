@@ -55,7 +55,7 @@ import service.UserService;
 
 /**
  * 
- * @author Guillermo Marcano, Richard Mora y Estefan√≠a P√©rez
+ * @author Guillermo Marcano, Richard Mora y EstefanÌa PÈrez
  * Managed Bean que se encarga de gestionar los usuarios y egenrar reportes.
  *
  */
@@ -85,7 +85,7 @@ public class UserMB
 	private User userAdmin = new User();
 	
 	/**
-	 * Usuario oara generar nueva contrase√±a
+	 * Usuario oara generar nueva contraseÒa
 	 */
 	private User userPass = new User();
 	
@@ -165,12 +165,12 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que inicializa el usuario para ser adicionado
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el usuario para ser adicionado
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararAdicionarUser()
 	{
-		logger.trace("Entra al m√©todo prepararAdicionarUser");
+		logger.trace("Entra al mÈtodo prepararAdicionarUser");
 		user = new User();
 		user.setActive("ACTIVE");
 		user.setUserType("proveedor");
@@ -183,12 +183,12 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que inicializa el usuario postor para ser adicionado
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el usuario postor para ser adicionado
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararAdicionarPostor()
 	{
-		logger.trace("Entra al m√©todo prepararAdicionarPostor");
+		logger.trace("Entra al mÈtodo prepararAdicionarPostor");
 		user = new User();
 		user.setActive("ACTIVE");
 		user.setUserType("postor");
@@ -199,28 +199,28 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que inicializa el usuario desde la lista para ser modificado
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el usuario desde la lista para ser modificado
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararModificarUser()
 	{
-		logger.trace("Entra al m√©todo prepararModificarUser");
+		logger.trace("Entra al mÈtodo prepararModificarUser");
 		user = (User) (listaUser.getRowData());
 		String correo = user.getEmailAddress();
 		String[] x = correo.split("@");
 		email1 = x[0];
 		email2 = x[1];
-		logger.info("Objeto user inicializado con la fila de la listaUser y nos dirige a la p√°gina /administrador/modificarProveedor");
+		logger.info("Objeto user inicializado con la fila de la listaUser y nos dirige a la p·gina /administrador/modificarProveedor");
 		return "/administrador/modificarProveedor";
 	}
 
 	/**
-	 * M√©todo que inicializa el usuario administrador para obtener sus datos
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el usuario administrador para obtener sus datos
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararAdmin()
 	{
-		logger.trace("Entra al m√©todo prepararAdmin");
+		logger.trace("Entra al mÈtodo prepararAdmin");
 		UserService service = new UserService();
 		userAdmin = service.getUser("admin");
 		logger.info("objeto userAdmin iniicializado con el usuario de tipo admin y nos dirige a /administrador/datosAdmin");
@@ -228,37 +228,37 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que inicializa el userPass para recuperar la contrase√±a
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el userPass para recuperar la contraseÒa
+	 * @return redirecciÛn de la p·gina
 	 */
-	public String prepararRecuperarContrase√±a()
+	public String prepararRecuperarContraseÒa()
 	{
-		logger.trace("Entra al m√©todo prepararRecuperarContrase√±a");
+		logger.trace("Entra al mÈtodo prepararRecuperarContraseÒa");
 		userPass = new User();
-		logger.info("Objeto userPass inicializado y nos dirige a la p√°gina recuperarContrase√±a");
-		return "recuperarContrase√±a";
+		logger.info("Objeto userPass inicializado y nos dirige a la p·gina recuperarContraseÒa");
+		return "recuperarContraseÒa";
 	}
 
 	/**
-	 * M√©todo que inicializa el userPass desde a lista para cambiar su contrase√±a
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el userPass desde a lista para cambiar su contraseÒa
+	 * @return redirecciÛn de la p·gina
 	 */
-	public String prepararCambioContrase√±a()
+	public String prepararCambioContraseÒa()
 	{
-		logger.trace("Entra al m√©todo prepararCambioContrase√±a");
+		logger.trace("Entra al mÈtodo prepararCambioContraseÒa");
 		UserService service = new UserService();
 		userPass = service.getUser(loginUser.getUserName());
-		logger.info("Objeto userPass inicializado con el user de loginUser y nos dirige a cambiarContrase√±a");
-		return "cambiarContrase√±a";
+		logger.info("Objeto userPass inicializado con el user de loginUser y nos dirige a cambiarContraseÒa");
+		return "cambiarContraseÒa";
 	}
 
 	/**
-	 * M√©todo que inicializa el usuario proveedor desde la lista para su ingreso
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el usuario proveedor desde la lista para su ingreso
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararIngresoProveedor()
 	{
-		logger.trace("Entra al m√©todo prepararIngresoProveedor");
+		logger.trace("Entra al mÈtodo prepararIngresoProveedor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		listaProveedor = inicializarListaProveedor(loginUser.getUserName());
@@ -267,80 +267,80 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que inicializa el usuario proveedor desde las lista para obtener sus datos
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el usuario proveedor desde las lista para obtener sus datos
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararDatosProveedor()
 	{
-		logger.trace("Entra al m√©todo prepararDatosProveedor");
+		logger.trace("Entra al mÈtodo prepararDatosProveedor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
-		logger.info("Objeto user inicializado al user de loginUser y  nos dirige a la p√°gina /proveedor/datosProveedor");
+		logger.info("Objeto user inicializado al user de loginUser y  nos dirige a la p·gina /proveedor/datosProveedor");
 		return "/proveedor/datosProveedor";
 	}
 
 	/**
-	 * M√©todo que inicializa el usuario postor desde la lista para su ingreso
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el usuario postor desde la lista para su ingreso
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararIngresoPostor()
 	{
-		logger.trace("Entra al m√©todo prepararIngresoPostor");
+		logger.trace("Entra al mÈtodo prepararIngresoPostor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
-		logger.info("Objeto user inicializado al user de loginUser y listaOfertaPostor inicializadas a la p√°gina /postor/indexPostor");
+		logger.info("Objeto user inicializado al user de loginUser y listaOfertaPostor inicializadas a la p·gina /postor/indexPostor");
 		return "/postor/indexPostor";
 	}
 
 	/**
-	 * M√©todo que inicializa el usuario para ser adicionado
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa el usuario para ser adicionado
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararDatosPostor()
 	{
-		logger.trace("Entra al m√©todo prepararDatosPostor");
+		logger.trace("Entra al mÈtodo prepararDatosPostor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
-		logger.info("Ojeto user inicializado con el user de loginUser y nos dirige a la p√°gina /postor/datosPostor");
+		logger.info("Ojeto user inicializado con el user de loginUser y nos dirige a la p·gina /postor/datosPostor");
 		return "/postor/datosPostor";
 	}
 
 	/**
-	 * M√©todo que inicializa la subasta para ser adicionada
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa la subasta para ser adicionada
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararAdicionarSubasta()
 	{
-		logger.trace("Entra a m√©todo prepararAdicionarSubasta");
+		logger.trace("Entra a mÈtodo prepararAdicionarSubasta");
 		ParameterService serviceP = new ParameterService();
 		sale = new Salesueb();
 		nombre = user.getUserName();
 		sale.setPhotoProduct(serviceP.getParameter("RutaImagen").getTextValue());
-		logger.info("Objeto sale inicializado con Salesueb, objeto nombre inicializado con el userName de user y cambiamos la ruta de la imagen con el para metro 'Ruta imagen'. Nos dirige a la p√°gina /proveedor/nuevaSubasta ");
+		logger.info("Objeto sale inicializado con Salesueb, objeto nombre inicializado con el userName de user y cambiamos la ruta de la imagen con el para metro 'Ruta imagen'. Nos dirige a la p·gina /proveedor/nuevaSubasta ");
 		return "/proveedor/nuevaSubasta";
 
 	}
 
 	/**
-	 * M√©todo que inicializa la subasta desde la lista para obtener sus datos
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa la subasta desde la lista para obtener sus datos
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String prepararSubasta()
 	{
-		logger.trace("Entra al m√©todo prepararSubasta");
+		logger.trace("Entra al mÈtodo prepararSubasta");
 		sale = (Salesueb) listaSubastas.getRowData();
-		logger.info("Objeto sale inicializado con la columna de la lista y nos dirige a la p√°gina /postor/subasta ");
+		logger.info("Objeto sale inicializado con la columna de la lista y nos dirige a la p·gina /postor/subasta ");
 		return "/postor/subasta";
 	}
 
 	/**
-	 * M√©todo que inicializa la oferta para ser adicionada
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que inicializa la oferta para ser adicionada
+	 * @return redirecciÛn de la p·gina
 	 */
 	public void prepararAgregarOferta()
 	{
-		logger.trace("Entra al m√©todo prepararAgregarOferta");
+		logger.trace("Entra al mÈtodo prepararAgregarOferta");
 		idSale = sale.getId();
 		oferta.setDateOffer(new Date());
 		nombre = loginUser.getUserName();
@@ -348,12 +348,12 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que adiciona los usuarios administrador y proveedor
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que adiciona los usuarios administrador y proveedor
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String adicionarUser()
 	{
-		logger.trace("Entra al m√©todo adicionarUser");
+		logger.trace("Entra al mÈtodo adicionarUser");
 		UserService service = new UserService();
 		user.setEmailAddress(email1 + email2);
 		boolean repetido = false;
@@ -396,12 +396,12 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que modifica los usuarios
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que modifica los usuarios
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String modificarUser()
 	{
-		logger.trace("Entra al m√©todo modificarUser");
+		logger.trace("Entra al mÈtodo modificarUser");
 		UserService service = new UserService();
 		user.setEmailAddress(email1 + email2);
 		service.actualizar(user);
@@ -411,12 +411,12 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que elimina los usuarios
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que elimina los usuarios
+	 * @return redirecciÛn de la p·gina
 	 */
 	public void eliminarUser()
 	{
-		logger.trace("Entramos al m√©todo eliminarUser");
+		logger.trace("Entramos al mÈtodo eliminarUser");
 		User usuarioTemp = (User) (listaUser.getRowData());
 		UserService service = new UserService();
 		Date now = new Date();
@@ -438,13 +438,13 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo para iniciar sesi√≥n
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo para iniciar sesiÛn
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String login()
 	{
 
-		logger.trace("M√©todo de login");
+		logger.trace("MÈtodo de login");
 
 		String pagina = "";
 		UserService service = new UserService();
@@ -481,16 +481,16 @@ public class UserMB
 					{
 						usuarioTemp.setFailedAttempts(0);
 						service.actualizar(usuarioTemp);
-						logger.info("El usuario debe cambiar la contrasela por ingrresar con constrase√±a generada por el administrador o por que se vencio el tiempo para el cambio.");
-						pagina = prepararCambioContrase√±a();
+						logger.info("El usuario debe cambiar la contrasela por ingrresar con constraseÒa generada por el administrador o por que se vencio el tiempo para el cambio.");
+						pagina = prepararCambioContraseÒa();
 					} else
 					{
-						mensajeError = "Verificaci√≥n del CAPTCHA invalida";
-						logger.error("Validaci√≥n del CAPTCHA incorrecta");
+						mensajeError = "VerificaciÛn del CAPTCHA invalida";
+						logger.error("ValidaciÛn del CAPTCHA incorrecta");
 					}
 				} catch (Exception e)
 				{
-					logger.error("Validaci√≥n del CAPTCHA incorrecta");
+					logger.error("ValidaciÛn del CAPTCHA incorrecta");
 				}
 			} else if (usuarioTemp.getPassword()
 					.equals(Cifrado.getStringMessageDigest(loginUser.getPassword(), Cifrado.MD5))
@@ -512,11 +512,11 @@ public class UserMB
 							pagina = prepararIngresoProveedor();
 						} else
 						{
-							mensajeError = "Verificaci√≥n del CAPTCHA invalida";
+							mensajeError = "VerificaciÛn del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
-						logger.error("Validaci√≥n del CAPTCHA incorrecta");
+						logger.error("ValidaciÛn del CAPTCHA incorrecta");
 					}
 				} else if (usuarioTemp.getUserType().equalsIgnoreCase("POSTOR"))
 				{
@@ -533,11 +533,11 @@ public class UserMB
 							pagina = prepararIngresoPostor();
 						} else
 						{
-							mensajeError = "Verificaci√≥n del CAPTCHA invalida";
+							mensajeError = "VerificaciÛn del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
-						logger.error("Validaci√≥n del CAPTCHA incorrecta");
+						logger.error("ValidaciÛn del CAPTCHA incorrecta");
 					}
 				} else if (usuarioTemp.getUserType().equalsIgnoreCase("ADMIN"))
 				{
@@ -554,11 +554,11 @@ public class UserMB
 							pagina = "/administrador/inicioAdmin";
 						} else
 						{
-							mensajeError = "Verificaci√≥n del CAPTCHA invalida";
+							mensajeError = "VerificaciÛn del CAPTCHA invalida";
 						}
 					} catch (Exception e)
 					{
-						logger.error("Validaci√≥n del CAPTCHA incorrecta");
+						logger.error("ValidaciÛn del CAPTCHA incorrecta");
 					}
 				}
 
@@ -568,12 +568,12 @@ public class UserMB
 				if (usuarioTemp.getFailedAttempts() < serviceP.getParameter("Intentos").getNumberValue()
 						&& serviceP.getParameter("Intentos").getState().equalsIgnoreCase("ACTIVE"))
 				{
-					mensajeError = "Contrase√±a o Usuario inv√°lido";
+					mensajeError = "ContraseÒa o Usuario inv·lido";
 					FacesContext context = FacesContext.getCurrentInstance();
 					context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 					usuarioTemp.setFailedAttempts(usuarioTemp.getFailedAttempts() + 1);
 					service.actualizar(usuarioTemp);
-					logger.warn("El usuario ingreso mal su contrase√±a");
+					logger.warn("El usuario ingreso mal su contraseÒa");
 					audit.adicionarAudit(usuarioTemp.getUserName(), "FAILLOGIN", "User", 0);
 				}
 			}
@@ -594,29 +594,29 @@ public class UserMB
 
 		} else
 		{
-			mensajeError = "Contrase√±a o Usuario inv√°lido";
+			mensajeError = "ContraseÒa o Usuario inv·lido";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-			logger.warn("Est√° ingresando un usuario que no est√° registrado");
+			logger.warn("Est· ingresando un usuario que no est· registrado");
 		}
 
 		return pagina;
 	}
 
 	/**
-	 * M√©todo para hacer el cambio obligatorio de contrase√±a
+	 * MÈtodo para hacer el cambio obligatorio de contraseÒa
 	 * 
 	 * @throws IOException
 	 */
 
-	public void recuperarContrase√±a() throws IOException
+	public void recuperarContraseÒa() throws IOException
 	{
-		logger.trace("Entra la m√©todo recuperarContrase√±a");
+		logger.trace("Entra la mÈtodo recuperarContraseÒa");
 		UserService service = new UserService();
 		String pass = userPass.getPassword();
 		userPass.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5));
 		userPass.setDateLastPassword(new Date());
-		logger.info("Sele genera una nueva contrase√±a al usuario y es enviada al correo que est√° registrado");
+		logger.info("Sele genera una nueva contraseÒa al usuario y es enviada al correo que est· registrado");
 		service.actualizar(userPass);
 
 		audit.adicionarAudit(userPass.getUserName(), "UPDATE", "User", userPass.getId());
@@ -627,14 +627,14 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo para link De olvidar contrase√±a
+	 * MÈtodo para link De olvidar contraseÒa
 	 * 
 	 * @throws IOException
 	 */
 
-	public void cambiarContrase√±a() throws IOException
+	public void cambiarContraseÒa() throws IOException
 	{
-		logger.trace("Entramos al m√©todo cambiarContrase√±a");
+		logger.trace("Entramos al mÈtodo cambiarContraseÒa");
 		UserService service = new UserService();
 		User userTemp = new User();
 		userPass.setEmailAddress(email1 + email2);
@@ -663,15 +663,15 @@ public class UserMB
 			userTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			userTemp.setFailedAttempts(0);
 			service.actualizar(userTemp);
-			logger.info("El usuario fue encontrado por su correo y se le ha enviado la nueva contrase√±a la correo.");
+			logger.info("El usuario fue encontrado por su correo y se le ha enviado la nueva contraseÒa la correo.");
 			audit.adicionarAudit(userTemp.getUserName(), "UPDATE", "User", userTemp.getId());
 
 		} else
 		{
-			mensajeError = "No se encontr√≥ un usuario con ese correo.";
+			mensajeError = "No se encontrÛ un usuario con ese correo.";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-			logger.warn("No se encontr√≥ ningun usuario por ese correo");
+			logger.warn("No se encontrÛ ningun usuario por ese correo");
 		}
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
@@ -680,12 +680,12 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que cierra la sesi√≥n de un usuario
+	 * MÈtodo que cierra la sesiÛn de un usuario
 	 */
 	public void logOut() throws IOException
 	{
 
-		logger.trace("Entra al m√©todo logOut");
+		logger.trace("Entra al mÈtodo logOut");
 		
 		UserService service = new UserService();
 		User usuarioTemp = service.getUser(loginUser.getUserName());
@@ -696,16 +696,16 @@ public class UserMB
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 		
-		logger.info("El usuario cierra seci√≥n");
+		logger.info("El usuario cierra seciÛn");
 	}
 
 	/**
-	 * M√©todo que crea una oferta nueva
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que crea una oferta nueva
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String agregarOferta()
 	{
-		logger.trace("Entra al m√©todo agregarOferta");
+		logger.trace("Entra al mÈtodo agregarOferta");
 		OfferersaleService service = new OfferersaleService();
 		oferta.setIdentification(nombre);
 
@@ -731,12 +731,12 @@ public class UserMB
 	}
 	
 	/**
-	 * M√©todo que actualiza las ofertas
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que actualiza las ofertas
+	 * @return redirecciÛn de la p·gina
 	 */
 	public void actualizarOfertas(int idSales)
 	{
-		logger.trace("Entra al m√©todo actualizarOfertas");
+		logger.trace("Entra al mÈtodo actualizarOfertas");
 		OfferersaleService service = new OfferersaleService();
 		List<Offerersale> listaOfertas = new OfferersaleService().getOfertaDeSubasta(idSales);
 		
@@ -753,24 +753,24 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que modifica las subastas
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que modifica las subastas
+	 * @return redirecciÛn de la p·gina
 	 */
 	public void modificarSubasta()
 	{
-		logger.trace("Entra al m√©todo modificarSubasta");
+		logger.trace("Entra al mÈtodo modificarSubasta");
 		SalesuebService service = new SalesuebService();
 		service.actualizar(sale);
 		logger.info("Se modifica la subasta");
 	}
 
 	/**
-	 * M√©todo que crea las subastas
-	 * @return redirecci√≥n de la p√°gina
+	 * MÈtodo que crea las subastas
+	 * @return redirecciÛn de la p·gina
 	 */
 	public String adicionarSubasta()
 	{
-		logger.trace("Entra al m√©todo adicionarSubasta");
+		logger.trace("Entra al mÈtodo adicionarSubasta");
 		SalesuebMB saleB = new SalesuebMB();
 
 		if (sale.getDateStart().getDay() >= sale.getDateEnd().getDay())
@@ -791,11 +791,11 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que crea un usuario postor
+	 * MÈtodo que crea un usuario postor
 	 */
 	public void adicionarPostor()
 	{
-		logger.trace("Entra al m√©todo adicionarPostor");
+		logger.trace("Entra al mÈtodo adicionarPostor");
 		UserService service = new UserService();
 		boolean repetido = false;
 		Iterator<User> it = getListarUser().iterator();
@@ -807,7 +807,7 @@ public class UserMB
 			}
 		}
 
-		logger.info("Verifica si el usuario no est√° registrado en el sistema");
+		logger.info("Verifica si el usuario no est· registrado en el sistema");
 		
 		if (repetido == false)
 		{
@@ -817,7 +817,7 @@ public class UserMB
 			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
 			
-			logger.info("Se ha enviado contrase√±a del nuevo usuario a su correo");
+			logger.info("Se ha enviado contraseÒa del nuevo usuario a su correo");
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
 
@@ -845,13 +845,13 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que genera el reporte en formato excel de las ofertas
+	 * MÈtodo que genera el reporte en formato excel de las ofertas
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
 	public void archivoExcelOfertas() throws FileNotFoundException, DocumentException
 	{
-		logger.trace("Entra al m√©todo archivoExcelOfertas");
+		logger.trace("Entra al mÈtodo archivoExcelOfertas");
 		OfferersaleService service = new OfferersaleService();
 		List<Offerersale> oferta = service.getOfferersale(loginUser.getUserName());
 
@@ -905,13 +905,13 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que genera el reporte en formato excel de las subastas
+	 * MÈtodo que genera el reporte en formato excel de las subastas
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
 	public void archivoExcelSubastas() throws FileNotFoundException, DocumentException
 	{
-		logger.trace("Entra al m√©todo archivoExcelSubastas");
+		logger.trace("Entra al mÈtodo archivoExcelSubastas");
 
 		SalesuebService service = new SalesuebService();
 		List<Salesueb> subasta = service.getSalesueb(loginUser.getUserName());
@@ -933,7 +933,7 @@ public class UserMB
 
 		id.setCellValue(new HSSFRichTextString("ID"));
 		name.setCellValue(new HSSFRichTextString("Producto"));
-		descripcion.setCellValue(new HSSFRichTextString("Descripci√≥n"));
+		descripcion.setCellValue(new HSSFRichTextString("DescripciÛn"));
 		base.setCellValue(new HSSFRichTextString("Valor base"));
 		current.setCellValue(new HSSFRichTextString("Valor ofertado"));
 		fechaStar.setCellValue(new HSSFRichTextString("Fecha inicio"));
@@ -971,15 +971,83 @@ public class UserMB
 		logger.info("Se ha generado el arhcivo correctamente");
 		
 	}
+	
+	/**
+	 * MÈtodo para generar reporte excel de todas las subastas
+	 * @throws FileNotFoundException
+	 * @throws DocumentException
+	 */
+	public void excelSubastas() throws FileNotFoundException, DocumentException
+	{
+		logger.trace("Entra al mÈtodo ExcelSubastas");
+
+		SalesuebService service = new SalesuebService();
+		List<Salesueb> subasta = service.lista();
+
+		HSSFWorkbook libro = new HSSFWorkbook();
+
+		HSSFSheet hoja = libro.createSheet();
+
+		HSSFRow fila = hoja.createRow(0);
+
+		// Se crea una celda dentro de la fila
+		HSSFCell id = fila.createCell((short) 0);
+		HSSFCell name = fila.createCell((short) 1);
+		HSSFCell descripcion = fila.createCell((short) 2);
+		HSSFCell base = fila.createCell((short) 3);
+		HSSFCell current = fila.createCell((short) 4);
+		HSSFCell fechaStar = fila.createCell((short) 5);
+		HSSFCell fechaEnd = fila.createCell((short) 6);
+
+		id.setCellValue(new HSSFRichTextString("ID"));
+		name.setCellValue(new HSSFRichTextString("Producto"));
+		descripcion.setCellValue(new HSSFRichTextString("DescripciÛn"));
+		base.setCellValue(new HSSFRichTextString("Valor base"));
+		current.setCellValue(new HSSFRichTextString("Valor ofertado"));
+		fechaStar.setCellValue(new HSSFRichTextString("Fecha inicio"));
+		fechaEnd.setCellValue(new HSSFRichTextString("Fecha fin"));
+		for (int i = 0; i < subasta.size(); ++i)
+		{
+			HSSFRow dataRow = hoja.createRow(i + 1);
+
+			dataRow.createCell(0).setCellValue(subasta.get(i).getId());
+			dataRow.createCell(1).setCellValue(subasta.get(i).getName());
+			dataRow.createCell(2).setCellValue(subasta.get(i).getDescriptionProduct());
+			dataRow.createCell(3).setCellValue(subasta.get(i).getValueBase());
+			dataRow.createCell(4).setCellValue(subasta.get(i).getValueCurrent());
+			dataRow.createCell(5).setCellValue(subasta.get(i).getDateStart());
+			dataRow.createCell(6).setCellValue(subasta.get(i).getDateEnd());
+		}
+		
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+
+		try
+		{
+			FileOutputStream elFichero = new FileOutputStream(
+					"C://ReportesGeneradosSistemaSubastas/Reporte de subastas.xls");
+			libro.write(elFichero);
+			// Desktop.getDesktop().open(new
+			// File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas.xls"));
+			elFichero.close();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		logger.info("Se ha generado el arhcivo correctamente");
+		
+	}
 
 	/**
-	 * M√©todo que genera el reporte en formato pdf de las subastas
+	 * MÈtodo que genera el reporte en formato pdf de las subastas
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
 	public void pdfSubastas() throws FileNotFoundException, DocumentException
 	{
-		logger.trace("Entra en el m√©todo pdfSubastas");
+		logger.trace("Entra en el mÈtodo pdfSubastas");
 
 		Document pdfDoc = new Document(PageSize.A4);
 
@@ -1019,12 +1087,12 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que agrega los encabezados del archivo pdf de reporte de susbastas
+	 * MÈtodo que agrega los encabezados del archivo pdf de reporte de susbastas
 	 * @param table
 	 */
 	public void addTableHeaderSub(PdfPTable table)
 	{
-		Stream.of("ID", "Producto", "Descripci√≥n", "Valor base", "Valor ofertado", "Fecha inicio","Fecha fin").forEach(columnTitle ->
+		Stream.of("ID", "Producto", "DescripciÛn", "Valor base", "Valor ofertado", "Fecha inicio","Fecha fin").forEach(columnTitle ->
 		{
 			PdfPCell header = new PdfPCell();
 			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
@@ -1036,10 +1104,117 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo qe agrega las filas del archivo pdf de reporte de subastas
+	 * MÈtodo qe agrega las filas del archivo pdf de reporte de subastas
 	 * @param table
 	 */
 	public void addRowsUserSub(PdfPTable table)
+	{
+		Iterator it = getListaProveedor().iterator();
+
+		Salesueb x;
+
+		while (it.hasNext())
+		{
+			x = (Salesueb) it.next();
+			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
+			PdfPCell Name = new PdfPCell(new Phrase(x.getName()));
+			PdfPCell descripcion = new PdfPCell(new Phrase("" + x.getDescriptionProduct()));
+			PdfPCell base = new PdfPCell(new Phrase("" + x.getValueBase()));
+			PdfPCell actual = new PdfPCell(new Phrase("" + x.getValueCurrent()));
+			PdfPCell fIncio = new PdfPCell(new Phrase(x.getDateStart().toString()));
+			PdfPCell fFin = new PdfPCell(new Phrase(x.getDateEnd().toString()));
+			id.setBorder(Rectangle.NO_BORDER);
+			id.setHorizontalAlignment(Element.ALIGN_CENTER);
+			Name.setBorder(Rectangle.NO_BORDER);
+			Name.setHorizontalAlignment(Element.ALIGN_CENTER);
+			descripcion.setBorder(Rectangle.NO_BORDER);
+			descripcion.setHorizontalAlignment(Element.ALIGN_CENTER);
+			base.setBorder(Rectangle.NO_BORDER);
+			base.setHorizontalAlignment(Element.ALIGN_CENTER);
+			actual.setBorder(Rectangle.NO_BORDER);
+			actual.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fIncio.setBorder(Rectangle.NO_BORDER);
+			fIncio.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fFin.setBorder(Rectangle.NO_BORDER);
+			fFin.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(id);
+			table.addCell(Name);
+			table.addCell(descripcion);
+			table.addCell(base);
+			table.addCell(actual);
+			table.addCell(fIncio);
+			table.addCell(fFin);
+		}
+	}
+	
+	/**
+	 * MÈtodo que genera el reporte en formato pdf de las subastas
+	 * @throws FileNotFoundException
+	 * @throws DocumentException
+	 */
+	public void pdfTodasSubastas() throws FileNotFoundException, DocumentException
+	{
+		logger.trace("Entra en el mÈtodo pdfSubastas");
+
+		Document pdfDoc = new Document(PageSize.A4);
+
+		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
+				"C://ReportesGeneradosSistemaSubastas/Reporte de subastas.pdf"));
+
+		pdfDoc.open();
+
+		PdfPTable tableUsuario = new PdfPTable(5);
+		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE DE MIS SUBASTAS : " ));
+		titulo.setColspan(7);
+		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
+		titulo.setBorderWidth(0);
+		titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
+		tableUsuario.addCell(titulo);
+		TableHeaderSub(tableUsuario);
+		RowsUserSub(tableUsuario);
+		pdfDoc.add(tableUsuario);
+		
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		
+//		try
+//		{
+////			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas.pdf"));
+//		} catch (IOException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		pdfDoc.close();
+		m.close();
+		
+		logger.info("Se ha generado correctamente el archivo");
+
+	}
+
+	/**
+	 * MÈtodo que agrega los encabezados del archivo pdf de reporte de todas susbastas
+	 * @param table
+	 */
+	public void TableHeaderSub(PdfPTable table)
+	{
+		Stream.of("ID", "Producto", "DescripciÛn", "Valor base", "Valor ofertado", "Fecha inicio","Fecha fin").forEach(columnTitle ->
+		{
+			PdfPCell header = new PdfPCell();
+			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
+			header.setBorderWidth(0);
+			header.setHorizontalAlignment(Element.ALIGN_CENTER);
+			header.setPhrase(new Phrase(columnTitle));
+			table.addCell(header);
+		});
+	}
+
+	/**
+	 * MÈtodo qe agrega las filas del archivo pdf de reporte de todas subastas
+	 * @param table
+	 */
+	public void RowsUserSub(PdfPTable table)
 	{
 		Iterator it = getListaSubastas().iterator();
 
@@ -1080,14 +1255,14 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo para generar el documento PDF de las ofertas
+	 * MÈtodo para generar el documento PDF de las ofertas
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
 	public void pdfOfertas() throws FileNotFoundException, DocumentException
 	{
 
-		logger.trace("Entra al m√©todo pdfOfertas");
+		logger.trace("Entra al mÈtodo pdfOfertas");
 		Document pdfDoc = new Document(PageSize.A4);
 
 		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
@@ -1124,7 +1299,7 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo para agregar el encabezado del reporte PDF del CRUD
+	 * MÈtodo para agregar el encabezado del reporte PDF del CRUD
 	 * @param table 
 	 */
 	public void addTableHeaderCrud(PdfPTable table)
@@ -1141,7 +1316,7 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo para agregar las filas al reporte pdf del CRUD
+	 * MÈtodo para agregar las filas al reporte pdf del CRUD
 	 * @param table
 	 */
 	public void addRowsUserCrud(PdfPTable table)
@@ -1177,12 +1352,12 @@ public class UserMB
 	}
 	
 	/**
-	 * M√©todo para actualizar todas las ofertas cuando ingrese un usuario
+	 * MÈtodo para actualizar todas las ofertas cuando ingrese un usuario
 	 */
 	public void actualizarSubastas()
 	{
 		
-		logger.trace("Entra al m√©todo actualizarSubastas");
+		logger.trace("Entra al mÈtodo actualizarSubastas");
 		
 		List<Salesueb> lista = new SalesuebService().lista();
 		Date actual = new Date();
@@ -1380,13 +1555,13 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que inicializa la listaProveedor
+	 * MÈtodo que inicializa la listaProveedor
 	 * @param userSales
 	 * @return listaProveedor
 	 */
 	public DataModel inicializarListaProveedor(String userSales)
 	{
-		logger.trace("Entra al m√©todo inicializarListaProveedor");
+		logger.trace("Entra al mÈtodo inicializarListaProveedor");
 		List<Salesueb> lista = new SalesuebService().getSalesueb(userSales);
 		listaProveedor = new ListDataModel<>(lista);
 		logger.info("La lista de proveedor ha sido inicializada con sus subastas correspondientes");
@@ -1472,17 +1647,17 @@ public class UserMB
 	}
 
 	/**
-	 * M√©todo que inicializa la listaOfertaPostor
+	 * MÈtodo que inicializa la listaOfertaPostor
 	 * @param postor
 	 * @return listaOfertaPostor
 	 */
 	public DataModel inicializarListaOfertaPostor(String postor)
 	{
 		
-		logger.trace("Entra al m√©todo inicializarListaOfertaPostor");
+		logger.trace("Entra al mÈtodo inicializarListaOfertaPostor");
 		List<Offerersale> lista = new OfferersaleService().getOfferersale(postor);
 		listaOfertaPostor = new ListDataModel(lista);
-		logger.info("Lista de ofertas est√° inicializada");
+		logger.info("Lista de ofertas est· inicializada");
 		return listaOfertaPostor;
 	}
 
