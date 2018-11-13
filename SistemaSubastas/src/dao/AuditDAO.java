@@ -13,5 +13,6 @@ public interface AuditDAO {
 	public void actualizar(Audit auditoria);
 	public void eliminar(Audit auditoria);
 	public List<Audit> lista();
+	public List<Audit> listaRegistrosPostor(String createDate);
 
 }
