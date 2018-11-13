@@ -10,9 +10,18 @@ import entity.Audit;
 import entity.Parameter;
 import util.HibernateUtil;
 
+/**
+ * 
+ * @author Guillermo Marcano, Richard Mora y Estefanía Pérez
+ * DAO
+ */
 public class ParameterDAOImpl implements ParameterDAO
 {
 
+	/**
+	 * Método para crear un parámetro
+	 * @param parameter
+	 */
 	@Override
 	public void nuevo(Parameter parameter)
 	{
@@ -22,6 +31,11 @@ public class ParameterDAOImpl implements ParameterDAO
 		t.commit();
 	}
 
+	/**
+	 * Método que devuelve un parámetro específico
+	 * @param parameterCode
+	 * @return parametro
+	 */
 	@Override
 	public Parameter getParameter(String parameterCode)
 	{
@@ -43,6 +57,10 @@ public class ParameterDAOImpl implements ParameterDAO
 		}
 	}
 
+	/**
+	 * Método para modificar un parámetro
+	 * @param parameter
+	 */
 	@Override
 	public void actualizar(Parameter parameter)
 	{
@@ -52,6 +70,10 @@ public class ParameterDAOImpl implements ParameterDAO
 		t.commit();
 	}
 
+	/**
+	 * Método para eliminar un parámetro
+	 * @param parameter
+	 */
 	@Override
 	public void eliminar(Parameter parameter)
 	{
@@ -61,6 +83,10 @@ public class ParameterDAOImpl implements ParameterDAO
 		t.commit();
 	}
 	
+	/**
+	 * Método que devuelve la lista de los parámetros
+	 * @return lista
+	 */
 	@Override
 	public List<Parameter> lista()
 	{

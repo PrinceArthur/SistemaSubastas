@@ -9,8 +9,17 @@ import org.hibernate.Transaction;
 import entity.Audit;
 import util.HibernateUtil;
 
+/**
+ * 
+ * @author Guillermo Marcano, Richard Mora y Estefanía Pérez
+ * DAO
+ */
 public class AuditDAOImpl implements AuditDAO{
 
+	/**
+	 * Método para crear auditoría
+	 * @param auditoria
+	 */
 	@Override
 	public void nuevo(Audit auditoria) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -20,6 +29,11 @@ public class AuditDAOImpl implements AuditDAO{
 		
 	}
 
+	/**
+	 * Método para obtener la lista de auditorías de un usuario específico
+	 * @param userName
+	 * @return lista
+	 */
 	@Override
 	public List<Audit> getAuditUser(String userName) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -40,8 +54,11 @@ public class AuditDAOImpl implements AuditDAO{
 		}
 	}
 	
-	
-
+	/**
+	 * Método para obtener la lista de auditorías de una operación CRUD específica
+	 * @param operationCrud
+	 * @return lista
+	 */
 	@Override
 	public List<Audit> getAuditCrud(String operationCrud)
 	{
@@ -63,6 +80,10 @@ public class AuditDAOImpl implements AuditDAO{
 		}
 	}
 
+	/**
+	 * Método para modificar
+	 * @param auditoria
+	 */
 	@Override
 	public void actualizar(Audit auditoria) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -72,6 +93,10 @@ public class AuditDAOImpl implements AuditDAO{
 		
 	}
 	
+	/**
+	 * Método para eliminar
+	 * @param auditoria
+	 */
 	@Override
 	public void eliminar(Audit auditoria)
 	{
@@ -81,6 +106,10 @@ public class AuditDAOImpl implements AuditDAO{
 		t.commit();
 	}
 
+	/**
+	 * Método que devuelve una lista con todas las auditorías
+	 * @return lista
+	 */
 	@Override
 	public List<Audit> lista() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -88,27 +117,6 @@ public class AuditDAOImpl implements AuditDAO{
 		List lista = session.createQuery("from Audit").list();
 		t.commit();
 		return lista;
-	}
-	
-	@Override
-	public List<Audit> listaRegistrosPostor(String createDate)
-	{
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		Transaction t = session.beginTransaction();
-		
-		Query q=session.createQuery("from Audit where createDate = :createDate");
-		q.setParameter("createDate", createDate);
-		List lista = q.list();
-		t.commit();
-		session.close();
-		if(!lista.isEmpty())
-		{
-			return lista;
-		}
-		else
-		{
-			return null;
-		}
 	}
 
 

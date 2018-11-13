@@ -10,9 +10,18 @@ import entity.Offerersale;
 import entity.Parameter;
 import util.HibernateUtil;
 
+/**
+ * 
+ * @author Guillermo Marcano, Richard Mora y Estefanía Pérez
+ * DAO
+ */
 public class OfferersaleDAOImpl implements OfferersaleDAO
 {
 
+	/**
+	 * Método que crear una oferta
+	 * @param offerersale
+	 */
 	@Override
 	public void nuevo(Offerersale offerersale)
 	{
@@ -22,6 +31,11 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 		t.commit();
 	}
 
+	/**
+	 * Métod que devuelve una lista de las ofertas de un usuario específico
+	 * @param userName
+	 * @return lista
+	 */
 	@Override
 	public List<Offerersale> getOfferersale(String userName)
 	{
@@ -43,6 +57,11 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 		}
 	}
 	
+	/**
+	 * Método que devuelve una lista de las ofertas hechas en una subasta específica
+	 * @param idSubasta
+	 * @return list
+	 */
 	@Override
 	public List<Offerersale> getOfertaDeSubasta(int idSales)
 	{
@@ -64,6 +83,10 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 		}
 	}
 
+	/**
+	 * Métdo para modificar una oferta
+	 * @param offerersale
+	 */
 	@Override
 	public void actualizar(Offerersale offerersale)
 	{
@@ -73,6 +96,10 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 		t.commit();
 	}
 
+	/**
+	 * Método para eiminar una oferta
+	 * @param oferrersale
+	 */
 	@Override
 	public void eliminar(Offerersale oferrersale)
 	{
@@ -82,6 +109,10 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 		t.commit();
 	}
 
+	/**
+	 * Método que devuelve una lista de todas las ofertas
+	 * @return
+	 */
 	@Override
 	public List<Offerersale> lista()
 	{

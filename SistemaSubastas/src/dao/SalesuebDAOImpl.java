@@ -10,9 +10,18 @@ import entity.Parameter;
 import entity.Salesueb;
 import util.HibernateUtil;
 
+/**
+ * 
+ * @author Guillermo Marcano, Richard Mora y Estefanía Pérez
+ * DAO
+ */
 public class SalesuebDAOImpl implements SalesuebDAO
 {
 
+	/**
+	 * Método que crea subastas
+	 * @param salesueb
+	 */
 	@Override
 	public void nuevo(Salesueb salesueb)
 	{
@@ -22,6 +31,11 @@ public class SalesuebDAOImpl implements SalesuebDAO
 		t.commit();
 	}
 
+	/**
+	 * Método que devuelve una lista con las subastas de un proveedor específico
+	 * @param userSales
+	 * @return lista
+	 */
 	@Override
 	public List<Salesueb> getSalesueb(String userSales)
 	{
@@ -43,6 +57,10 @@ public class SalesuebDAOImpl implements SalesuebDAO
 		}
 	}
 
+	/**
+	 * Método para modificar uan subasta
+	 * @param salesueb
+	 */
 	@Override
 	public void actualizar(Salesueb salesueb)
 	{
@@ -52,6 +70,10 @@ public class SalesuebDAOImpl implements SalesuebDAO
 		t.commit();
 	}
 
+	/**
+	 * Método para eliminar una subasta
+	 * @param salesueb
+	 */
 	@Override
 	public void eliminar(Salesueb salesueb)
 	{
@@ -61,6 +83,10 @@ public class SalesuebDAOImpl implements SalesuebDAO
 		t.commit();
 	}
 
+	/**
+	 * Método que devuelve una lista con todas las subastas
+	 * @return lista
+	 */
 	@Override
 	public List<Salesueb> lista()
 	{
@@ -71,6 +97,10 @@ public class SalesuebDAOImpl implements SalesuebDAO
 		return lista;
 	}
 
+	/**
+	 * Método que devuelve una lista con las subastas activas
+	 * @return
+	 */
 	@Override
 	public List<Salesueb> listaActivas() {
 		Session session = HibernateUtil.getSessionFactory().openSession();
