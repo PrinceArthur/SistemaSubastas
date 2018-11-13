@@ -13,6 +13,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.swing.plaf.ActionMapUIResource;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -66,6 +67,7 @@ public class UserMB
 	private DataModel listaProveedor;
 	private DataModel listaSubastas;
 	private DataModel listaOfertaPostor;
+	private DataModel listaSubastasActivas;
 	private String mensajeError;
 	private String email1;
 	private String email2;
@@ -500,7 +502,7 @@ public class UserMB
 		
 		
 		
-		if(oferta.getValueOffer() <= sale.getValueBase())
+		if(oferta.getValueOffer() <= sale.getValueBase() && oferta.getValueOffer() <= sale.getValueCurrent())
 		{
 			mensajeError = "La oferta debe ser mayor que la oferta actual";
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -706,6 +708,29 @@ public class UserMB
 			table.addCell(ganador);
 		}
 	}
+	
+	public void actualizarSubastas()
+	{
+		List<Salesueb> lista = new SalesuebService().lista();
+		Date actual = new Date();
+		for(int i = 0; i < lista.size(); i++)
+		{
+			sale = lista.get(i);
+			System.out.println(sale.getName());
+			
+			if(lista.get(i).getDateStart().before(actual) || lista.get(i).getDateStart().equals(actual))
+			{
+				lista.get(i).setState("ACTIVE");
+				modificarSubasta();
+				
+			}
+			if(lista.get(i).getDateEnd().before(actual))
+			{
+				lista.get(i).setState("INACTIVE");
+				modificarSubasta();
+			}
+		}
+	}
 
 
 	public User getUsuario()
@@ -846,6 +871,7 @@ public class UserMB
 	}
 	
 	public DataModel getListaSubastas() {
+		actualizarSubastas();
 		List<Salesueb> lista = new SalesuebService().lista();
 		listaSubastas = new ListDataModel(lista);
 		return listaSubastas;
@@ -873,5 +899,18 @@ public class UserMB
 		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
 		return listaOfertaPostor;
 	}
+
+	public DataModel getListaSubastasActivas() {
+		actualizarSubastas();
+		List<Salesueb> lista = new SalesuebService().listaActivas();
+		listaSubastas = new ListDataModel(lista);
+		return listaSubastas;
+	}
+
+	public void setListaSubastasActivas(DataModel listaSubastasActivas) {
+		this.listaSubastasActivas = listaSubastasActivas;
+	}
+	
+	
 
 }
