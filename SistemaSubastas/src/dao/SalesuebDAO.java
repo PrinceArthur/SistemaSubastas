@@ -2,6 +2,7 @@ package dao;
 
 import java.util.List;
 
+import entity.Audit;
 import entity.Salesueb;
 
 /**
@@ -47,4 +48,8 @@ public interface SalesuebDAO
 	 * @return
 	 */
 	public List<Salesueb> listaActivas();
+	
+	public Salesueb listaSalesuebID(int id);
+	
+	public List<Salesueb> getSaleFilter(String filtro);
 }

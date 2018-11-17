@@ -32,7 +32,7 @@ body {
 
 .centered {
 	position: absolute;
-	height: 380px;
+	height: 65%;
 	top: 0;
 	bottom: 0;
 	margin: auto;
@@ -78,19 +78,13 @@ body {
 
 
 		<p:panel styleClass="centered">
-
+<!-- https://es.stackoverflow.com/questions/9195/c%C3%B3mo-puedo-obtener-una-vista-previa-de-un-pdf-con-itextpdf -->
 
 				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
 						<p:menuitem value="Subastas" action="/postor/indexPostor.xhtml"
 							icon="ui-icon-star" />
 						<p:menuitem value="Mis ofertas"
 							action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
-					<p:submenu label="Opciones">
-							<p:menuitem value="Generar PDF" action="#{userMB.pdfOfertas}"
-							icon="ui-icon-star" />
-							<p:menuitem value="Generar EXCEL" action="#{userMB.archivoExcelOfertas}"
-							icon="ui-icon-star" />
-						</p:submenu>
 				</p:menubar>
 
 
@@ -115,7 +109,7 @@ body {
 								<h:outputText value="#{ofer.id}" />
 							</center>
 						</p:column>
-						<p:column style="width:30px;height:3px;font-size:14px">
+						<p:column style="width:40px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="UserName" />
 							</f:facet>
@@ -123,7 +117,7 @@ body {
 								<h:outputText value="#{ofer.identification}" />
 							</center>
 						</p:column>
-						<p:column style="width:15px;height:3px;font-size:14px">
+						<p:column style="width:20px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="IdSale" />
 							</f:facet>
@@ -131,7 +125,7 @@ body {
 								<h:outputText value="#{ofer.idSales}" />
 							</center>
 						</p:column>
-						<p:column style="width:25px;height:3px;font-size:14px">
+						<p:column style="width:40px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Valor" />
 							</f:facet>
@@ -139,13 +133,15 @@ body {
 								<h:outputText value="#{ofer.valueOffer}" />
 							</center>
 						</p:column>
-						<p:column style="width:50px;height:3px;font-size:14px">
+						<p:column style="width:70px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Fecha Oferta" />
 							</f:facet>
+							<center>
 							<h:outputText value="#{ofer.dateOffer}" />
+							</center>
 						</p:column>
-						<p:column style="width:30px;height:3px;font-size:14px">
+						<p:column style="width:35px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Ganador" />
 							</f:facet>

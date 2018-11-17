@@ -60,5 +60,10 @@ public class UserService
 	{
 		return dao.lista();
 	}
+	
+	public List<User> listaProveedores(String filtro)
+	{
+		return dao.listaProveedores(filtro);
+	}
 
 }

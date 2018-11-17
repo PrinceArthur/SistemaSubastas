@@ -48,4 +48,6 @@ public interface OfferersaleDAO
 	 * @return
 	 */
 	public List<Offerersale> lista();
+	
+	public List<Offerersale> listaFiltrada(String filtro);
 }

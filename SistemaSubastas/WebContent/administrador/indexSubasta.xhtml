@@ -99,6 +99,9 @@ body {
 						<p:menuitem value="Ofertas"
 							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Reportes" action="/administrador/reportes.xhtml" icon="ui-icon-star" />
+						<p:submenu >
+							<p:menuitem value="Reportes" action="/administrador/reportesSubastas.xhtml" />
+						</p:submenu>
 					</p:submenu>
 				</p:menu>
 
@@ -173,6 +176,16 @@ body {
 							</f:facet>
 							<h:outputText value="#{subasta.state}" /> 	
 						</p:column>
+						<p:column style="width:10px;height:3px;font-size:14px">
+							<f:facet name="header">
+								<center>
+									<h:outputText value="Acción" />
+								</center>
+							</f:facet>
+							<p:commandButton value="Ofertas"
+									action="#{userMB.prepararReportesDeSubasta}"
+									onclick="PF('dlg1').show();" />
+						</p:column>
 
 					</p:dataTable>
 				</p:panel>
@@ -182,5 +195,24 @@ body {
 
 		</p:panel>
 	</h:form>
+	
+	<p:dialog id="dlg1" header="Reportes" widgetVar="dlg1" modal="true"
+		style="width:300px;height:200px" width="250px" resizable="false"
+		position="center" draggable="false">
+		<h:form id="formM">
+			<p:growl id="growl" showDetail="true" sticky="true" />
+			<p:panelGrid columns="2" styleClass="panel">
+
+				<p:commandButton value="PDF"
+								actionListener="#{userMB.pdfOfertasSubasta}"
+								onclick="PrimeFaces.monitorDownload(start, stop);"
+								oncomplete="PF('dlg1').hide()">
+								<p:fileDownload value="#{userMB.file}"
+									contentDisposition="inline"></p:fileDownload>
+				</p:commandButton>
+				
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
 </h:body>
 </html>

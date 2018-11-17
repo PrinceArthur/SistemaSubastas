@@ -73,4 +73,14 @@ public class AuditService
 	{
 		return audit.lista();
 	}
+	
+	/**
+	 * Método con el que podemos filtrar cualquier lista
+	 * @param filtro
+	 * @return lista por el filtro correspondiente
+	 */
+	public List<Audit> getAuditFilter(String filtro)
+	{
+		return audit.getAuditFilter(filtro);
+	}
 }

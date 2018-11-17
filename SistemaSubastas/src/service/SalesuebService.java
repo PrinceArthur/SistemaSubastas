@@ -4,6 +4,7 @@ import java.util.List;
 
 import dao.SalesuebDAOImpl;
 import dao.SalesuebDAO;
+import entity.Audit;
 import entity.Salesueb;
 
 /**
@@ -68,5 +69,15 @@ public class SalesuebService
 	public List<Salesueb> listaActivas()
 	{
 		return sales.listaActivas();
+	}
+	
+	public Salesueb listaSalesuebID(int id)
+	{
+		return sales.listaSalesuebID(id);
+	}
+	
+	public List<Salesueb> getSaleFilter(String filtro)
+	{
+		return sales.getSaleFilter(filtro);
 	}
 }

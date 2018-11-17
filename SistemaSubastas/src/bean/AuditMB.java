@@ -12,6 +12,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +32,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.BaseColor;
@@ -50,7 +53,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 import dao.AuditDAO;
 import dao.AuditDAOImpl;
 import entity.Audit;
+import entity.Salesueb;
 import service.AuditService;
+import service.SalesuebService;
 
 /**
  * 
@@ -84,6 +89,11 @@ public class AuditMB
 	private List listaCrud;
 
 	/**
+	 * Lista filtrada por parámetro
+	 */
+	private List listaSubastasCreadas;
+
+	/**
 	 * Atributo para la operación del reporte
 	 */
 	private String operacion;
@@ -97,6 +107,11 @@ public class AuditMB
 	 * Atributo para dar el mensaje en la capa de presentación
 	 */
 	private String mensajeError;
+	
+	private StreamedContent file;
+
+	private Date inicio;
+	private Date fin;
 
 	/**
 	 * Constructor de la clase
@@ -256,43 +271,66 @@ public class AuditMB
 	/**
 	 * Método para generar archivo pdf del reeporte del CRUD
 	 * 
-	 * @throws FileNotFoundException
 	 * @throws DocumentException
+	 * @throws IOException 
 	 */
-	public void pdfCrud() throws FileNotFoundException, DocumentException
+	public void pdfSubastasCreadas() throws DocumentException, IOException
 	{
 
-		Document pdfDoc = new Document(PageSize.A4);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in;
+		
+		Document document = new Document();
 
-		PdfWriter m = PdfWriter.getInstance(pdfDoc,
-				new FileOutputStream("C://ReportesGeneradosSistemaSubastas/" + operacion + ".pdf"));
+		PdfWriter.getInstance(document, out);
+		
+		Rectangle tamaño = PageSize.A4;
+		document.setPageSize(tamaño);
+		document.open();
 
-		pdfDoc.open();
+		Font f = new Font();
+		f.setStyle(Font.BOLDITALIC);
+		f.setSize(30);
+		f.setColor(244, 92, 66);
 
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
+		String date = sdf.format(new Date());
+
+		Paragraph tituloEmpresa = new Paragraph();
+		tituloEmpresa.setFont(f);
+		tituloEmpresa.add("ACME inc");
+		document.add(tituloEmpresa);
+		document.add(new Paragraph(date));
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+
+		Font boldFont = new Font();
+		boldFont.setStyle(Font.BOLD);
+		boldFont.setSize(18);
+
+		SimpleDateFormat format = new SimpleDateFormat("dd/M/yyyy");
+		
+		Paragraph titulo = new Paragraph();
+		titulo.setFont(boldFont);
+		titulo.add("REPORTE DE SUBASTAS CREADAS ENTRE " + format.format(inicio) + " - " + format.format(fin) + ".");
+		titulo.setIndentationLeft(150);
+		document.add(titulo);
+
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
 		PdfPTable tableUsuario = new PdfPTable(7);
-		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE POR OPERACIÓN : " + operacion));
-		titulo.setColspan(7);
-		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
-		titulo.setBorderWidth(0);
-		titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableUsuario.addCell(titulo);
-		addTableHeaderCrud(tableUsuario);
-		addRowsUserCrud(tableUsuario);
-		pdfDoc.add(tableUsuario);
+		addTableHeaderSubastasCreadas(tableUsuario);
+		addRowsUserSubastasCreadas(tableUsuario);
+		document.add(tableUsuario);
+		document.close();
+
+		in = new ByteArrayInputStream(out.toByteArray());
+		file = new DefaultStreamedContent(in, "application/pdf", "ReporteDeSubastasCreadas.pdf");
 
 		mensajeError = "Se ha generado el archivo correctamente.";
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-
-		try
-		{
-			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/" + operacion + ".pdf"));
-		} catch (IOException e)
-		{
-		}
-		pdfDoc.close();
-		m.close();
-
 	}
 
 	/**
@@ -300,9 +338,9 @@ public class AuditMB
 	 * 
 	 * @param table
 	 */
-	public void addTableHeaderCrud(PdfPTable table)
+	public void addTableHeaderSubastasCreadas(PdfPTable table)
 	{
-		Stream.of("ID", "Usuario", "Tabla", "ID Tabla", "Operación", "Fecha", "Dirección IP").forEach(columnTitle ->
+		Stream.of("ID", "Producto", "Descripción", "Valor base", "Valor ofertado", "Fecha inicio", "Fecha fin").forEach(columnTitle ->
 		{
 			PdfPCell header = new PdfPCell();
 			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
@@ -318,48 +356,49 @@ public class AuditMB
 	 * 
 	 * @param table
 	 */
-	public void addRowsUserCrud(PdfPTable table)
+	public void addRowsUserSubastasCreadas(PdfPTable table)
 	{
-		Iterator it = getListaCrud().iterator();
+		Iterator it = getListaSubastasCreadas().iterator();
 
-		Audit x;
+		Salesueb x;
 
 		while (it.hasNext())
 		{
-			x = (Audit) it.next();
+			x = (Salesueb) it.next();
 			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
-			PdfPCell userName = new PdfPCell(new Phrase(x.getUserName()));
-			PdfPCell TableName = new PdfPCell(new Phrase(x.getTableName()));
-			PdfPCell TableID = new PdfPCell(new Phrase("" + x.getTableId()));
-			PdfPCell CRUD = new PdfPCell(new Phrase(x.getOperationCrud()));
-			PdfPCell Fecha = new PdfPCell(new Phrase("" + x.getCreateDate()));
-			PdfPCell IP = new PdfPCell(new Phrase(x.getAddressIP()));
+			PdfPCell Name = new PdfPCell(new Phrase(x.getName()));
+			PdfPCell descripcion = new PdfPCell(new Phrase("" + x.getDescriptionProduct()));
+			PdfPCell base = new PdfPCell(new Phrase("" + x.getValueBase()));
+			PdfPCell actual = new PdfPCell(new Phrase("" + x.getValueCurrent()));
+			PdfPCell fIncio = new PdfPCell(new Phrase(x.getDateStart().toString()));
+			PdfPCell fFin = new PdfPCell(new Phrase(x.getDateEnd().toString()));
 			id.setBorder(Rectangle.NO_BORDER);
 			id.setHorizontalAlignment(Element.ALIGN_CENTER);
-			userName.setBorder(Rectangle.NO_BORDER);
-			userName.setHorizontalAlignment(Element.ALIGN_CENTER);
-			TableName.setBorder(Rectangle.NO_BORDER);
-			TableName.setHorizontalAlignment(Element.ALIGN_CENTER);
-			TableID.setBorder(Rectangle.NO_BORDER);
-			TableID.setHorizontalAlignment(Element.ALIGN_CENTER);
-			CRUD.setBorder(Rectangle.NO_BORDER);
-			CRUD.setHorizontalAlignment(Element.ALIGN_CENTER);
-			Fecha.setBorder(Rectangle.NO_BORDER);
-			Fecha.setHorizontalAlignment(Element.ALIGN_CENTER);
-			IP.setBorder(Rectangle.NO_BORDER);
-			IP.setHorizontalAlignment(Element.ALIGN_CENTER);
+			Name.setBorder(Rectangle.NO_BORDER);
+			Name.setHorizontalAlignment(Element.ALIGN_CENTER);
+			descripcion.setBorder(Rectangle.NO_BORDER);
+			descripcion.setHorizontalAlignment(Element.ALIGN_CENTER);
+			base.setBorder(Rectangle.NO_BORDER);
+			base.setHorizontalAlignment(Element.ALIGN_CENTER);
+			actual.setBorder(Rectangle.NO_BORDER);
+			actual.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fIncio.setBorder(Rectangle.NO_BORDER);
+			fIncio.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fFin.setBorder(Rectangle.NO_BORDER);
+			fFin.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(id);
-			table.addCell(userName);
-			table.addCell(TableName);
-			table.addCell(TableID);
-			table.addCell(CRUD);
-			table.addCell(Fecha);
-			table.addCell(IP);
+			table.addCell(Name);
+			table.addCell(descripcion);
+			table.addCell(base);
+			table.addCell(actual);
+			table.addCell(fIncio);
+			table.addCell(fFin);
 		}
 	}
 
 	/**
-	 * Método para generar archivo pdf para reporte de usuarios 
+	 * Método para generar archivo pdf para reporte de usuarios
+	 * 
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
@@ -390,7 +429,7 @@ public class AuditMB
 
 		try
 		{
-			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+usu+".pdf"));
+			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/" + usu + ".pdf"));
 		} catch (IOException e)
 		{
 		}
@@ -398,9 +437,10 @@ public class AuditMB
 		m.close();
 
 	}
-	
+
 	/**
 	 * Método para poner cabecera en el archivo
+	 * 
 	 * @param table
 	 */
 	public void addTableHeader(PdfPTable table)
@@ -418,6 +458,7 @@ public class AuditMB
 
 	/**
 	 * Método para poner filas en el reporte
+	 * 
 	 * @param table
 	 */
 	public void addRowsUser(PdfPTable table)
@@ -462,6 +503,7 @@ public class AuditMB
 
 	/**
 	 * Dar la auditoria
+	 * 
 	 * @return auditoria
 	 */
 	public Audit getAuditoria()
@@ -471,6 +513,7 @@ public class AuditMB
 
 	/**
 	 * Modificar auditoria
+	 * 
 	 * @param auditoria
 	 */
 	public void setAuditoria(Audit auditoria)
@@ -480,6 +523,7 @@ public class AuditMB
 
 	/**
 	 * Dar lista de auditorias
+	 * 
 	 * @return listaAudit
 	 */
 	public DataModel getListarAuditorias()
@@ -491,6 +535,7 @@ public class AuditMB
 
 	/**
 	 * Dar lista audorias por usuarios
+	 * 
 	 * @return listaUsuario
 	 */
 	public List getListaUsuario()
@@ -501,6 +546,7 @@ public class AuditMB
 
 	/**
 	 * Modifica lista audorias por usuarios
+	 * 
 	 * @param listaUsuario
 	 */
 	public void setListaUsuario(List listaUsuario)
@@ -510,6 +556,7 @@ public class AuditMB
 
 	/**
 	 * Dar lista auditorias por CRUD
+	 * 
 	 * @return listaCrud
 	 */
 	public List getListaCrud()
@@ -520,6 +567,7 @@ public class AuditMB
 
 	/**
 	 * Modifica lista auditorias por CRUD
+	 * 
 	 * @param listaCrud
 	 */
 	public void setListaCrud(List listaCrud)
@@ -529,6 +577,7 @@ public class AuditMB
 
 	/**
 	 * Dar el usuario
+	 * 
 	 * @return usu
 	 */
 	public String getUsu()
@@ -538,6 +587,7 @@ public class AuditMB
 
 	/**
 	 * Modifica el usuario
+	 * 
 	 * @param usu
 	 */
 	public void setUsu(String usu)
@@ -547,6 +597,7 @@ public class AuditMB
 
 	/**
 	 * Dar operacion CRUD
+	 * 
 	 * @return operacion
 	 */
 	public String getOperacion()
@@ -556,6 +607,7 @@ public class AuditMB
 
 	/**
 	 * Modifica la operacion
+	 * 
 	 * @param operacion
 	 */
 	public void setOperacion(String operacion)
@@ -565,6 +617,7 @@ public class AuditMB
 
 	/**
 	 * Da el mensaje error
+	 * 
 	 * @return mensajeError
 	 */
 	public String getMensajeError()
@@ -574,11 +627,76 @@ public class AuditMB
 
 	/**
 	 * Modifica el mensaje error
+	 * 
 	 * @param mensajeError
 	 */
 	public void setMensajeError(String mensajeError)
 	{
 		this.mensajeError = mensajeError;
 	}
+	
+	public List inicializarSubastasCreadas()
+	{
+		listaSubastasCreadas = new ArrayList<>();
+		SalesuebService service = new SalesuebService();
+		SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.0");
+		List<Audit> listaFiltada = new AuditService().getAuditFilter("createDate BETWEEN '" + formato.format(inicio)
+				+ "'AND '" + formato.format(fin) + "' AND operationCrud = 'CREATE' AND tableName = 'Salesueb'");
+		
+		Iterator<Audit> it = listaFiltada.iterator();
+		
+		while(it.hasNext())
+		{
+			Audit x = it.next();
+			Salesueb elemento = service.listaSalesuebID(x.getTableId());
+			listaSubastasCreadas.add(elemento);
+		}
+		
+		return listaSubastasCreadas;
+	}
+
+	public List getListaSubastasCreadas()
+	{
+		listaSubastasCreadas = inicializarSubastasCreadas();
+		
+		return listaSubastasCreadas;
+	}
+
+	public void setListaSubastasCreadas(List listaFiltrada)
+	{
+		this.listaSubastasCreadas = listaFiltrada;
+	}
+
+	public Date getInicio()
+	{
+		return inicio;
+	}
+
+	public void setInicio(Date inicio)
+	{
+		this.inicio = inicio;
+	}
+
+	public Date getFin()
+	{
+		return fin;
+	}
+
+	public void setFin(Date fin)
+	{
+		this.fin = fin;
+	}
+
+	public StreamedContent getFile()
+	{
+		return file;
+	}
+
+	public void setFile(StreamedContent file)
+	{
+		this.file = file;
+	}
+	
+	
 
 }

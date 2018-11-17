@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import entity.Audit;
 import entity.Parameter;
 import entity.Salesueb;
 import util.HibernateUtil;
@@ -120,5 +121,25 @@ public class SalesuebDAOImpl implements SalesuebDAO
 			return null;
 		}
 	}
+
+	@Override
+	public Salesueb listaSalesuebID(int id)
+	{
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Salesueb a = (Salesueb) session.load(Salesueb.class,id);
+		return a;
+	}
+
+	@Override
+	public List<Salesueb> getSaleFilter(String filtro)
+	{
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		List lista = session.createQuery("from Salesueb where " + filtro).list();
+		t.commit();
+		return lista;
+	}
+	
+	
 
 }

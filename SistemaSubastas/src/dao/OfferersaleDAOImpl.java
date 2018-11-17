@@ -123,4 +123,16 @@ public class OfferersaleDAOImpl implements OfferersaleDAO
 		return lista;
 	}
 
+	@Override
+	public List<Offerersale> listaFiltrada(String filtro)
+	{
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		List lista = session.createQuery("from Offerersale where " + filtro).list();
+		t.commit();
+		return lista;
+	}
+	
+	
+
 }

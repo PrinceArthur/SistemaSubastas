@@ -98,27 +98,31 @@ body {
 							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Ofertas"
 							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
-						<p:menuitem value="Reportes"
-							action="/administrador/reportes.xhtml" icon="ui-icon-star" />
 					</p:submenu>
-					<p:submenu label="OPCIONES"
+					<p:submenu 
 						style="background-color: rgb(179, 185, 242)">
 						<p:menuitem value="Registrar Proveedor"
 							action="#{userMB.prepararAdicionarUser}" icon="ui-icon-pin-w" />
+
 					</p:submenu>
 				</p:menu>
-
+				
+				
 
 
 				<p:panel
 					style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%">
+
+					
+					
+					<p:spacer/>
 
 					<p:dataTable id="tbl" var="usu" value="#{userMB.listarUser}"
 						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
 						paginator="true" rows="5"
 						style="width:100%;height:100%;align: top" styleClass="myTable">
 
-						
+
 
 						<f:facet name="header">
 							<h:outputText value="LISTADO USUARIOS" />
@@ -207,7 +211,17 @@ body {
 
 					</p:dataTable>
 				</p:panel>
-
+				
+				<p:spacer/>
+				<p:panelGrid columns="2">
+				
+				<p:commandButton value="Proveedores en sistema PDF"
+						title="Reporte de proveedores en el sistema"
+						actionListener="#{userMB.pdfProveedores}"
+						onclick="PrimeFaces.monitorDownload(start, stop);">
+						<p:fileDownload value="#{userMB.file}" contentDisposition="inline"></p:fileDownload>
+					</p:commandButton>
+				</p:panelGrid>
 			</p:panelGrid>
 
 

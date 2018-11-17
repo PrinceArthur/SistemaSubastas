@@ -41,4 +41,6 @@ public interface UserDAO {
 	 * @return lista
 	 */
 	public List<User> lista();
+	
+	public List<User> listaProveedores(String filtro);
 }

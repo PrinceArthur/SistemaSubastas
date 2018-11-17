@@ -1,9 +1,13 @@
 package bean;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -22,13 +26,23 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.hibernate.engine.jdbc.connections.internal.UserSuppliedConnectionProviderImpl;
+import org.primefaces.component.calendar.Calendar;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.log.SysoCounter;
@@ -55,8 +69,8 @@ import service.UserService;
 
 /**
  * 
- * @author Guillermo Marcano, Richard Mora y Estefanía Pérez
- * Managed Bean que se encarga de gestionar los usuarios y egenrar reportes.
+ * @author Guillermo Marcano, Richard Mora y Estefanía Pérez Managed Bean que se
+ *         encarga de gestionar los usuarios y egenrar reportes.
  *
  */
 
@@ -68,86 +82,100 @@ public class UserMB
 	 * Instancia de el bean de Auditorias
 	 */
 	private AuditMB audit = new AuditMB();
-	
+
 	/**
 	 * Usuario principal
 	 */
 	private User user;
-	
+
 	/**
 	 * Usuario que se utiliza al realizar un login
 	 */
 	private User loginUser = new User();
-	
+
 	/**
 	 * Usuario administrador
 	 */
 	private User userAdmin = new User();
-	
+
 	/**
 	 * Usuario oara generar nueva contraseña
 	 */
 	private User userPass = new User();
-	
+
 	/**
 	 * DataModel que lista los usaurios del sistema
 	 */
 	private DataModel listaUser;
-	
+
 	/**
 	 * DataModel que lista los usuarios de tipo proveedor.
 	 */
 	private DataModel listaProveedor;
-	
+
 	/**
 	 * DataModel que lista las subastas en el sistema
 	 */
 	private DataModel listaSubastas;
-	
+
 	/**
 	 * DataModel que lista las ofertas hechas por un postor especificado
 	 */
 	private DataModel listaOfertaPostor;
 	
+	private List listaOfertaPostorRangoFechas;
+	
+	private List listaProveedores;
+
+	/**
+	 * DataModel que lista las ofertas de una subasta
+	 */
+	private DataModel listaOfertaSubasta;
+
 	/**
 	 * DataModel que lista las subastas en estado activo
 	 */
 	private DataModel listaSubastasActivas;
-	
+
 	/**
 	 * Mensaje de error para los validaciones del cliente
 	 */
 	private String mensajeError;
-	
+
 	/**
 	 * Primera parte del email
 	 */
 	private String email1;
-	
+
 	/**
 	 * Segunda parte del email
 	 */
 	private String email2;
-	
+
 	/**
 	 * Subasta utilizada en el sistema
 	 */
 	private Salesueb sale;
-	
+
 	/**
 	 * Para obtener el userName de un usuario
 	 */
 	private String nombre;
-	
+
 	/**
 	 * Instancia del bean de ofertas
 	 */
 	private Offerersale oferta = new Offerersale();
-	
+
 	/**
 	 * Para obtener la id de la subasta.
 	 */
 	private int idSale;
+	
+	private Date inicio;
+	private Date fin;
+	private String userPostor;
+	private StreamedContent file;
 
 	/**
 	 * Logger del sistema
@@ -166,6 +194,7 @@ public class UserMB
 
 	/**
 	 * Método que inicializa el usuario para ser adicionado
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararAdicionarUser()
@@ -178,12 +207,14 @@ public class UserMB
 		user.setDateLastPassword(now);
 		email1 = "";
 		email2 = "";
-		logger.info("Objeto user inicializado para agregar Proveedor y nos dirige a /administrador/registrarProvedor.xhtml");
+		logger.info(
+				"Objeto user inicializado para agregar Proveedor y nos dirige a /administrador/registrarProvedor.xhtml");
 		return "/administrador/registrarProvedor.xhtml";
 	}
 
 	/**
 	 * Método que inicializa el usuario postor para ser adicionado
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararAdicionarPostor()
@@ -200,6 +231,7 @@ public class UserMB
 
 	/**
 	 * Método que inicializa el usuario desde la lista para ser modificado
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararModificarUser()
@@ -210,12 +242,14 @@ public class UserMB
 		String[] x = correo.split("@");
 		email1 = x[0];
 		email2 = x[1];
-		logger.info("Objeto user inicializado con la fila de la listaUser y nos dirige a la página /administrador/modificarProveedor");
+		logger.info(
+				"Objeto user inicializado con la fila de la listaUser y nos dirige a la página /administrador/modificarProveedor");
 		return "/administrador/modificarProveedor";
 	}
 
 	/**
 	 * Método que inicializa el usuario administrador para obtener sus datos
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararAdmin()
@@ -223,12 +257,14 @@ public class UserMB
 		logger.trace("Entra al método prepararAdmin");
 		UserService service = new UserService();
 		userAdmin = service.getUser("admin");
-		logger.info("objeto userAdmin iniicializado con el usuario de tipo admin y nos dirige a /administrador/datosAdmin");
+		logger.info(
+				"objeto userAdmin iniicializado con el usuario de tipo admin y nos dirige a /administrador/datosAdmin");
 		return "/administrador/datosAdmin";
 	}
 
 	/**
 	 * Método que inicializa el userPass para recuperar la contraseña
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararRecuperarContraseña()
@@ -241,6 +277,7 @@ public class UserMB
 
 	/**
 	 * Método que inicializa el userPass desde a lista para cambiar su contraseña
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararCambioContraseña()
@@ -248,12 +285,14 @@ public class UserMB
 		logger.trace("Entra al método prepararCambioContraseña");
 		UserService service = new UserService();
 		userPass = service.getUser(loginUser.getUserName());
+		userPass.setPassword("");
 		logger.info("Objeto userPass inicializado con el user de loginUser y nos dirige a cambiarContraseña");
 		return "cambiarContraseña";
 	}
 
 	/**
 	 * Método que inicializa el usuario proveedor desde la lista para su ingreso
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararIngresoProveedor()
@@ -262,12 +301,15 @@ public class UserMB
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		listaProveedor = inicializarListaProveedor(loginUser.getUserName());
-		logger.info("Objeto user inicializado por el user de loginUser y listaProveedor incializada. Nos dirige a /proveedor/indexProveedor");
+		logger.info(
+				"Objeto user inicializado por el user de loginUser y listaProveedor incializada. Nos dirige a /proveedor/indexProveedor");
 		return "/proveedor/indexProveedor";
 	}
 
 	/**
-	 * Método que inicializa el usuario proveedor desde las lista para obtener sus datos
+	 * Método que inicializa el usuario proveedor desde las lista para obtener sus
+	 * datos
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararDatosProveedor()
@@ -275,12 +317,14 @@ public class UserMB
 		logger.trace("Entra al método prepararDatosProveedor");
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
-		logger.info("Objeto user inicializado al user de loginUser y  nos dirige a la página /proveedor/datosProveedor");
+		logger.info(
+				"Objeto user inicializado al user de loginUser y  nos dirige a la página /proveedor/datosProveedor");
 		return "/proveedor/datosProveedor";
 	}
 
 	/**
 	 * Método que inicializa el usuario postor desde la lista para su ingreso
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararIngresoPostor()
@@ -289,12 +333,14 @@ public class UserMB
 		UserService service = new UserService();
 		user = service.getUser(loginUser.getUserName());
 		listaOfertaPostor = inicializarListaOfertaPostor(loginUser.getUserName());
-		logger.info("Objeto user inicializado al user de loginUser y listaOfertaPostor inicializadas a la página /postor/indexPostor");
+		logger.info(
+				"Objeto user inicializado al user de loginUser y listaOfertaPostor inicializadas a la página /postor/indexPostor");
 		return "/postor/indexPostor";
 	}
 
 	/**
 	 * Método que inicializa el usuario para ser adicionado
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararDatosPostor()
@@ -308,6 +354,7 @@ public class UserMB
 
 	/**
 	 * Método que inicializa la subasta para ser adicionada
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararAdicionarSubasta()
@@ -317,25 +364,28 @@ public class UserMB
 		sale = new Salesueb();
 		nombre = user.getUserName();
 		sale.setPhotoProduct(serviceP.getParameter("RutaImagen").getTextValue());
-		logger.info("Objeto sale inicializado con Salesueb, objeto nombre inicializado con el userName de user y cambiamos la ruta de la imagen con el para metro 'Ruta imagen'. Nos dirige a la página /proveedor/nuevaSubasta ");
+		logger.info(
+				"Objeto sale inicializado con Salesueb, objeto nombre inicializado con el userName de user y cambiamos la ruta de la imagen con el para metro 'Ruta imagen'. Nos dirige a la página /proveedor/nuevaSubasta ");
 		return "/proveedor/nuevaSubasta";
 
 	}
 
 	/**
 	 * Método que inicializa la subasta desde la lista para obtener sus datos
+	 * 
 	 * @return redirección de la página
 	 */
 	public String prepararSubasta()
 	{
 		logger.trace("Entra al método prepararSubasta");
-		sale = (Salesueb) listaSubastas.getRowData();
+		sale = (Salesueb) listaSubastasActivas.getRowData();
 		logger.info("Objeto sale inicializado con la columna de la lista y nos dirige a la página /postor/subasta ");
 		return "/postor/subasta";
 	}
 
 	/**
 	 * Método que inicializa la oferta para ser adicionada
+	 * 
 	 * @return redirección de la página
 	 */
 	public void prepararAgregarOferta()
@@ -344,11 +394,19 @@ public class UserMB
 		idSale = sale.getId();
 		oferta.setDateOffer(new Date());
 		nombre = loginUser.getUserName();
-		logger.info("Se incializa el objeto idSale con el id de la subasta, se asigna la fefcha a la oferta y asignamos a la variable nombre el valor del userName de loginUser.");
+		logger.info(
+				"Se incializa el objeto idSale con el id de la subasta, se asigna la fefcha a la oferta y asignamos a la variable nombre el valor del userName de loginUser.");
+	}
+	
+	public void prepararReportesDeSubasta()
+	{
+		sale = (Salesueb) getListaSubastas().getRowData();
+		inicializarListaOfertas(sale.getId());
 	}
 
 	/**
 	 * Método que adiciona los usuarios administrador y proveedor
+	 * 
 	 * @return redirección de la página
 	 */
 	public String adicionarUser()
@@ -375,7 +433,7 @@ public class UserMB
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
 			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
-			
+
 			logger.info("Usuario agregado a la base de datos");
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
@@ -397,6 +455,7 @@ public class UserMB
 
 	/**
 	 * Método que modifica los usuarios
+	 * 
 	 * @return redirección de la página
 	 */
 	public String modificarUser()
@@ -412,6 +471,7 @@ public class UserMB
 
 	/**
 	 * Método que elimina los usuarios
+	 * 
 	 * @return redirección de la página
 	 */
 	public void eliminarUser()
@@ -439,6 +499,7 @@ public class UserMB
 
 	/**
 	 * Método para iniciar sesión
+	 * 
 	 * @return redirección de la página
 	 */
 	public String login()
@@ -462,11 +523,9 @@ public class UserMB
 			}
 		}
 
-		
-		
 		if (existe)
 		{
-			
+
 			logger.info("El usuario si existe");
 
 			if (usuarioTemp.getPassword().endsWith("$") || (dias >= serviceP.getParameter("Fecha").getNumberValue()
@@ -481,7 +540,8 @@ public class UserMB
 					{
 						usuarioTemp.setFailedAttempts(0);
 						service.actualizar(usuarioTemp);
-						logger.info("El usuario debe cambiar la contrasela por ingrresar con constraseña generada por el administrador o por que se vencio el tiempo para el cambio.");
+						logger.info(
+								"El usuario debe cambiar la contrasela por ingrresar con constraseña generada por el administrador o por que se vencio el tiempo para el cambio.");
 						pagina = prepararCambioContraseña();
 					} else
 					{
@@ -686,7 +746,7 @@ public class UserMB
 	{
 
 		logger.trace("Entra al método logOut");
-		
+
 		UserService service = new UserService();
 		User usuarioTemp = service.getUser(loginUser.getUserName());
 
@@ -695,12 +755,13 @@ public class UserMB
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		ec.invalidateSession();
 		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
-		
+
 		logger.info("El usuario cierra seción");
 	}
 
 	/**
 	 * Método que crea una oferta nueva
+	 * 
 	 * @return redirección de la página
 	 */
 	public String agregarOferta()
@@ -709,7 +770,7 @@ public class UserMB
 		OfferersaleService service = new OfferersaleService();
 		oferta.setIdentification(nombre);
 
-		if (oferta.getValueOffer() <= sale.getValueBase()  && oferta.getValueOffer() <= sale.getValueCurrent())
+		if (oferta.getValueOffer() <= sale.getValueBase() && oferta.getValueOffer() <= sale.getValueCurrent())
 		{
 			mensajeError = "La oferta debe ser mayor que la oferta actual";
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -729,9 +790,10 @@ public class UserMB
 		}
 		return "/postor/subasta";
 	}
-	
+
 	/**
 	 * Método que actualiza las ofertas
+	 * 
 	 * @return redirección de la página
 	 */
 	public void actualizarOfertas(int idSales)
@@ -739,21 +801,22 @@ public class UserMB
 		logger.trace("Entra al método actualizarOfertas");
 		OfferersaleService service = new OfferersaleService();
 		List<Offerersale> listaOfertas = new OfferersaleService().getOfertaDeSubasta(idSales);
-		
+
 		Iterator<Offerersale> it = listaOfertas.iterator();
-		while(it.hasNext())
+		while (it.hasNext())
 		{
 			Offerersale m = it.next();
 			m.setWinner("LOSER");
 			service.actualizar(m);
 		}
-		
+
 		logger.info("Actualiza el estado de todas las oferta a LOSER para que la nueva oferta sea la gabadora");
-		
+
 	}
 
 	/**
 	 * Método que modifica las subastas
+	 * 
 	 * @return redirección de la página
 	 */
 	public void modificarSubasta()
@@ -766,6 +829,7 @@ public class UserMB
 
 	/**
 	 * Método que crea las subastas
+	 * 
 	 * @return redirección de la página
 	 */
 	public String adicionarSubasta()
@@ -773,7 +837,9 @@ public class UserMB
 		logger.trace("Entra al método adicionarSubasta");
 		SalesuebMB saleB = new SalesuebMB();
 
-		if (sale.getDateStart().getDay() >= sale.getDateEnd().getDay())
+		int dias = (int) ((sale.getDateEnd().getTime() - sale.getDateStart().getTime()) / 86400000);
+
+		if (dias < 0)
 		{
 			mensajeError = "La fecha de inicio debe ser menor que la fecha final";
 			FacesContext context = FacesContext.getCurrentInstance();
@@ -784,10 +850,23 @@ public class UserMB
 		{
 			saleB.agregarSubasta(nombre, sale.getDateStart(), sale.getDateEnd(), sale.getPhotoProduct(),
 					sale.getDescriptionProduct(), sale.getName(), sale.getValueBase());
-			audit.adicionarAudit(nombre, "CREATE", "Salesueb", sale.getId());
+			int id = darIdNuevaSubasta(nombre);
+			audit.adicionarAudit(nombre, "CREATE", "Salesueb", id);
 			logger.info("Se crea una nueva subasta");
 			return "/proveedor/indexProveedor";
 		}
+	}
+	
+	public int darIdNuevaSubasta(String name)
+	{
+		int id = 0;
+		
+		SalesuebService servicio = new SalesuebService();
+		List<Salesueb> temp = servicio.lista();
+		
+		id = temp.size();
+		
+		return id;
 	}
 
 	/**
@@ -808,7 +887,7 @@ public class UserMB
 		}
 
 		logger.info("Verifica si el usuario no está registrado en el sistema");
-		
+
 		if (repetido == false)
 		{
 			user.setDateLastPassword(new Date());
@@ -816,7 +895,7 @@ public class UserMB
 			String pass = EnviarCorreo.sendEmail(user.getEmailAddress());
 			user.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			service.nuevo(user);
-			
+
 			logger.info("Se ha enviado contraseña del nuevo usuario a su correo");
 
 			audit.adicionarAudit("Admin", "CREATE", "User", user.getId());
@@ -839,29 +918,40 @@ public class UserMB
 			ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
 		} catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	
+	// REPORTES EN EXCEL ----------------------------------------------------------------
+	
 
 	/**
-	 * Método que genera el reporte en formato excel de las ofertas
+	 * Método que genera el reporte en formato excel de las ofertas en un rango de fechas
+	 * 
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
-	public void archivoExcelOfertas() throws FileNotFoundException, DocumentException
+	public void excelOfertasFechas() throws FileNotFoundException, DocumentException
 	{
-		logger.trace("Entra al método archivoExcelOfertas");
-		OfferersaleService service = new OfferersaleService();
-		List<Offerersale> oferta = service.getOfferersale(loginUser.getUserName());
+		logger.trace("Entra al método excelOfertasFechas");
+		List<Offerersale> oferta = getListaOfertaPostorRangoFechas();
 
 		HSSFWorkbook libro = new HSSFWorkbook();
 
 		HSSFSheet hoja = libro.createSheet();
 
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
+		String date = sdf.format(new Date());
+		
+		Row row  =  hoja.createRow(0);
+		Cell cell = row.createCell(0);
+		cell.setCellValue(date);
+		
+		hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, 4));
+		
 		HSSFRow fila = hoja.createRow(0);
 
-		// Se crea una celda dentro de la fila
 		HSSFCell id = fila.createCell((short) 0);
 		HSSFCell operationCrud = fila.createCell((short) 1);
 		HSSFCell tableName = fila.createCell((short) 2);
@@ -869,16 +959,20 @@ public class UserMB
 		HSSFCell createDate = fila.createCell((short) 4);
 
 		id.setCellValue(new HSSFRichTextString("ID"));
-		operationCrud.setCellValue(new HSSFRichTextString("Usuario de subasta"));
+		operationCrud.setCellValue(new HSSFRichTextString("Producto"));
 		tableName.setCellValue(new HSSFRichTextString("Valor Oferta"));
 		tableId.setCellValue(new HSSFRichTextString("Fecha oferta"));
 		createDate.setCellValue(new HSSFRichTextString("Ganador"));
+		
+		String producto = "";
+		SalesuebService service = new SalesuebService();
+		
 		for (int i = 0; i < oferta.size(); ++i)
 		{
 			HSSFRow dataRow = hoja.createRow(i + 1);
-
+			producto = service.listaSalesuebID(oferta.get(i).getIdSales()).getName();
 			dataRow.createCell(0).setCellValue(oferta.get(i).getId());
-			dataRow.createCell(1).setCellValue(oferta.get(i).getIdSales());
+			dataRow.createCell(1).setCellValue(producto);
 			dataRow.createCell(2).setCellValue(oferta.get(i).getValueOffer());
 			dataRow.createCell(3).setCellValue(oferta.get(i).getDateOffer().toString());
 			dataRow.createCell(4).setCellValue(oferta.get(i).getWinner());
@@ -896,16 +990,17 @@ public class UserMB
 		{
 			e.printStackTrace();
 		}
-		
+
 		mensajeError = "Se ha generado el archivo correctamente.";
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-		
+
 		logger.info("Se genera el archivo excel de las ofertas");
 	}
 
 	/**
 	 * Método que genera el reporte en formato excel de las subastas
+	 * 
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
@@ -950,7 +1045,7 @@ public class UserMB
 			dataRow.createCell(5).setCellValue(subasta.get(i).getDateStart());
 			dataRow.createCell(6).setCellValue(subasta.get(i).getDateEnd());
 		}
-		
+
 		mensajeError = "Se ha generado el archivo correctamente.";
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
@@ -961,19 +1056,21 @@ public class UserMB
 					"C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".xls");
 			libro.write(elFichero);
 			// Desktop.getDesktop().open(new
-			// File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".xls"));
+			// File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " +
+			// user.getUserName() + ".xls"));
 			elFichero.close();
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		
+
 		logger.info("Se ha generado el arhcivo correctamente");
-		
+
 	}
-	
+
 	/**
 	 * Método para generar reporte excel de todas las subastas
+	 * 
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
@@ -1018,7 +1115,7 @@ public class UserMB
 			dataRow.createCell(5).setCellValue(subasta.get(i).getDateStart());
 			dataRow.createCell(6).setCellValue(subasta.get(i).getDateEnd());
 		}
-		
+
 		mensajeError = "Se ha generado el archivo correctamente.";
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
@@ -1035,308 +1132,110 @@ public class UserMB
 		{
 			e.printStackTrace();
 		}
-		
+
 		logger.info("Se ha generado el arhcivo correctamente");
-		
-	}
 
-	/**
-	 * Método que genera el reporte en formato pdf de las subastas
-	 * @throws FileNotFoundException
-	 * @throws DocumentException
-	 */
-	public void pdfSubastas() throws FileNotFoundException, DocumentException
-	{
-		logger.trace("Entra en el método pdfSubastas");
-
-		Document pdfDoc = new Document(PageSize.A4);
-
-		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
-				"C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".pdf"));
-
-		pdfDoc.open();
-
-		PdfPTable tableUsuario = new PdfPTable(5);
-		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE DE MIS SUBASTAS : " + loginUser.getUserName()));
-		titulo.setColspan(7);
-		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
-		titulo.setBorderWidth(0);
-		titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableUsuario.addCell(titulo);
-		addTableHeaderSub(tableUsuario);
-		addRowsUserSub(tableUsuario);
-		pdfDoc.add(tableUsuario);
-		
-		mensajeError = "Se ha generado el archivo correctamente.";
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-		
-//		try
-//		{
-////			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas - " + user.getUserName() + ".pdf"));
-//		} catch (IOException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		pdfDoc.close();
-		m.close();
-		
-		logger.info("Se ha generado correctamente el archivo");
-
-	}
-
-	/**
-	 * Método que agrega los encabezados del archivo pdf de reporte de susbastas
-	 * @param table
-	 */
-	public void addTableHeaderSub(PdfPTable table)
-	{
-		Stream.of("ID", "Producto", "Descripción", "Valor base", "Valor ofertado", "Fecha inicio","Fecha fin").forEach(columnTitle ->
-		{
-			PdfPCell header = new PdfPCell();
-			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-			header.setBorderWidth(0);
-			header.setHorizontalAlignment(Element.ALIGN_CENTER);
-			header.setPhrase(new Phrase(columnTitle));
-			table.addCell(header);
-		});
-	}
-
-	/**
-	 * Método qe agrega las filas del archivo pdf de reporte de subastas
-	 * @param table
-	 */
-	public void addRowsUserSub(PdfPTable table)
-	{
-		Iterator it = getListaProveedor().iterator();
-
-		Salesueb x;
-
-		while (it.hasNext())
-		{
-			x = (Salesueb) it.next();
-			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
-			PdfPCell Name = new PdfPCell(new Phrase(x.getName()));
-			PdfPCell descripcion = new PdfPCell(new Phrase("" + x.getDescriptionProduct()));
-			PdfPCell base = new PdfPCell(new Phrase("" + x.getValueBase()));
-			PdfPCell actual = new PdfPCell(new Phrase("" + x.getValueCurrent()));
-			PdfPCell fIncio = new PdfPCell(new Phrase(x.getDateStart().toString()));
-			PdfPCell fFin = new PdfPCell(new Phrase(x.getDateEnd().toString()));
-			id.setBorder(Rectangle.NO_BORDER);
-			id.setHorizontalAlignment(Element.ALIGN_CENTER);
-			Name.setBorder(Rectangle.NO_BORDER);
-			Name.setHorizontalAlignment(Element.ALIGN_CENTER);
-			descripcion.setBorder(Rectangle.NO_BORDER);
-			descripcion.setHorizontalAlignment(Element.ALIGN_CENTER);
-			base.setBorder(Rectangle.NO_BORDER);
-			base.setHorizontalAlignment(Element.ALIGN_CENTER);
-			actual.setBorder(Rectangle.NO_BORDER);
-			actual.setHorizontalAlignment(Element.ALIGN_CENTER);
-			fIncio.setBorder(Rectangle.NO_BORDER);
-			fIncio.setHorizontalAlignment(Element.ALIGN_CENTER);
-			fFin.setBorder(Rectangle.NO_BORDER);
-			fFin.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(id);
-			table.addCell(Name);
-			table.addCell(descripcion);
-			table.addCell(base);
-			table.addCell(actual);
-			table.addCell(fIncio);
-			table.addCell(fFin);
-		}
 	}
 	
-	/**
-	 * Método que genera el reporte en formato pdf de las subastas
-	 * @throws FileNotFoundException
-	 * @throws DocumentException
-	 */
-	public void pdfTodasSubastas() throws FileNotFoundException, DocumentException
+	//---------------------------------------------------------------------------
+	// REPORTES EN PDF
+	//---------------------------------------------------------------------------
+
+	public void pdfOfertasSubasta() throws DocumentException
 	{
-		logger.trace("Entra en el método pdfSubastas");
+		logger.trace("Entra en el método pdfofertasSubastas");
 
-		Document pdfDoc = new Document(PageSize.A4);
-
-		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
-				"C://ReportesGeneradosSistemaSubastas/Reporte de subastas.pdf"));
-
-		pdfDoc.open();
-
-		PdfPTable tableUsuario = new PdfPTable(5);
-		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE DE MIS SUBASTAS : " ));
-		titulo.setColspan(7);
-		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
-		titulo.setBorderWidth(0);
-		titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableUsuario.addCell(titulo);
-		TableHeaderSub(tableUsuario);
-		RowsUserSub(tableUsuario);
-		pdfDoc.add(tableUsuario);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in;
 		
+		Document document = new Document();
+
+		PdfWriter.getInstance(document, out);
+		
+		Rectangle tamaño = PageSize.A4;
+		document.setPageSize(tamaño);
+		document.open();
+
+		Font f = new Font();
+		f.setStyle(Font.BOLDITALIC);
+		f.setSize(30);
+		f.setColor(244, 92, 66);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
+		String date = sdf.format(new Date());
+
+		Paragraph tituloEmpresa = new Paragraph();
+		tituloEmpresa.setFont(f);
+		tituloEmpresa.add("ACME inc");
+		document.add(tituloEmpresa);
+		document.add(new Paragraph(date));
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+
+		Font boldFont = new Font();
+		boldFont.setStyle(Font.BOLD);
+		boldFont.setSize(18);
+
+		SimpleDateFormat format = new SimpleDateFormat("dd/M/yyyy");
+		
+		Paragraph titulo = new Paragraph();
+		titulo.setFont(boldFont);
+		titulo.add("REPORTE DE OFERTAS DE LA SUBASTA DE " + sale.getName().toUpperCase());
+		titulo.setIndentationLeft(150);
+		document.add(titulo);
+
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		PdfPTable tableUsuario = new PdfPTable(5);
+		TableHeaderOfer(tableUsuario);
+		RowsUserOfer(tableUsuario);
+		document.add(tableUsuario);
+		document.close();
+
+		in = new ByteArrayInputStream(out.toByteArray());
+		file = new DefaultStreamedContent(in, "application/pdf", "ReporteOfertasDeSubasta.pdf");
+
 		mensajeError = "Se ha generado el archivo correctamente.";
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-		
-//		try
-//		{
-////			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/Reporte de subastas.pdf"));
-//		} catch (IOException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		pdfDoc.close();
-		m.close();
-		
+
 		logger.info("Se ha generado correctamente el archivo");
-
 	}
-
-	/**
-	 * Método que agrega los encabezados del archivo pdf de reporte de todas susbastas
-	 * @param table
-	 */
-	public void TableHeaderSub(PdfPTable table)
+	
+	public void TableHeaderOfer(PdfPTable table)
 	{
-		Stream.of("ID", "Producto", "Descripción", "Valor base", "Valor ofertado", "Fecha inicio","Fecha fin").forEach(columnTitle ->
+		Stream.of("ID", "Producto", "Valor Oferta", "Fecha oferta", "Ganador").forEach(columnTitle ->
 		{
 			PdfPCell header = new PdfPCell();
-			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-			header.setBorderWidth(0);
+			header.setBorderWidth(1);
 			header.setHorizontalAlignment(Element.ALIGN_CENTER);
 			header.setPhrase(new Phrase(columnTitle));
 			table.addCell(header);
 		});
 	}
-
-	/**
-	 * Método qe agrega las filas del archivo pdf de reporte de todas subastas
-	 * @param table
-	 */
-	public void RowsUserSub(PdfPTable table)
+	
+	public void RowsUserOfer(PdfPTable table)
 	{
-		Iterator it = getListaSubastas().iterator();
-
-		Salesueb x;
-
-		while (it.hasNext())
-		{
-			x = (Salesueb) it.next();
-			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
-			PdfPCell Name = new PdfPCell(new Phrase(x.getName()));
-			PdfPCell descripcion = new PdfPCell(new Phrase("" + x.getDescriptionProduct()));
-			PdfPCell base = new PdfPCell(new Phrase("" + x.getValueBase()));
-			PdfPCell actual = new PdfPCell(new Phrase("" + x.getValueCurrent()));
-			PdfPCell fIncio = new PdfPCell(new Phrase(x.getDateStart().toString()));
-			PdfPCell fFin = new PdfPCell(new Phrase(x.getDateEnd().toString()));
-			id.setBorder(Rectangle.NO_BORDER);
-			id.setHorizontalAlignment(Element.ALIGN_CENTER);
-			Name.setBorder(Rectangle.NO_BORDER);
-			Name.setHorizontalAlignment(Element.ALIGN_CENTER);
-			descripcion.setBorder(Rectangle.NO_BORDER);
-			descripcion.setHorizontalAlignment(Element.ALIGN_CENTER);
-			base.setBorder(Rectangle.NO_BORDER);
-			base.setHorizontalAlignment(Element.ALIGN_CENTER);
-			actual.setBorder(Rectangle.NO_BORDER);
-			actual.setHorizontalAlignment(Element.ALIGN_CENTER);
-			fIncio.setBorder(Rectangle.NO_BORDER);
-			fIncio.setHorizontalAlignment(Element.ALIGN_CENTER);
-			fFin.setBorder(Rectangle.NO_BORDER);
-			fFin.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(id);
-			table.addCell(Name);
-			table.addCell(descripcion);
-			table.addCell(base);
-			table.addCell(actual);
-			table.addCell(fIncio);
-			table.addCell(fFin);
-		}
-	}
-
-	/**
-	 * Método para generar el documento PDF de las ofertas
-	 * @throws FileNotFoundException
-	 * @throws DocumentException
-	 */
-	public void pdfOfertas() throws FileNotFoundException, DocumentException
-	{
-
-		logger.trace("Entra al método pdfOfertas");
-		Document pdfDoc = new Document(PageSize.A4);
-
-		PdfWriter m = PdfWriter.getInstance(pdfDoc, new FileOutputStream(
-				"C://ReportesGeneradosSistemaSubastas/Reporte de ofertas - " + loginUser.getUserName() + ".pdf"));
-
-		pdfDoc.open();
-
-		PdfPTable tableUsuario = new PdfPTable(5);
-		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE DE MIS OFERTAS : " + loginUser.getUserName()));
-		titulo.setColspan(5);
-		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
-		titulo.setBorderWidth(0);
-		titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableUsuario.addCell(titulo);
-		addTableHeaderCrud(tableUsuario);
-		addRowsUserCrud(tableUsuario);
-		pdfDoc.add(tableUsuario);
 		
-		mensajeError = "Se ha generado el archivo correctamente.";
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-		
-//			try
-//			{
-////				Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/"+crud+".pdf"));
-//			} catch (IOException e)
-//			{
-//			}
-		pdfDoc.close();
-		m.close();
-		
-		logger.info("Se genera correctamente el archivo");
-
-	}
-
-	/**
-	 * Método para agregar el encabezado del reporte PDF del CRUD
-	 * @param table 
-	 */
-	public void addTableHeaderCrud(PdfPTable table)
-	{
-		Stream.of("ID", "Usuario de subasta", "Valor Oferta", "Fecha oferta", "Ganador").forEach(columnTitle ->
-		{
-			PdfPCell header = new PdfPCell();
-			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-			header.setBorderWidth(0);
-			header.setHorizontalAlignment(Element.ALIGN_CENTER);
-			header.setPhrase(new Phrase(columnTitle));
-			table.addCell(header);
-		});
-	}
-
-	/**
-	 * Método para agregar las filas al reporte pdf del CRUD
-	 * @param table
-	 */
-	public void addRowsUserCrud(PdfPTable table)
-	{
-		Iterator it = getListaOfertaPostor().iterator();
+		Iterator it = getListaOfertaSubasta().iterator();
 
 		Offerersale x;
-
+		String producto = "";
+		SalesuebService service = new SalesuebService();
 		while (it.hasNext())
 		{
 			x = (Offerersale) it.next();
+			producto = service.listaSalesuebID(x.getIdSales()).getName();
 			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
-			PdfPCell userName = new PdfPCell(new Phrase(x.getIdentification()));
+			PdfPCell produc = new PdfPCell(new Phrase(producto));
 			PdfPCell valor = new PdfPCell(new Phrase("" + x.getValueOffer()));
 			PdfPCell fecha = new PdfPCell(new Phrase("" + x.getDateOffer()));
 			PdfPCell ganador = new PdfPCell(new Phrase("" + x.getWinner()));
 			id.setBorder(Rectangle.NO_BORDER);
 			id.setHorizontalAlignment(Element.ALIGN_CENTER);
-			userName.setBorder(Rectangle.NO_BORDER);
-			userName.setHorizontalAlignment(Element.ALIGN_CENTER);
+			produc.setBorder(Rectangle.NO_BORDER);
+			produc.setHorizontalAlignment(Element.ALIGN_CENTER);
 			valor.setBorder(Rectangle.NO_BORDER);
 			valor.setHorizontalAlignment(Element.ALIGN_CENTER);
 			fecha.setBorder(Rectangle.NO_BORDER);
@@ -1344,45 +1243,411 @@ public class UserMB
 			ganador.setBorder(Rectangle.NO_BORDER);
 			ganador.setHorizontalAlignment(Element.ALIGN_CENTER);
 			table.addCell(id);
-			table.addCell(userName);
+			table.addCell(produc);
 			table.addCell(valor);
 			table.addCell(fecha);
 			table.addCell(ganador);
 		}
 	}
 	
+	
+	/**
+	 * Método que genera el reporte en formato pdf de las subastas activas del momento
+	 * 
+	 * @throws FileNotFoundException
+	 * @throws DocumentException
+	 */
+	public void pdfSubastasActivas() throws FileNotFoundException, DocumentException
+	{
+		logger.trace("Entra en el método pdfSubastasActivas");
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in;
+		
+		Document document = new Document();
+
+		PdfWriter.getInstance(document, out);
+		
+		Rectangle tamaño = PageSize.A4;
+		document.setPageSize(tamaño);
+		document.open();
+
+		Font f = new Font();
+		f.setStyle(Font.BOLDITALIC);
+		f.setSize(30);
+		f.setColor(244, 92, 66);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
+		String date = sdf.format(new Date());
+
+		Paragraph tituloEmpresa = new Paragraph();
+		tituloEmpresa.setFont(f);
+		tituloEmpresa.add("ACME inc");
+		document.add(tituloEmpresa);
+		document.add(new Paragraph(date));
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+
+		Font boldFont = new Font();
+		boldFont.setStyle(Font.BOLD);
+		boldFont.setSize(18);
+
+		SimpleDateFormat format = new SimpleDateFormat("dd/M/yyyy");
+		
+		Paragraph titulo = new Paragraph();
+		titulo.setFont(boldFont);
+		titulo.add("REPORTE SUBASTAS ACTIVAS ");
+		titulo.setAlignment(Element.ALIGN_CENTER);
+		titulo.setIndentationLeft(100);
+		document.add(titulo);
+
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		PdfPTable tableUsuario = new PdfPTable(7);
+		TableHeaderSub(tableUsuario);
+		RowsUserSub(tableUsuario);
+		document.add(tableUsuario);
+		document.close();
+
+		in = new ByteArrayInputStream(out.toByteArray());
+		file = new DefaultStreamedContent(in, "application/pdf", "ReporteSubastasActivas.pdf");
+
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+
+		logger.info("Se ha generado correctamente el archivo");
+
+	}
+
+	/**
+	 * Método que agrega los encabezados del archivo pdf de reporte de todas
+	 * susbastas activas
+	 * 
+	 * @param table
+	 */
+	public void TableHeaderSub(PdfPTable table)
+	{
+		Stream.of("ID", "Producto", "Descripción", "Valor base", "Valor ofertado", "Fecha inicio", "Fecha fin")
+				.forEach(columnTitle ->
+				{
+					PdfPCell header = new PdfPCell();
+					header.setBorderWidth(1);
+					header.setHorizontalAlignment(Element.ALIGN_CENTER);
+					header.setPhrase(new Phrase(columnTitle));
+					table.addCell(header);
+				});
+	}
+
+	/**
+	 * Método qe agrega las filas del archivo pdf de reporte de todas subastas activas
+	 * 
+	 * @param table
+	 */
+	public void RowsUserSub(PdfPTable table)
+	{
+		Iterator it = getListaSubastasActivas().iterator();
+
+		Salesueb x;
+
+		while (it.hasNext())
+		{
+			x = (Salesueb) it.next();
+			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
+			PdfPCell Name = new PdfPCell(new Phrase(x.getName()));
+			PdfPCell descripcion = new PdfPCell(new Phrase("" + x.getDescriptionProduct()));
+			PdfPCell base = new PdfPCell(new Phrase("" + x.getValueBase()));
+			PdfPCell actual = new PdfPCell(new Phrase("" + x.getValueCurrent()));
+			PdfPCell fIncio = new PdfPCell(new Phrase(x.getDateStart().toString()));
+			PdfPCell fFin = new PdfPCell(new Phrase(x.getDateEnd().toString()));
+			id.setBorder(Rectangle.NO_BORDER);
+			id.setHorizontalAlignment(Element.ALIGN_CENTER);
+			Name.setBorder(Rectangle.NO_BORDER);
+			Name.setHorizontalAlignment(Element.ALIGN_CENTER);
+			descripcion.setBorder(Rectangle.NO_BORDER);
+			descripcion.setHorizontalAlignment(Element.ALIGN_CENTER);
+			base.setBorder(Rectangle.NO_BORDER);
+			base.setHorizontalAlignment(Element.ALIGN_CENTER);
+			actual.setBorder(Rectangle.NO_BORDER);
+			actual.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fIncio.setBorder(Rectangle.NO_BORDER);
+			fIncio.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fFin.setBorder(Rectangle.NO_BORDER);
+			fFin.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(id);
+			table.addCell(Name);
+			table.addCell(descripcion);
+			table.addCell(base);
+			table.addCell(actual);
+			table.addCell(fIncio);
+			table.addCell(fFin);
+		}
+	}
+	
+	public void pdfProveedores() throws DocumentException
+	{
+		logger.trace("Entra al método pdfProveedores");
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in;
+		
+		Document document = new Document();
+
+		PdfWriter.getInstance(document, out);
+		
+		Rectangle tamaño = PageSize.A4;
+		document.setPageSize(tamaño);
+		document.open();
+
+		Font f = new Font();
+		f.setStyle(Font.BOLDITALIC);
+		f.setSize(30);
+		f.setColor(244, 92, 66);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
+		String date = sdf.format(new Date());
+
+		Paragraph tituloEmpresa = new Paragraph();
+		tituloEmpresa.setFont(f);
+		tituloEmpresa.add("ACME inc");
+		document.add(tituloEmpresa);
+		document.add(new Paragraph(date));
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+
+		Font boldFont = new Font();
+		boldFont.setStyle(Font.BOLD);
+		boldFont.setSize(18);
+
+		SimpleDateFormat format = new SimpleDateFormat("dd/M/yyyy");
+		
+		Paragraph titulo = new Paragraph();
+		titulo.setFont(boldFont);
+		titulo.add("REPORTE DE PROVEEDORES EN EL SISTEMA");
+		titulo.setAlignment(Element.ALIGN_CENTER);
+		titulo.setIndentationLeft(100);
+		document.add(titulo);
+
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		PdfPTable tableUsuario = new PdfPTable(4);
+		addTableHeaderProveedores(tableUsuario);
+		addRowsUserProveedores(tableUsuario);
+		document.add(tableUsuario);
+		document.close();
+
+		in = new ByteArrayInputStream(out.toByteArray());
+		file = new DefaultStreamedContent(in, "application/pdf", "ReporteProveedores.pdf");
+
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+
+		logger.info("Se genera correctamente el archivo");
+	}
+	
+	public void addTableHeaderProveedores(PdfPTable table)
+	{
+		Stream.of("ID", "Usuario", "Nombre", "Correo Electronico").forEach(columnTitle ->
+		{
+			PdfPCell header = new PdfPCell();
+			header.setBorderWidth(1);
+			header.setHorizontalAlignment(Element.ALIGN_CENTER);
+			header.setPhrase(new Phrase(columnTitle));
+			table.addCell(header);
+		});
+	}
+	
+	public void addRowsUserProveedores(PdfPTable table)
+	{
+		
+		Iterator it = getListaProveedores().iterator();
+
+		User x;
+		while (it.hasNext())
+		{
+			x = (User) it.next();
+			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
+			PdfPCell userName = new PdfPCell(new Phrase(x.getUserName()));
+			PdfPCell fullName = new PdfPCell(new Phrase(x.getFullName()));
+			PdfPCell correo = new PdfPCell(new Phrase(x.getEmailAddress()));
+			id.setBorder(Rectangle.NO_BORDER);
+			id.setHorizontalAlignment(Element.ALIGN_CENTER);
+			userName.setBorder(Rectangle.NO_BORDER);
+			userName.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fullName.setBorder(Rectangle.NO_BORDER);
+			fullName.setHorizontalAlignment(Element.ALIGN_CENTER);
+			correo.setBorder(Rectangle.NO_BORDER);
+			correo.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(id);
+			table.addCell(userName);
+			table.addCell(fullName);
+			table.addCell(correo);
+		}
+	}
+
+	/**
+	 * Método para generar el documento PDF de las ofertas por un rango de fecha
+	 * 
+	 * @throws DocumentException
+	 * @throws IOException 
+	 */
+	public void pdfOfertasFechas() throws DocumentException, IOException
+	{
+
+		logger.trace("Entra al método pdfOfertas");
+		
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ByteArrayInputStream in;
+		
+		Document document = new Document();
+
+		PdfWriter.getInstance(document, out);
+		
+		Rectangle tamaño = PageSize.A4;
+		document.setPageSize(tamaño);
+		document.open();
+
+		Font f = new Font();
+		f.setStyle(Font.BOLDITALIC);
+		f.setSize(30);
+		f.setColor(244, 92, 66);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
+		String date = sdf.format(new Date());
+
+		Paragraph tituloEmpresa = new Paragraph();
+		tituloEmpresa.setFont(f);
+		tituloEmpresa.add("ACME inc");
+		document.add(tituloEmpresa);
+		document.add(new Paragraph(date));
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+
+		Font boldFont = new Font();
+		boldFont.setStyle(Font.BOLD);
+		boldFont.setSize(18);
+
+		SimpleDateFormat format = new SimpleDateFormat("dd/M/yyyy");
+		
+		Paragraph titulo = new Paragraph();
+		titulo.setFont(boldFont);
+		titulo.add("REPORTE DE OFERTAS DE " + userPostor + " ENTRE " + format.format(inicio) + " - " + format.format(fin) + ".");
+		titulo.setIndentationLeft(150);
+		document.add(titulo);
+
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		document.add(Chunk.NEWLINE);
+		PdfPTable tableUsuario = new PdfPTable(5);
+		addTableHeaderOfertasFechas(tableUsuario);
+		addRowsUserOfertasFechas(tableUsuario);
+		document.add(tableUsuario);
+		document.close();
+
+		in = new ByteArrayInputStream(out.toByteArray());
+		file = new DefaultStreamedContent(in, "application/pdf", "ReporteDeOfertas.pdf");
+
+		mensajeError = "Se ha generado el archivo correctamente.";
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+
+		logger.info("Se genera correctamente el archivo");
+
+	}
+
+	/**
+	 * Método para agregar el encabezado del reporte PDF de las ofertas por un rango de fechas
+	 * 
+	 * @param table
+	 */
+	public void addTableHeaderOfertasFechas(PdfPTable table)
+	{
+		Stream.of("ID", "Producto", "Valor Oferta", "Fecha oferta", "Ganador").forEach(columnTitle ->
+		{
+			PdfPCell header = new PdfPCell();
+			header.setBorderWidth(1);
+			header.setHorizontalAlignment(Element.ALIGN_CENTER);
+			header.setPhrase(new Phrase(columnTitle));
+			table.addCell(header);
+		});
+	}
+
+	/**
+	 * Método para agregar las filas al reporte pdf de las ofertas por un rango de fechas
+	 * 
+	 * @param table
+	 */
+	public void addRowsUserOfertasFechas(PdfPTable table)
+	{
+		
+		Iterator it = getListaOfertaPostorRangoFechas().iterator();
+
+		Offerersale x;
+		String producto = "";
+		SalesuebService service = new SalesuebService();
+		while (it.hasNext())
+		{
+			x = (Offerersale) it.next();
+			producto = service.listaSalesuebID(x.getIdSales()).getName();
+			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
+			PdfPCell produc = new PdfPCell(new Phrase(producto));
+			PdfPCell valor = new PdfPCell(new Phrase("" + x.getValueOffer()));
+			PdfPCell fecha = new PdfPCell(new Phrase("" + x.getDateOffer()));
+			PdfPCell ganador = new PdfPCell(new Phrase("" + x.getWinner()));
+			id.setBorder(Rectangle.NO_BORDER);
+			id.setHorizontalAlignment(Element.ALIGN_CENTER);
+			produc.setBorder(Rectangle.NO_BORDER);
+			produc.setHorizontalAlignment(Element.ALIGN_CENTER);
+			valor.setBorder(Rectangle.NO_BORDER);
+			valor.setHorizontalAlignment(Element.ALIGN_CENTER);
+			fecha.setBorder(Rectangle.NO_BORDER);
+			fecha.setHorizontalAlignment(Element.ALIGN_CENTER);
+			ganador.setBorder(Rectangle.NO_BORDER);
+			ganador.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(id);
+			table.addCell(produc);
+			table.addCell(valor);
+			table.addCell(fecha);
+			table.addCell(ganador);
+		}
+	}
+
 	/**
 	 * Método para actualizar todas las ofertas cuando ingrese un usuario
 	 */
 	public void actualizarSubastas()
 	{
-		
+
 		logger.trace("Entra al método actualizarSubastas");
-		
+
 		List<Salesueb> lista = new SalesuebService().lista();
 		Date actual = new Date();
-		for(int i = 0; i < lista.size(); i++)
+		for (int i = 0; i < lista.size(); i++)
 		{
 			sale = lista.get(i);
-			
-			if(lista.get(i).getDateStart().before(actual) || lista.get(i).getDateStart().equals(actual))
+
+			if (lista.get(i).getDateStart().before(actual) || lista.get(i).getDateStart().equals(actual))
 			{
 				lista.get(i).setState("ACTIVE");
 				modificarSubasta();
-				
+
 			}
-			if(lista.get(i).getDateEnd().before(actual))
+			if (lista.get(i).getDateEnd().before(actual))
 			{
 				lista.get(i).setState("INACTIVE");
 				modificarSubasta();
 			}
 		}
-		
+
 		logger.info("El estado de las subastas ha sido actualizado a LOSER");
 	}
 
 	/**
 	 * Getter de user
+	 * 
 	 * @return user
 	 */
 	public User getUsuario()
@@ -1392,6 +1657,7 @@ public class UserMB
 
 	/**
 	 * Setter de user
+	 * 
 	 * @param user
 	 */
 	public void setUsuario(User usuario)
@@ -1401,6 +1667,7 @@ public class UserMB
 
 	/**
 	 * getter de loginUser
+	 * 
 	 * @return loginUser
 	 */
 	public User getLoginUser()
@@ -1410,6 +1677,7 @@ public class UserMB
 
 	/**
 	 * Setter de loginUser
+	 * 
 	 * @param loginUser
 	 */
 	public void setLoginUser(User loginUser)
@@ -1419,6 +1687,7 @@ public class UserMB
 
 	/**
 	 * Getter de userAdmin
+	 * 
 	 * @return userAdmin
 	 */
 	public User getUserAdmin()
@@ -1428,6 +1697,7 @@ public class UserMB
 
 	/**
 	 * Setter de userAdmin
+	 * 
 	 * @param userAdmin
 	 */
 	public void setUserAdmin(User userAdmin)
@@ -1437,6 +1707,7 @@ public class UserMB
 
 	/**
 	 * Getter de listaUser
+	 * 
 	 * @return listaUser
 	 */
 	public DataModel getListarUser()
@@ -1448,6 +1719,7 @@ public class UserMB
 
 	/**
 	 * Getter de userPass
+	 * 
 	 * @return userPass
 	 */
 	public User getUserPass()
@@ -1457,6 +1729,7 @@ public class UserMB
 
 	/**
 	 * Setter de userPass
+	 * 
 	 * @param userPass
 	 */
 	public void setUserPass(User userPass)
@@ -1466,6 +1739,7 @@ public class UserMB
 
 	/**
 	 * Getter de mensaje Error
+	 * 
 	 * @return mensajeError
 	 */
 	public String getMensajeError()
@@ -1475,6 +1749,7 @@ public class UserMB
 
 	/**
 	 * Setter de mensajeError
+	 * 
 	 * @param mensajeError
 	 */
 	public void setMensajeError(String mensajeError)
@@ -1484,6 +1759,7 @@ public class UserMB
 
 	/**
 	 * Getter de email1
+	 * 
 	 * @return email1
 	 */
 	public String getEmail1()
@@ -1493,6 +1769,7 @@ public class UserMB
 
 	/**
 	 * Setter de email1
+	 * 
 	 * @param email1
 	 */
 	public void setEmail1(String email1)
@@ -1502,6 +1779,7 @@ public class UserMB
 
 	/**
 	 * Getter de email2
+	 * 
 	 * @return email2
 	 */
 	public String getEmail2()
@@ -1511,6 +1789,7 @@ public class UserMB
 
 	/**
 	 * Setter de email2
+	 * 
 	 * @param email2
 	 */
 	public void setEmail2(String email2)
@@ -1520,6 +1799,7 @@ public class UserMB
 
 	/**
 	 * Getter de sale
+	 * 
 	 * @return sale
 	 */
 	public Salesueb getSale()
@@ -1529,6 +1809,7 @@ public class UserMB
 
 	/**
 	 * Setter de sale
+	 * 
 	 * @param sale
 	 */
 	public void setSale(Salesueb sale)
@@ -1538,6 +1819,7 @@ public class UserMB
 
 	/**
 	 * Getter de nombre
+	 * 
 	 * @return nombre
 	 */
 	public String getNombre()
@@ -1547,6 +1829,7 @@ public class UserMB
 
 	/**
 	 * Setter de nombre
+	 * 
 	 * @param nombre
 	 */
 	public void setNombre(String nombre)
@@ -1556,6 +1839,7 @@ public class UserMB
 
 	/**
 	 * Método que inicializa la listaProveedor
+	 * 
 	 * @param userSales
 	 * @return listaProveedor
 	 */
@@ -1570,6 +1854,7 @@ public class UserMB
 
 	/**
 	 * Getter de listaProveedor
+	 * 
 	 * @return listaProveedor
 	 */
 	public DataModel getListaProveedor()
@@ -1582,6 +1867,7 @@ public class UserMB
 
 	/**
 	 * Setter de listaProveedor
+	 * 
 	 * @param listaProveedor
 	 */
 	public void setListaProveedor(DataModel listaProveedor)
@@ -1591,6 +1877,7 @@ public class UserMB
 
 	/**
 	 * Getter de oferta
+	 * 
 	 * @return oferta
 	 */
 	public Offerersale getOferta()
@@ -1600,6 +1887,7 @@ public class UserMB
 
 	/**
 	 * Setter de oferta
+	 * 
 	 * @param oferta
 	 */
 	public void setOferta(Offerersale oferta)
@@ -1609,6 +1897,7 @@ public class UserMB
 
 	/**
 	 * Getter de idSale
+	 * 
 	 * @return
 	 */
 	public int getIdSale()
@@ -1618,6 +1907,7 @@ public class UserMB
 
 	/**
 	 * Setter de idSale
+	 * 
 	 * @param idSale
 	 */
 	public void setIdSale(int idSale)
@@ -1627,6 +1917,7 @@ public class UserMB
 
 	/**
 	 * Getter de listaSubastas
+	 * 
 	 * @return listaSubastas
 	 */
 	public DataModel getListaSubastas()
@@ -1639,6 +1930,7 @@ public class UserMB
 
 	/**
 	 * Getter de listaSubastas
+	 * 
 	 * @param listaSubastas
 	 */
 	public void setListaSubastas(DataModel listaSubastas)
@@ -1648,12 +1940,13 @@ public class UserMB
 
 	/**
 	 * Método que inicializa la listaOfertaPostor
+	 * 
 	 * @param postor
 	 * @return listaOfertaPostor
 	 */
 	public DataModel inicializarListaOfertaPostor(String postor)
 	{
-		
+
 		logger.trace("Entra al método inicializarListaOfertaPostor");
 		List<Offerersale> lista = new OfferersaleService().getOfferersale(postor);
 		listaOfertaPostor = new ListDataModel(lista);
@@ -1663,6 +1956,7 @@ public class UserMB
 
 	/**
 	 * Setter de listaOfertaPostor
+	 * 
 	 * @param listaOfertaPostor
 	 */
 	public void setListaOfertaPostor(DataModel listaOfertaPostor)
@@ -1672,6 +1966,7 @@ public class UserMB
 
 	/**
 	 * Getter de listaOfertaPostor
+	 * 
 	 * @return listaOfertaPostor
 	 */
 	public DataModel getListaOfertaPostor()
@@ -1684,9 +1979,11 @@ public class UserMB
 
 	/**
 	 * Getter de listaSubastaActivas
+	 * 
 	 * @return listaSubastasActivas
 	 */
-	public DataModel getListaSubastasActivas() {
+	public DataModel getListaSubastasActivas()
+	{
 		actualizarSubastas();
 		List<Salesueb> lista = new SalesuebService().listaActivas();
 		listaSubastasActivas = new ListDataModel(lista);
@@ -1695,11 +1992,141 @@ public class UserMB
 
 	/**
 	 * Setter de listaSubastasActivas
+	 * 
 	 * @param listaSubastasActivas
 	 */
-	public void setListaSubastasActivas(DataModel listaSubastasActivas) {
+	public void setListaSubastasActivas(DataModel listaSubastasActivas)
+	{
 		this.listaSubastasActivas = listaSubastasActivas;
 	}
 
+	/**
+	 * Inicializa la lista de ofertas de una subasta
+	 */
+	public void inicializarListaOfertas(int idSubasta)
+	{
+		OfferersaleService servicio = new OfferersaleService();
+		List<Offerersale> lista = servicio.getOfertaDeSubasta(idSubasta);
+		listaOfertaSubasta = new ListDataModel<>(lista);
+	}
+
+	/**
+	 * Da la lista de ofertas por una subasta
+	 * 
+	 * @return listaOfertaSubasta
+	 */
+	public DataModel getListaOfertaSubasta()
+	{
+		inicializarListaOfertas(sale.getId());
+		return listaOfertaSubasta;
+	}
+	
+	/**
+	 * Modifica la lista de las ofertas de una subasta
+	 * 
+	 * @param listaOfertaSubasta
+	 */
+	public void setListaOfertaSubasta(DataModel listaOfertaSubasta)
+	{
+		this.listaOfertaSubasta = listaOfertaSubasta;
+	}
+	
+	public List inicializarListaOfertasPostorRangos()
+	{
+		UserService servicio = new UserService();
+		Iterator<User> it = servicio.lista().iterator();
+		boolean encontrado = false;
+
+		while(it.hasNext())
+		{
+			if(it.next().getUserName().equalsIgnoreCase(userPostor))
+			{
+				encontrado = true;
+			}
+		}
+		
+		if(encontrado == true)
+		{
+			listaOfertaPostorRangoFechas = new ArrayList<>();
+			OfferersaleService service = new OfferersaleService();
+			SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.0");
+			listaOfertaPostorRangoFechas = service.listaFiltrada("dateOffer BETWEEN '" + formato.format(inicio) + "'AND'" + formato.format(fin) + "' AND userName = '" + userPostor + "'");
+			return listaOfertaPostorRangoFechas;
+		}
+		else
+		{
+			mensajeError = "El usuario " + userPostor + " no existe.";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			return null;
+		}
+		
+		
+	}
+
+	public List getListaOfertaPostorRangoFechas()
+	{
+		listaOfertaPostorRangoFechas = inicializarListaOfertasPostorRangos();
+		return listaOfertaPostorRangoFechas;
+	}
+
+	public void setListaOfertaPostorRangoFechas(List listaOfertaPostorRangoFechas)
+	{
+		this.listaOfertaPostorRangoFechas = listaOfertaPostorRangoFechas;
+	}
+
+	public Date getInicio()
+	{
+		return inicio;
+	}
+
+	public void setInicio(Date inicio)
+	{
+		this.inicio = inicio;
+	}
+
+	public Date getFin()
+	{
+		return fin;
+	}
+
+	public void setFin(Date fin)
+	{
+		this.fin = fin;
+	}
+
+	public String getUserPostor()
+	{
+		return userPostor;
+	}
+
+	public void setUserPostor(String userPostor)
+	{
+		this.userPostor = userPostor;
+	}
+
+	public StreamedContent getFile()
+	{
+		return file;
+	}
+
+	public void setFile(StreamedContent file)
+	{
+		this.file = file;
+	}
+
+	public List getListaProveedores()
+	{
+		UserService servicio = new UserService();
+		listaProveedores = servicio.listaProveedores("userType = 'proveedor'");
+		return listaProveedores;
+	}
+
+	public void setListaProveedores(List listaProveedores)
+	{
+		this.listaProveedores = listaProveedores;
+	}
+
+	
 	
 }

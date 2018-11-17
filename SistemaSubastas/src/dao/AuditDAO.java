@@ -49,5 +49,12 @@ public interface AuditDAO {
 	 * @return lista
 	 */
 	public List<Audit> lista();
+	
+	/**
+	 * Método con el que podemos filtrar cualquier lista
+	 * @param filtro
+	 * @return lista por el filtro correspondiente
+	 */
+	public List<Audit> getAuditFilter(String filtro);
 
 }

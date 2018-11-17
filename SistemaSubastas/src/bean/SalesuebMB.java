@@ -52,7 +52,7 @@ public class SalesuebMB
 		sale.setDescriptionProduct(descripcion);
 		sale.setName(nombre);
 		sale.setValueBase(valorInicial);
-		sale.setState("W");
+		sale.setState("WAITING");
 		service.nuevo(sale);
 	}
 	

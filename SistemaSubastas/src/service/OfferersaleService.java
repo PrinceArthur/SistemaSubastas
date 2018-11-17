@@ -70,4 +70,9 @@ public class OfferersaleService
 	{
 		return offer.getOfertaDeSubasta(idSales);
 	}
+	
+	public List<Offerersale> listaFiltrada(String filtro)
+	{
+		return offer.listaFiltrada(filtro);
+	}
 }

@@ -12,7 +12,6 @@ body {
 	background-color: rgb(244, 247, 247)
 }
 
-
 .panel tr, .panel td {
 	background: none;
 	border: none !important;
@@ -68,6 +67,8 @@ body {
 					icon="ui-icon-extlink" styleClass="boton" />
 				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
 					style="background-color: rgb(203, 216, 237);border:none">
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
 					<p:menuitem value="Salir" action="#{userMB.logOut}"
 						icon="ui-icon-power" />
 				</p:menu>
@@ -80,45 +81,70 @@ body {
 			<p:panelGrid columns="2" styleClass="panel">
 
 				<p:menu style="background-color: rgb(203, 216, 237);border:none">
-					<p:submenu label="OPCIONES"
+					<p:submenu label="LISTADOS"
 						style="background-color: rgb(179, 185, 242)">
 						<p:menuitem value="Usuarios"
 							action="/administrador/indexAdmin.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Auditoria"
 							action="/administrador/indexAudit.xhtml" icon="ui-icon-star" />
-						<p:menuitem value="Parámetros"
+						<p:menuitem value="Parametros"
 							action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Subastas"
-							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star" />
+							action="/administrador/indexSubata.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Ofertas"
 							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
 					</p:submenu>
 				</p:menu>
-				
-				
-				<p:panel header="MIS DATOS"
+
+				<p:panel
 					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-top:10%;margin-left:40%">
+					<p:growl id="growl" showDetail="true" sticky="true" />
 
-						<p:panelGrid columns="2" styleClass="panel" id="pg">
+					<p:panelGrid columns="2" styleClass="panel" id="pg">
 
-						<h:outputLabel value="Nombre de usuario: "
+						<h:outputLabel value="Reporte Subastas creadas: "
 							style="font-weight:bold" />
-						<p:outputLabel value="#{userMB.userAdmin.userName}" />
+							
+							<p:spacer />
 
-						<p:outputLabel value="Contraseña: " style="font-weight:bold" />
-						<p:outputLabel value="#{userMB.userAdmin.password}" />
 
-						<p:outputLabel value="Nombre completo: " style="font-weight:bold" />
-						<p:outputLabel value="#{userMB.userAdmin.fullName}" />
-
-						<p:outputLabel value="Correo electrónico: "
+						<p:calendar pattern="yyyy-MM-dd HH:mm:ss" id="popup" value="#{auditMB.inicio}" />
+					
+						<h:outputLabel value="Reporte Subastas activas del momento: "
 							style="font-weight:bold" />
-						<p:outputLabel value="#{userMB.userAdmin.emailAddress}" />
+
+						<p:calendar pattern="yyyy-MM-dd HH:mm:ss" id="popup2" value="#{auditMB.fin}" />
+						
+						<p:panelGrid columns="2">
+						
+							<p:commandButton value="PDF"
+								actionListener="#{userMB.pdfSubastasActivas}"
+								onclick="PrimeFaces.monitorDownload(start, stop);">
+								<p:fileDownload value="#{userMB.file}"
+									contentDisposition="inline"></p:fileDownload>
+							</p:commandButton>
+							<p:commandButton value="EXCEL"
+								action="#{auditMB.archivoExcelPorUsuario}" />
+						</p:panelGrid>
+
+
+						<p:panelGrid columns="2">
+							
+							<p:commandButton value="PDF"
+								actionListener="#{auditMB.pdfSubastasCreadas}"
+								onclick="PrimeFaces.monitorDownload(start, stop);">
+								<p:fileDownload value="#{auditMB.file}"
+									contentDisposition="inline"></p:fileDownload>
+							</p:commandButton>
+							<p:commandButton value="EXCEL"
+								action="#{auditMB.archivoExcelPorCrud}" />
+						</p:panelGrid>
+
+
 
 					</p:panelGrid>
-
-
 				</p:panel>
+
 			</p:panelGrid>
 		</p:panel>
 	</h:form>

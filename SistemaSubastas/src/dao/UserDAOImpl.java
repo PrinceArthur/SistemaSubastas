@@ -93,5 +93,16 @@ public class UserDAOImpl implements UserDAO{
 		return lista;
 	}
 
+	@Override
+	public List<User> listaProveedores(String filtro)
+	{
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		List lista = session.createQuery("from User where " + filtro).list();
+		t.commit();
+		return lista;
+	}
+
+	
 
 }

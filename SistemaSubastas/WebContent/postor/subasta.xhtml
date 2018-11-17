@@ -11,20 +11,24 @@
 body {
 	background-color: rgb(244, 247, 247)
 }
+
 .panel tr, .panel td {
 	background: none;
 	border: none !important;
 }
+
 .boton {
 	background-color: transparent !important;
 	background: transparent !important;
 	border: rbg(5, 5, 5);
 	font-weight: normal;
 }
+
 .panel tr, .panel td {
 	background: none;
 	border: none !important;
 }
+
 .centered {
 	position: absolute;
 	height: 380px;
@@ -38,6 +42,7 @@ body {
 	background-color: rgb(203, 216, 237);
 	border: 0px;
 }
+
 .boton {
 	background-color: transparent !important;
 	background: transparent !important;
@@ -58,9 +63,9 @@ body {
 				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
 
 			<div style="margin-left: 90%">
-				<p:commandButton id="dynaButton" value="ADMIN" type="button"
+				<p:commandButton id="dynaButton" value="#{userMB.usuario.userName}" type="button"
 					icon="ui-icon-extlink" styleClass="boton" />
-				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
+				<p:menu overlay="true" trigger="dynaButton" value="#{userMB.usuario.userName}"
 					style="background-color: rgb(203, 216, 237);border:none">
 					<p:menuitem value="Datos personales"
 						action="#{userMB.prepararDatosPostor}" icon="ui-icon-person" />
@@ -75,24 +80,24 @@ body {
 
 
 
-				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
-						<p:menuitem value="Subastas" action="/postor/indexPostor.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Mis ofertas"
-							action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
-						
-				</p:menubar>
+			<p:menubar style="background-color: rgb(203, 216, 237);border:none">
+				<p:menuitem value="Subastas" action="/postor/indexPostor.xhtml"
+					icon="ui-icon-star" />
+				<p:menuitem value="Mis ofertas"
+					action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
 
+			</p:menubar>
 
-				<p:panel header="SUBASTA"
-					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:30%">
+			<p:panelGrid columns="2" styleClass="panel">
+
+				<p:panel
+					style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:0%">
 					<p:growl id="growl" showDetail="true" sticky="true" />
-					<p:panelGrid columns="2" styleClass="panel" id="pg">
+
+					<p:panelGrid columns="2" styleClass="panel" style="margin-top:10%"
+						id="pg">
 
 
-						<h:outputLabel value="Imagen del producto: "
-							style="font-weight:bold" />
-						<p:outputLabel value="Imagen" />
 						<h:outputLabel value="Nombre del producto: "
 							style="font-weight:bold" />
 						<p:outputLabel value="#{userMB.sale.name}" />
@@ -106,16 +111,42 @@ body {
 						<p:outputLabel value="Valor actual: " style="font-weight:bold" />
 						<p:outputLabel value="#{userMB.sale.valueCurrent}" />
 
-						<center>
-							<p:commandButton value="Ofertar"
-								action="#{userMB.prepararAgregarOferta}"
-								onclick="PF('dlg1').show();" />
-						</center>
+
+						<p:column colspan="2">
+
+							<center>
+								<p:commandButton value="Ofertar"
+									action="#{userMB.prepararAgregarOferta}"
+									onclick="PF('dlg1').show();" />
+							</center>
+						</p:column>
 
 					</p:panelGrid>
 
 
 				</p:panel>
+				<p:dataTable id="tbl" var="oferta" scrollable="true"
+					scrollHeight="50%" value="#{userMB.listaOfertaSubasta}"
+					style="width:80%;height:100%;align: top;margin-left:10%">
+					<p:column>
+						<center>
+							<p:outputLabel value="#{oferta.dateOffer}" />
+						</center>
+					</p:column>
+					<p:column>
+						<center>
+							<p:outputLabel value="#{oferta.identification}" />
+						</center>
+					</p:column>
+					<p:column>
+						<center>
+							<p:outputLabel value="#{oferta.valueOffer}" />
+						</center>
+					</p:column>
+
+				</p:dataTable>
+
+			</p:panelGrid>
 		</p:panel>
 	</h:form>
 
@@ -124,19 +155,19 @@ body {
 		position="center" draggable="false">
 		<h:form id="formM">
 			<p:growl id="growl" showDetail="true" sticky="true" />
-				<p:panelGrid columns="2" styleClass="panel">
+			<p:panelGrid columns="2" styleClass="panel">
 
-					<p:outputLabel value="Digite su oferta: " />
-					<p:inputNumber value="#{userMB.oferta.valueOffer}" id="noMod">
-					</p:inputNumber>
-					<p:commandButton value="Ofertar" action="#{userMB.agregarOferta}"
-						update=":#{p:component('formM')} :#{p:component('pg')} :#{p:component('growl')}"
-						oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg1').hide()">
-					</p:commandButton>
-					<p:commandButton value="Cancelar" oncomplete="PF('dlg1').hide()">
-					</p:commandButton>
+				<p:outputLabel value="Digite su oferta: " />
+				<p:inputNumber value="#{userMB.oferta.valueOffer}" id="noMod">
+				</p:inputNumber>
+				<p:commandButton value="Ofertar" action="#{userMB.agregarOferta}"
+					update=":#{p:component('formM')} :#{p:component('pg')} :#{p:component('growl')}: #{p:component('tbl')}"
+					oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg1').hide()">
+				</p:commandButton>
+				<p:commandButton value="Cancelar" oncomplete="PF('dlg1').hide()">
+				</p:commandButton>
 
-				</p:panelGrid>
+			</p:panelGrid>
 		</h:form>
 	</p:dialog>
 

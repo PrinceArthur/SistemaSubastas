@@ -79,7 +79,22 @@ public class AuditDAOImpl implements AuditDAO{
 			return null;
 		}
 	}
-
+	
+	/**
+	 * Método con el que podemos filtrar cualquier lista
+	 * @param filtro
+	 * @return lista por el filtro correspondiente
+	 */
+	public List<Audit> getAuditFilter(String filtro)
+	{
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction t = session.beginTransaction();
+		List lista = session.createQuery("from Audit where " + filtro).list();
+		t.commit();
+		session.close();
+		return lista;
+	}
+	
 	/**
 	 * Método para modificar
 	 * @param auditoria
