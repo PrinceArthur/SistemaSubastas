@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputText value="ADMIN" /></title>
+	<style>
+body {
+	background-color: rgb(244, 247, 247)
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+
+.panel tr, .panel td {
+	background: none;
+	border: none !important;
+}
+
+.centered {
+	position: absolute;
+	height: 380px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	width: 90%;
+	left: 50%;
+	margin-left: -45%;
+	margin-top: 15%;
+	background-color: rgb(203, 216, 237);
+	border: 0px;
+}
+
+.boton {
+	background-color: transparent !important;
+	background: transparent !important;
+	border: rbg(5, 5, 5);
+	font-weight: normal;
+}
+</style>
+</h:head>
+<h:body>
+	<h:form>
+
+		<p:panel
+			style="background-color: rgb(236, 242, 67);magine-top:0px;height:130px">
+
+			<p:graphicImage value="/img/Acme-corp.png"
+				style="width:200px;height:80px;backGround-color: rgb(236, 242, 67)" />
+
+			<div style="margin-left: 90%">
+				<p:commandButton id="dynaButton" value="ADMIN" type="button"
+					icon="ui-icon-extlink" styleClass="boton" />
+				<p:menu overlay="true" trigger="dynaButton" value="ADMIN"
+					style="background-color: rgb(203, 216, 237);border:none">
+					<p:menuitem value="Datos personales"
+						action="#{userMB.prepararAdmin}" icon="ui-icon-person" />
+					<p:menuitem value="Salir" action="#{userMB.logOut}"
+						icon="ui-icon-power" />
+				</p:menu>
+			</div>
+		</p:panel>
+
+
+		<p:panel styleClass="centered">
+
+			<p:panel
+				style="background-color: rgb(203, 216, 237);border:none;width:55%;height:100%;margin-left:20%">
+				<p:growl id="growl" showDetail="true" sticky="true" />
+
+				<center>
+					<p:outputLabel
+						value="Ingrese todos los datos para modificar la Subasta"
+						style="font-weight:bold" />
+				</center>
+
+				<p:panelGrid columns="3" styleClass="panel" id="pg" style="margin-top:7%">
+
+
+					<h:outputLabel value="Nombre: " style="font-weight:bold"
+						for="unTxt" />
+
+					<p:inputText value="#{userMB.sale.name}" required="true"
+						maxlength="12" requiredMessage="Campo requerido"
+						validatorMessage="El nombre NO puede tener simbolos" id="unTxt"
+						placeholder="#{userMB.sale.name}">
+						<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
+					</p:inputText>
+					<h:panelGroup />
+
+					<p:outputLabel value="Descripción: " style="font-weight:bold" />
+					<p:inputTextarea value="#{userMB.sale.descriptionProduct}" required="true"
+						requiredMessage="Descripción requerida" id="nTxt"
+						validatorMessage="La descripción NO puede tener simbolos"
+						placeholder="#{userMB.sale.descriptionProduct}">
+					</p:inputTextarea>
+					<h:panelGroup />
+
+					<p:outputLabel value="Fecha de inicio: " style="font-weight:bold"
+						for="popup" />
+					<p:calendar id="popup" value="#{userMB.sale.dateStart}" />
+
+					<p:outputLabel value="Fecha final: " style="font-weight:bold"
+						for="popup2" />
+					<p:calendar id="popup2" value="#{userMB.sale.dateEnd}" />
+
+					<center>
+						<p:commandButton value="ACTUALIZAR"
+							action="#{userMB.modificarSubasta}" update="growl" />
+						<p:button value="CANCELAR" outcome="/administrador/indexAdmin"/>
+					</center>
+					
+				</p:panelGrid>
+					
+					
+			</p:panel>
+			
+		</p:panel>
+	
+	</h:form>
+</h:body>
+</html>
