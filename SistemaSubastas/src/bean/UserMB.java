@@ -388,7 +388,6 @@ public class UserMB
 	 */
 	public String prepararSubasta()
 	{
-		System.out.println("Entra");
 		logger.trace("Entra al método prepararSubasta");
 		sale = (Salesueb) listaSubastasActivas.getRowData();
 		logger.info("Objeto sale inicializado con la columna de la lista y nos dirige a la página /postor/subasta ");
@@ -633,6 +632,7 @@ public class UserMB
 				mensajeError = "Usuario inactivo, por favor comunicarse para ser activado";
 				FacesContext context = FacesContext.getCurrentInstance();
 				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+				audit.adicionarAudit(usuarioTemp.getUserName(), "LOGIN ERRÓNEO", "User", usuarioTemp.getId());
 				logger.warn("Está ingresando un usuario que no está registrado");
 			}			
 			else if (!usuarioTemp.getPassword()
@@ -706,8 +706,9 @@ public class UserMB
 	 * @throws IOException
 	 */
 
-	public void cambiarContraseña() throws IOException
+	public String cambiarContraseña() throws IOException
 	{
+		String pagina = "";
 		logger.trace("Entramos al método cambiarContraseña");
 		UserService service = new UserService();
 		User userTemp = new User();
@@ -732,14 +733,22 @@ public class UserMB
 
 		if (existe)
 		{
+			if(userTemp.getActive().equalsIgnoreCase("ACTIVO"))
+			{
 			String pass = EnviarCorreo.sendEmail(userTemp.getEmailAddress());
 			userTemp.setDateLastPassword(date);
 			userTemp.setPassword(Cifrado.getStringMessageDigest(pass, Cifrado.MD5) + "$");
 			userTemp.setFailedAttempts(0);
 			service.actualizar(userTemp);
+			pagina = "login";
 			logger.info("El usuario fue encontrado por su correo y se le ha enviado la nueva contraseña la correo.");
 			audit.adicionarAudit(userTemp.getUserName(), "ACTUALIZAR", "User", userTemp.getId());
-
+			}else if(userTemp.getActive().equalsIgnoreCase("INACTIVO"))
+			{
+				mensajeError = "El usuario se encuentra inactivo, por favor comunicarse para ser activado.";
+				FacesContext context = FacesContext.getCurrentInstance();
+				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			}
 		} else
 		{
 			mensajeError = "No se encontró un usuario con ese correo.";
@@ -747,9 +756,8 @@ public class UserMB
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			logger.warn("No se encontró ningun usuario por ese correo");
 		}
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		ec.invalidateSession();
-		ec.redirect(ec.getRequestContextPath() + "/faces/login.xhtml");
+		
+		return pagina;
 
 	}
 
@@ -784,26 +792,25 @@ public class UserMB
 		OfferersaleService service = new OfferersaleService();
 		oferta.setIdentification(nombre);
 
-		System.out.println(sale.getValueCurrent());
-		System.out.println(oferta.getValueOffer() <= sale.getValueCurrent());
 
-		if ((oferta.getValueOffer() <= sale.getValueCurrent()) == true)
-		{
-			mensajeError = "La oferta debe ser mayor que la oferta actual";
-			FacesContext context = FacesContext.getCurrentInstance();
-			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-			logger.warn("La oferta ingresada no es valida por ser menor al valor base o el valor actual");
-		}
 		if ((oferta.getValueOffer() <= sale.getValueBase()) == true)
 		{
 			mensajeError = "La oferta debe ser mayor que la oferta actual";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 			logger.warn("La oferta ingresada no es valida por ser menor al valor base o el valor actual");
-		} else
+		}	else if ((oferta.getValueOffer() <= sale.getValueCurrent()) == true)
+			{
+				mensajeError = "La oferta debe ser mayor que la oferta actual";
+				FacesContext context = FacesContext.getCurrentInstance();
+				context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+				logger.warn("La oferta ingresada no es valida por ser menor al valor base o el valor actual");
+			}
+		 else
 		{
 			sale.setValueCurrent(oferta.getValueOffer());
 			oferta.setIdSales(sale.getId());
+			oferta.setProducto(sale.getName());
 			oferta.setWinner("GANADOR");
 			modificarSubasta();
 			service.nuevo(oferta);
@@ -835,6 +842,11 @@ public class UserMB
 				m.setWinner("PERDEDOR");
 				service.actualizar(m);
 			}
+			
+			Offerersale n = listaOfertas.get(listaOfertas.size() - 1);
+			n.setWinner("GANADOR");
+			service.actualizar(n);
+			
 		} else if (listaOfertas.isEmpty())
 		{
 			oferta.setWinner("GANADOR");
@@ -987,8 +999,8 @@ public class UserMB
 			audit.adicionarAudit("Admin", "CREAR", "User", user.getId());
 		} else if (repetido)
 		{
-			logger.warn("El usuario ya se encuentra en el sistema y no se puede registrar");
-			mensajeError = "Ese Usuario ya existe";
+			logger.warn("Datos inválidos al registro de un postor");
+			mensajeError = "Datos inválidos";
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 		}
