@@ -31,7 +31,7 @@ body {
 
 .centered {
 	position: absolute;
-	height: 380px;
+	height: 80%;
 	top: 0;
 	bottom: 0;
 	margin: auto;
@@ -52,6 +52,7 @@ body {
 </style>
 </h:head>
 <h:body>
+
 	<h:form>
 
 		<p:panel
@@ -76,60 +77,64 @@ body {
 
 		<p:panel styleClass="centered">
 
-			<p:panel header="Modificar Subasta"
-			style="background-color: rgb(203, 216, 237);border:none;width:500px;height:280px;margin-left:30%">
-
-			<h:form>
+			<p:panel
+				style="background-color: rgb(203, 216, 237);border:none;width:55%;height:100%;margin-left:20%">
 				<p:growl id="growl" showDetail="true" sticky="true" />
-				<p:panelGrid columns="2" styleClass="panel" id="pg" cellpadding="1">
 
-
-					<h:outputLabel value="Nombre del producto: "
-						style="font-weight:bold" for="unTxt" />
-					<p:inputText value="#{userMB.sale.name}" required="true"
-						maxlength="12" requiredMessage="Campo requerido"
-						validatorMessage="EL nombre dle producto no puede tener símbolos" id="unTxt">
-						<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="unTxt"></f:validateRegex>
-					</p:inputText>
-					
-					<h:outputLabel value="Proveedor: "
-						style="font-weight:bold" for="Txt" />
-					<p:inputText value="#{userMB.sale.identificationSales}" required="true"
-						maxlength="50" requiredMessage="Campo requerido" disabled="true"
-						validatorMessage="No puede tener símbolos" id="Txt">
-					</p:inputText>
-
-					<p:outputLabel value="Descripción del producto: "
+				<center>
+					<p:outputLabel
+						value="Ingrese todos los datos para registrar el nuevo Proveedor"
 						style="font-weight:bold" />
-					<p:inputTextarea value="#{userMB.sale.descriptionProduct}"
-						required="true" requiredMessage="Campo requerido" id="nTxt"
-						validatorMessage="La descripción del producto solo puede contener letras">
+				</center>
+				
+
+				<p:panelGrid columns="2" styleClass="panel" id="pg"
+					style="margin-top:7%">
+
+
+					<h:outputLabel value="Código: " style="font-weight:bold"
+						for="Txt" />
+					<p:inputText value="#{parameterMB.parameter.parameterCode}" required="true"
+						maxlength="12" requiredMessage="Código requerido"
+						validatorMessage="El código NO puede tener simbolos" id="Txt">
+						<f:validateRegex pattern="^[a-zA-Z0-9]+$" for="usu"></f:validateRegex>
+					</p:inputText>
+
+					<p:outputLabel value="Tipo: " style="font-weight:bold" />
+					<p:inputText value="#{parameterMB.parameter.parameterType}" required="true"
+						requiredMessage="Tipo requerido" id="nTxt" placeholder="T(para texto) - N(para número)"
+						validatorMessage="El tipo solo puede contener las letras T o N">
+						<f:validateRegex pattern="[a-zA-Z]*"  />
+						<f:validateLength minimum="1" maximum="1" />
+					</p:inputText>
+
+					<p:outputLabel value="Descripción: "
+						style="font-weight:bold" />
+					<p:inputText value="#{parameterMB.parameter.descriptionParameter}" required="true"
+						requiredMessage="Descripción requerida"
+						 id="txtD">
+					</p:inputText>
+					<p:outputLabel value="Valor texto: "
+						style="font-weight:bold" />
+					<p:inputText value="#{parameterMB.parameter.textValue}" required="true"
+						requiredMessage="Valor texto requerido"
+						validatorMessage="Valor Texto solo puede tener letras" id="txtNT">
 						<f:validateRegex pattern="[a-zA-Z ]*" />
-					</p:inputTextarea>
-
-					<p:outputLabel value="Valor inicial: " style="font-weight:bold" />
-					<p:inputNumber value="#{userMB.sale.valueBase}" required="true"
-						requiredMessage="Campo requerido" minValue="0"
-						validatorMessage="El valor inicial solo pude tener números" id="valorbaseTxt">
-						
+					</p:inputText>
+					<p:outputLabel value="Valor número: "
+						style="font-weight:bold" />
+					<p:inputNumber value="#{parameterMB.parameter.numberValue}" required="true"
+						requiredMessage="Valor número requerido" minValue="0"
+						validatorMessage="Estructura de correo invalida" id="txtNV">
 					</p:inputNumber>
-
-					<p:outputLabel value="Fecha de inicio: " style="font-weight:bold"
-						for="popup" />
-					<p:calendar id="popup" pattern="yyyy-MM-dd HH:mm:ss" value="#{userMB.sale.dateStart}" />
-
-					<p:outputLabel value="Fecha final: " style="font-weight:bold"
-						for="popup2" />
-					<p:calendar id="popup2" pattern="yyyy-MM-dd HH:mm:ss" value="#{userMB.sale.dateEnd}" />
-
-					<p:commandButton value="Actualizar"
-						action="#{userMB.actualizarSubasta}" update="growl" />
-					<p:button value="Cancelar" outcome="/administrador/indexSubasta" />
+						<p:commandButton value="Crear"
+							action="#{parameterMB.nuevoParametro()}" update="growl" />
+						<p:button value="CANCELAR" outcome="/administrador/indexParameter" />
+					<center>
+					<p:outputLabel value="*Si el parametro es de tipo numérico se recomienda ingresar 'no' en el valor texto" />
+					</center>
 				</p:panelGrid>
-			</h:form>
-
-		</p:panel>
-			
+			</p:panel>
 		</p:panel>
 		
 		<p:layout fullPage="true" >
@@ -146,7 +151,7 @@ body {
 
 
 </p:layout>
-	
+		
 	</h:form>
 </h:body>
 </html>

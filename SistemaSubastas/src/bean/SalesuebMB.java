@@ -52,7 +52,7 @@ public class SalesuebMB
 		sale.setDescriptionProduct(descripcion);
 		sale.setName(nombre);
 		sale.setValueBase(valorInicial);
-		sale.setState("WAITING");
+		sale.setState("ESPERA");
 		service.nuevo(sale);
 	}
 	
@@ -74,7 +74,7 @@ public class SalesuebMB
 		Salesueb subastaTemp = (Salesueb) (listaSubastas.getRowData());
 		SalesuebService service = new SalesuebService();
 
-		subastaTemp.setState("INACTIVE");
+		subastaTemp.setState("INACTIVO");
 		service.actualizar(subastaTemp);
 		return "/usuarios/indexProveedor";
 	}
@@ -103,8 +103,6 @@ public class SalesuebMB
 	 */
 	public DataModel<Salesueb> getListaSubastas()
 	{
-		List<Salesueb> lista = new SalesuebService().lista();
-		listaSubastas = new ListDataModel(lista);
 		return listaSubastas;
 	}
 	

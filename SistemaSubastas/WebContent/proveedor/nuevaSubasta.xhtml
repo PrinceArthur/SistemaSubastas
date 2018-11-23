@@ -96,29 +96,31 @@ body {
 						style="font-weight:bold" for="unTxt" />
 					<p:inputText value="#{userMB.sale.name}" required="true"
 						maxlength="12" requiredMessage="Campo requerido"
-						validatorMessage="No puede tener símbolos" id="unTxt">
+						validatorMessage="El nombre del producto no puede tener símbolos" id="unTxt">
+						<f:validateRegex pattern="[a-zA-Z ]*" />
 					</p:inputText>
 
 					<p:outputLabel value="Descripción del producto: "
 						style="font-weight:bold" />
 					<p:inputTextarea value="#{userMB.sale.descriptionProduct}"
 						required="true" requiredMessage="Campo requerido" id="nTxt"
-						validatorMessage="Solo puede contener letras">
+						validatorMessage="La descripción del producto no pude contener simbolos">
+						<f:validateRegex pattern="^[a-zA-Z0-9 ]+$" />
 					</p:inputTextarea>
 
 					<p:outputLabel value="Valor inicial: " style="font-weight:bold" />
-					<p:inputText value="#{userMB.sale.valueBase}" required="true"
-						requiredMessage="Campo requerido"
-						validatorMessage="Estructura de correo invalida" id="emailTxt">
-					</p:inputText>
+					<p:inputNumber value="#{userMB.sale.valueBase}" required="true"
+						requiredMessage="Campo requerido" minValue="0"
+						validatorMessage="Solo puede tener números el valor inicial" id="emailTxt">
+					</p:inputNumber>
 
 					<p:outputLabel value="Fecha de inicio: " style="font-weight:bold"
 						for="popup" />
-					<p:calendar id="popup" value="#{userMB.sale.dateStart}" />
+					<p:calendar id="popup" pattern="yyyy-MM-dd HH:mm:ss" value="#{userMB.sale.dateStart}" />
 
 					<p:outputLabel value="Fecha final: " style="font-weight:bold"
 						for="popup2" />
-					<p:calendar id="popup2" value="#{userMB.sale.dateEnd}" />
+					<p:calendar id="popup2" pattern="yyyy-MM-dd HH:mm:ss" value="#{userMB.sale.dateEnd}" />
 
 					<p:commandButton value="Registrar"
 						action="#{userMB.adicionarSubasta}" update="growl" />
@@ -128,6 +130,22 @@ body {
 
 		</p:panel>
 	</p:panel>
+	
+	<p:layout fullPage="true" >
+
+    
+
+    <p:layoutUnit position="south" size="40"  style="text-align:center">
+        <h:outputText   style="font-size:75%;font-family:Courier" value="Universidad el bosque | Estefania Pérez Torres | Guillermo Marcano Funes | Richard Mora Perilla" />
+    </p:layoutUnit>
+
+    
+
+    <p:layoutUnit position="center" visible="false"/>
+
+
+</p:layout>
+	
 	</h:form>
 </h:body>
 </html>

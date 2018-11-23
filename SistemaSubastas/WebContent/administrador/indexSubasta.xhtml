@@ -98,7 +98,10 @@ body {
 							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Ofertas"
 							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
-						<p:menuitem value="Reportes" action="/administrador/reportes.xhtml" icon="ui-icon-star" />
+						<p:submenu>
+							<p:menuitem value="Reportes"
+								action="/administrador/reportesSubastas.xhtml" />
+						</p:submenu>
 					</p:submenu>
 				</p:menu>
 
@@ -106,8 +109,8 @@ body {
 
 				<p:panel
 					style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%">
-					<p:dataTable id="tbl" var="subasta"
-						value="#{salesuebMB.listaSubastas}"
+				<p:growl id="growl" showDetail="true" sticky="true" />
+					<p:dataTable id="tbl" var="subasta" value="#{userMB.listaSubastas}"
 						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} "
 						paginator="true" rows="5"
 						style="width:100%;height:100%;align: top" styleClass="myTable">
@@ -140,7 +143,7 @@ body {
 								<h:outputText value="#{subasta.descriptionProduct}" />
 							</center>
 						</p:column>
-						<p:column style="width:5px;height:3px;font-size:14px">
+						<p:column style="width:25px;height:3px;font-size:14px">
 							<f:facet name="header">
 								<h:outputText value="Fecha Inicio" />
 							</f:facet>
@@ -159,7 +162,7 @@ body {
 						</p:column>
 						<p:column style="width:15px;height:3px;font-size:14px">
 							<f:facet name="header">
-								<h:outputText value="Usuario" />
+								<h:outputText value="Proveedor" />
 							</f:facet>
 							<center>
 								<h:outputText value="#{subasta.identificationSales}" />
@@ -171,7 +174,7 @@ body {
 									<h:outputText value="Estado" />
 								</center>
 							</f:facet>
-							<h:outputText value="#{subasta.state}" /> 	
+							<h:outputText value="#{subasta.state}" />
 						</p:column>
 						<p:column style="width:10px;height:3px;font-size:14px">
 							<f:facet name="header">
@@ -185,14 +188,51 @@ body {
 								</h:commandLink>
 							</center>
 						</p:column>
+						
 
 					</p:dataTable>
 				</p:panel>
-
+				
+				<p:spacer/>
+				
+				<p:panelGrid columns="4" styleClass="panel" >
+			<p:outputLabel value="Ingrese el ID de la subasta para el reporte de ofertas" />
+			<p:inputNumber value="#{userMB.idSubasta}" />
+			<p:commandButton value="PDF"
+								actionListener="#{userMB.pdfOfertasSubasta}"
+								onclick="PrimeFaces.monitorDownload(start, stop);" update="growl" >
+								<p:fileDownload value="#{userMB.file}"
+									contentDisposition="new inline"></p:fileDownload>
+			</p:commandButton>
+			<p:commandButton value="EXCEL" action="#{userMB.archivoExcelOfertasSubastas}" update="growl" />
 			</p:panelGrid>
 
+			</p:panelGrid >
+			
+			
 
 		</p:panel>
+		
+		<p:layout fullPage="true" >
+
+    
+
+    <p:layoutUnit position="south" size="40"  style="text-align:center">
+        <h:outputText   style="font-size:75%;font-family:Courier" value="Universidad el bosque | Estefania Pérez Torres | Guillermo Marcano Funes | Richard Mora Perilla" />
+    </p:layoutUnit>
+
+    
+
+    <p:layoutUnit position="center" visible="false"/>
+
+
+</p:layout>
+
+
+
+		
 	</h:form>
+
+		
 </h:body>
 </html>

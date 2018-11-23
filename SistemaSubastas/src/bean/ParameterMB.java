@@ -38,6 +38,8 @@ public class ParameterMB
 	 */
 	private DataModel listaParametros;
 
+	private String mensajeError;
+
 	/**
 	 * Método para preprarar la modificación del parametro
 	 * 
@@ -49,6 +51,42 @@ public class ParameterMB
 		return "/administrador/modificarParametro";
 	}
 
+	public String prepararAgregarParametro()
+	{
+		parameter = new Parameter();
+		parameter.setState("ACTIVO");
+		return "/administrador/crearParametro";
+	}
+	
+	public boolean validaciion()
+	{
+		boolean valido = true;
+		
+		if (!parameter.getParameterType().equals("T") || !parameter.getParameterType().equals("N"))
+		{
+			valido = false;
+			mensajeError = "El tipo del parametro solo puede ser T o N";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		}
+		
+		
+		
+		return valido;
+	}
+
+	public String nuevoParametro()
+	{
+
+		if(validaciion()==true)
+		{
+					
+		ParameterService servicio = new ParameterService();
+		servicio.nuevo(parameter);
+		}
+		return "/administrador/indexParameter";
+	}
+
 	/**
 	 * Méotodo para modificar el parámetro
 	 * 
@@ -58,7 +96,7 @@ public class ParameterMB
 	{
 		ParameterService servicio = new ParameterService();
 		servicio.actualizar(parameter);
-		audit.adicionarAudit("Admin", "UPDATE", "Parameter", parameter.getId());
+		audit.adicionarAudit("Admin", "ACTUALIZAR", "Parameter", parameter.getId());
 		return "/administrador/indexParameter";
 	}
 
@@ -70,29 +108,21 @@ public class ParameterMB
 		Parameter parametroTemp = (Parameter) (listaParametros.getRowData());
 		ParameterService servicio = new ParameterService();
 
-		if (parametroTemp.getState().equalsIgnoreCase("ACTIVE"))
+		if (parametroTemp.getState().equalsIgnoreCase("ACTIVO"))
 		{
-			parametroTemp.setState("INACTIVE");
-			audit.adicionarAudit("Admin", "DELETE", "Parameter", parametroTemp.getId());
-		} else if (parametroTemp.getState().equalsIgnoreCase("INACTIVE"))
+			parametroTemp.setState("INACTIVO");
+			servicio.actualizar(parametroTemp);
+			audit.adicionarAudit("Admin", "BORRAR", "Parameter", parametroTemp.getId());
+		} else if (parametroTemp.getState().equalsIgnoreCase("INACTIVO"))
 		{
-			parametroTemp.setState("ACTIVE");
+			parametroTemp.setState("ACTIVO");
+			servicio.actualizar(parametroTemp);
 		}
 	}
 
 	/**
-	 * método para dar un mensaje en la vista
-	 * @param summary
-	 * @param detail
-	 */
-	public void addMessage(String summary, String detail)
-	{
-		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
-		FacesContext.getCurrentInstance().addMessage(null, message);
-	}
-
-	/**
 	 * Da el parámetro
+	 * 
 	 * @return parameter
 	 */
 	public Parameter getParameter()
@@ -102,6 +132,7 @@ public class ParameterMB
 
 	/**
 	 * Modifica el parametro
+	 * 
 	 * @param parameter
 	 */
 	public void setParameter(Parameter parameter)
@@ -111,6 +142,7 @@ public class ParameterMB
 
 	/**
 	 * Da la lista de parametros inicializada
+	 * 
 	 * @return listaParametros
 	 */
 	public DataModel<Parameter> getListaParametros()
@@ -122,11 +154,22 @@ public class ParameterMB
 
 	/**
 	 * Modifica la lista de los parámetros
+	 * 
 	 * @param listaParametros
 	 */
 	public void setListaParametros(DataModel<Parameter> listaParametros)
 	{
 		this.listaParametros = listaParametros;
+	}
+
+	public String getMensajeError()
+	{
+		return mensajeError;
+	}
+
+	public void setMensajeError(String mensajeError)
+	{
+		this.mensajeError = mensajeError;
 	}
 
 }

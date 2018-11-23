@@ -90,9 +90,9 @@ body {
 						<p:menuitem value="Parametros"
 							action="/administrador/indexParameter.xhtml" icon="ui-icon-star" />
 						<p:menuitem value="Subastas"
-							action="/administrador/indexSubata.xhtml" icon="ui-icon-star" />
-						<p:menuitem value="Reportes"
-							action="/administrador/reportes.xhtml" icon="ui-icon-star" />
+							action="/administrador/indexSubasta.xhtml" icon="ui-icon-star" />
+							<p:menuitem value="Ofertas"
+							action="/administrador/indexOferta.xhtml" icon="ui-icon-star" />
 					</p:submenu>
 				</p:menu>
 
@@ -126,12 +126,12 @@ body {
 						
 							<p:commandButton value="PDF"
 								actionListener="#{userMB.pdfOfertasFechas}"
-								onclick="PrimeFaces.monitorDownload(start, stop);">
+								onclick="PrimeFaces.monitorDownload(start, stop);" update="growl" >
 								<p:fileDownload value="#{userMB.file}"
 									contentDisposition="new inline"></p:fileDownload>
 							</p:commandButton>
-							<p:commandButton value="EXCEL"
-								action="#{auditMB.archivoExcelPorUsuario}" />
+							<p:commandButton value="EXCEL" update="growl" action="#{userMB.archivoExcelOfertasSubastasFechas}"
+								/>
 						</p:panelGrid>
 
 					</p:panelGrid>
@@ -139,6 +139,22 @@ body {
 
 			</p:panelGrid>
 		</p:panel>
+		
+		<p:layout fullPage="true" >
+
+    
+
+    <p:layoutUnit position="south" size="40"  style="text-align:center">
+        <h:outputText   style="font-size:75%;font-family:Courier" value="Universidad El Bosque | Estefanía Pérez Torres | Guillermo Marcano Funes | Richard Mora Perilla" />
+    </p:layoutUnit>
+
+    
+
+    <p:layoutUnit position="center" visible="false"/>
+
+
+</p:layout>
+		
 	</h:form>
 
 

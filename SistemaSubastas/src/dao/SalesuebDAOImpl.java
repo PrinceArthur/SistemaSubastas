@@ -108,7 +108,7 @@ public class SalesuebDAOImpl implements SalesuebDAO
 		Transaction t = session.beginTransaction();
 		
 		Query q=session.createQuery("from Salesueb where state = :state");
-		q.setParameter("state", "ACTIVE");
+		q.setParameter("state", "ACTIVO");
 		List lista = q.list();
 		t.commit();
 		session.close();

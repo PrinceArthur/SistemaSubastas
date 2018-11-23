@@ -13,7 +13,6 @@ body {
 	background-color: rgb(244, 247, 247)
 }
 
-
 .panel tr, .panel td {
 	background: none;
 	border: none !important;
@@ -28,7 +27,7 @@ body {
 
 .centered {
 	position: absolute;
-	height: 80%;
+	height: 100%;
 	top: 0;
 	bottom: 0;
 	margin: auto;
@@ -69,48 +68,50 @@ body {
 
 		<p:panel styleClass="centered">
 
-				<center> 
+			<center>
 				<p:menubar style="background-color: rgb(203, 216, 237);border:none">
-						<p:menuitem value="Subastas" action="/postor/indexPostor.xhtml"
-							icon="ui-icon-star" />
-						<p:menuitem value="Mis ofertas"
-							action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
-						
+					<p:menuitem value="Mis ofertas"
+						action="/postor/listaOfertaPostor.xhtml" icon="ui-icon-star" />
+
 				</p:menubar>
 
-</center>
+			</center>
 
-				<p:panel
-					style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%">
-					<p:dataGrid var="sub" value="#{userMB.listaSubastasActivas}" columns="4"
-						layout="grid" rows="12" paginator="true" id="subastas"
-						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-						rowsPerPageTemplate="6,12,16"
-						style="width:100%;height:100%;align: top">
-						<f:facet name="header">
-							<h:outputText value="SUBASTAS" />
-						</f:facet>
+			<p:panel
+				style="background-color: rgb(203, 216, 237);border:none;width:100%;height:100%">
+				<p:dataGrid var="sub" value="#{userMB.listaSubastasActivas}"
+					columns="4" layout="grid" rows="1" paginator="true" id="subastas"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					
+					style="width:100%;height:100%;align: top">
+					<f:facet name="header">
+						<h:outputText value="SUBASTAS" />
+					</f:facet>
 
-						<p:panel header="#{sub.name}"
-							style="text-align:center; width:225px">
-							<h:panelGrid columns="1" style="width:100%">
-								<p:graphicImage value="/img/ImagenSubasta.png"
-									style="width:180px; align: center" />
+					<p:panel header="#{sub.name}"
+						style="text-align:center; width:225px">
+						<h:panelGrid columns="1" style="width:100px">
+							<p:graphicImage value="/img/ImagenSubasta.png"
+								style="width:180px; align: center" />
+							<h:outputText value="INICIA:" />
+							<h:outputText value="#{sub.dateStart}" />
+							<h:outputText value="TERMINA:" />
+							<h:outputText value="#{sub.dateEnd}" />
+							<p:commandButton value="Ver subasta"
+								action="#{userMB.prepararSubasta}">
+							</p:commandButton>
+						</h:panelGrid>
 
-								<h:outputText value="#{sub.dateStart}" />
+					</p:panel>
 
-								<p:commandLink value="Ver subasta"
-									action="#{userMB.prepararSubasta}">
-								</p:commandLink>
-							</h:panelGrid>
-
-						</p:panel>
-
-					</p:dataGrid>
-				</p:panel>
+				</p:dataGrid>
+			</p:panel>
 
 
 		</p:panel>
+
+
+
 	</h:form>
 </h:body>
 </html>

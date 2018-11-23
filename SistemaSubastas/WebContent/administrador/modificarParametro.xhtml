@@ -82,7 +82,7 @@ body {
 
 				<center>
 					<p:outputLabel
-						value="Ingrese todos los datos para modificar el Proveedor"
+						value="Ingrese todos los datos para modificar Parametro"
 						style="font-weight:bold" />
 				</center>
 
@@ -111,7 +111,7 @@ body {
 						style="font-weight:bold" />
 						
 					<p:inputNumber value="#{parameterMB.parameter.numberValue}" required="true"
-						requiredMessage="Campo requerido"
+						requiredMessage="Campo requerido" minValue="0"
 						validatorMessage="Valor numérico solo puede tener números" 
 						placeholder="#{parameterMB.parameter.numberValue}">
 					</p:inputNumber>
@@ -120,17 +120,17 @@ body {
 						style="font-weight:bold" />
 					<p:inputText value="#{parameterMB.parameter.textValue}" required="true"
 						requiredMessage="Campo requerido"
-						validatorMessage="Valor del texto solo puede tener letras" 
+						validatorMessage="Valor del texto solo puede tener letras y  si es vacío un 'no' . " 
 						placeholder="#{parameterMB.parameter.textValue}">
-						<f:validateRegex pattern="[a-zA-Z]*" />
+						<f:validateRegex pattern="^[a-zA-Z]*" />
 					</p:inputText>
 					
 
-					<center>
+					
 						<p:commandButton value="ACTUALIZAR"
 							action="#{parameterMB.modificarParameter}" update="growl" />
 						<p:button value="CANCELAR" outcome="/administrador/indexParameter"/>
-					</center>
+					
 					
 				</p:panelGrid>
 					
@@ -138,6 +138,21 @@ body {
 			</p:panel>
 			
 		</p:panel>
+	
+	<p:layout fullPage="true" >
+
+    
+
+    <p:layoutUnit position="south" size="40"  style="text-align:center">
+        <h:outputText   style="font-size:75%;font-family:Courier" value="Universidad El Bosque | Estefanía Pérez Torres | Guillermo Marcano Funes | Richard Mora Perilla" />
+    </p:layoutUnit>
+
+    
+
+    <p:layoutUnit position="center" visible="false"/>
+
+
+</p:layout>
 	
 	</h:form>
 </h:body>

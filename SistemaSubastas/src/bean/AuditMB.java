@@ -107,7 +107,7 @@ public class AuditMB
 	 * Atributo para dar el mensaje en la capa de presentación
 	 */
 	private String mensajeError;
-	
+
 	private StreamedContent file;
 
 	private Date inicio;
@@ -149,188 +149,82 @@ public class AuditMB
 	}
 
 	/**
-	 * Método para generar archivo de Excel para reporte de CRUD
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws DocumentException
-	 */
-	public void archivoExcelPorCrud() throws FileNotFoundException, DocumentException
-	{
-		AuditService service = new AuditService();
-
-		List<Audit> audit = service.auditCrud(operacion);
-
-		HSSFWorkbook libro = new HSSFWorkbook();
-
-		HSSFSheet hoja = libro.createSheet();
-
-		HSSFRow fila = hoja.createRow(0);
-
-		HSSFCell id = fila.createCell((short) 0);
-		HSSFCell operationCrud = fila.createCell((short) 1);
-		HSSFCell tableName = fila.createCell((short) 2);
-		HSSFCell tableId = fila.createCell((short) 3);
-		HSSFCell createDate = fila.createCell((short) 4);
-		HSSFCell addressIP = fila.createCell((short) 5);
-
-		id.setCellValue(new HSSFRichTextString("ID"));
-		operationCrud.setCellValue(new HSSFRichTextString("OperationCrud"));
-		tableName.setCellValue(new HSSFRichTextString("TableName"));
-		tableId.setCellValue(new HSSFRichTextString("TableId"));
-		createDate.setCellValue(new HSSFRichTextString("CreateDate"));
-		addressIP.setCellValue(new HSSFRichTextString("AddressIP"));
-
-		for (int i = 0; i < audit.size(); ++i)
-		{
-			HSSFRow dataRow = hoja.createRow(i + 1);
-
-			dataRow.createCell(0).setCellValue(audit.get(i).getId());
-			dataRow.createCell(1).setCellValue(audit.get(i).getOperationCrud());
-			dataRow.createCell(2).setCellValue(audit.get(i).getTableName());
-			dataRow.createCell(3).setCellValue(audit.get(i).getTableId());
-			dataRow.createCell(4).setCellValue(audit.get(i).getCreateDate().toString());
-			dataRow.createCell(5).setCellValue(audit.get(i).getAddressIP());
-		}
-
-		mensajeError = "Se ha generado el archivo correctamente.";
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-
-		try
-		{
-			FileOutputStream elFichero = new FileOutputStream(
-					"C://ReportesGeneradosSistemaSubastas/Reporte de operación - " + operacion + ".xls");
-			libro.write(elFichero);
-			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/" + operacion + ".xls"));
-			elFichero.close();
-		} catch (Exception e)
-		{
-		}
-	}
-
-	/**
-	 * Método para generar archivo excel del reporte de auditoria por usuarios
-	 * 
-	 * @throws FileNotFoundException
-	 * @throws DocumentException
-	 */
-	public void archivoExcelPorUsuario() throws FileNotFoundException, DocumentException
-	{
-		AuditService service = new AuditService();
-
-		List<Audit> audit = service.auditUser(usu);
-
-		HSSFWorkbook libro = new HSSFWorkbook();
-
-		HSSFSheet hoja = libro.createSheet();
-
-		HSSFRow fila = hoja.createRow(0);
-
-		HSSFCell id = fila.createCell((short) 0);
-		HSSFCell operationCrud = fila.createCell((short) 1);
-		HSSFCell tableName = fila.createCell((short) 2);
-		HSSFCell tableId = fila.createCell((short) 3);
-		HSSFCell createDate = fila.createCell((short) 4);
-		HSSFCell addressIP = fila.createCell((short) 5);
-
-		id.setCellValue(new HSSFRichTextString("ID"));
-		operationCrud.setCellValue(new HSSFRichTextString("OperationCrud"));
-		tableName.setCellValue(new HSSFRichTextString("TableName"));
-		tableId.setCellValue(new HSSFRichTextString("TableId"));
-		createDate.setCellValue(new HSSFRichTextString("CreateDate"));
-		addressIP.setCellValue(new HSSFRichTextString("AddressIP"));
-
-		for (int i = 0; i < audit.size(); ++i)
-		{
-			HSSFRow dataRow = hoja.createRow(i + 1);
-
-			dataRow.createCell(0).setCellValue(audit.get(i).getId());
-			dataRow.createCell(1).setCellValue(audit.get(i).getOperationCrud());
-			dataRow.createCell(2).setCellValue(audit.get(i).getTableName());
-			dataRow.createCell(3).setCellValue(audit.get(i).getTableId());
-			dataRow.createCell(4).setCellValue(audit.get(i).getCreateDate().toString());
-			dataRow.createCell(5).setCellValue(audit.get(i).getAddressIP());
-		}
-
-		mensajeError = "Se ha generado el archivo correctamente.";
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-
-		try
-		{
-			FileOutputStream elFichero = new FileOutputStream(
-					"C://ReportesGeneradosSistemaSubastas/Reporte de usuario " + usu + ".xls");
-			libro.write(elFichero);
-			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/" + usu + ".xls"));
-			elFichero.close();
-		} catch (Exception e)
-		{
-		}
-	}
-
-	/**
 	 * Método para generar archivo pdf del reeporte del CRUD
 	 * 
 	 * @throws DocumentException
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void pdfSubastasCreadas() throws DocumentException, IOException
 	{
+		boolean generar = true;
+		int dias = (int) ((fin.getTime() - inicio.getTime()) / 86400000);
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ByteArrayInputStream in;
-		
-		Document document = new Document();
+		if (dias < 0)
+		{
+			generar = false;
+			mensajeError = "La fecha de inicio debe ser menor que la fecha final";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		}
 
-		PdfWriter.getInstance(document, out);
-		
-		Rectangle tamaño = PageSize.A4;
-		document.setPageSize(tamaño);
-		document.open();
+		if (generar == true)
+		{
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			ByteArrayInputStream in;
 
-		Font f = new Font();
-		f.setStyle(Font.BOLDITALIC);
-		f.setSize(30);
-		f.setColor(244, 92, 66);
+			Document document = new Document();
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
-		String date = sdf.format(new Date());
+			PdfWriter.getInstance(document, out);
 
-		Paragraph tituloEmpresa = new Paragraph();
-		tituloEmpresa.setFont(f);
-		tituloEmpresa.add("ACME inc");
-		document.add(tituloEmpresa);
-		document.add(new Paragraph(date));
-		document.add(Chunk.NEWLINE);
-		document.add(Chunk.NEWLINE);
+			Rectangle tamaño = PageSize.A4;
+			document.setPageSize(tamaño);
+			document.open();
 
-		Font boldFont = new Font();
-		boldFont.setStyle(Font.BOLD);
-		boldFont.setSize(18);
+			Font f = new Font();
+			f.setStyle(Font.BOLDITALIC);
+			f.setSize(30);
+			f.setColor(244, 92, 66);
 
-		SimpleDateFormat format = new SimpleDateFormat("dd/M/yyyy");
-		
-		Paragraph titulo = new Paragraph();
-		titulo.setFont(boldFont);
-		titulo.add("REPORTE DE SUBASTAS CREADAS ENTRE " + format.format(inicio) + " - " + format.format(fin) + ".");
-		titulo.setIndentationLeft(150);
-		document.add(titulo);
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy HH:mm:ss");
+			String date = sdf.format(new Date());
 
-		document.add(Chunk.NEWLINE);
-		document.add(Chunk.NEWLINE);
-		document.add(Chunk.NEWLINE);
-		PdfPTable tableUsuario = new PdfPTable(7);
-		addTableHeaderSubastasCreadas(tableUsuario);
-		addRowsUserSubastasCreadas(tableUsuario);
-		document.add(tableUsuario);
-		document.close();
+			Paragraph tituloEmpresa = new Paragraph();
+			tituloEmpresa.setFont(f);
+			tituloEmpresa.add("ACME inc");
+			document.add(tituloEmpresa);
+			document.add(new Paragraph(date));
+			document.add(Chunk.NEWLINE);
+			document.add(Chunk.NEWLINE);
 
-		in = new ByteArrayInputStream(out.toByteArray());
-		file = new DefaultStreamedContent(in, "application/pdf", "ReporteDeSubastasCreadas.pdf");
+			Font boldFont = new Font();
+			boldFont.setStyle(Font.BOLD);
+			boldFont.setSize(18);
 
-		mensajeError = "Se ha generado el archivo correctamente.";
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+			SimpleDateFormat format = new SimpleDateFormat("dd/M/yyyy");
+
+			Paragraph titulo = new Paragraph();
+			titulo.setFont(boldFont);
+			titulo.add("REPORTE DE SUBASTAS CREADAS ENTRE " + format.format(inicio) + " - " + format.format(fin) + ".");
+			titulo.setAlignment(Element.ALIGN_JUSTIFIED);
+			titulo.setIndentationLeft(80);
+			document.add(titulo);
+
+			document.add(Chunk.NEWLINE);
+			document.add(Chunk.NEWLINE);
+			document.add(Chunk.NEWLINE);
+			PdfPTable tableUsuario = new PdfPTable(7);
+			addTableHeaderSubastasCreadas(tableUsuario);
+			addRowsUserSubastasCreadas(tableUsuario);
+			document.add(tableUsuario);
+			document.close();
+
+			in = new ByteArrayInputStream(out.toByteArray());
+			file = new DefaultStreamedContent(in, "application/pdf", "ReporteDeSubastasCreadas.pdf");
+
+			mensajeError = "Se ha generado el archivo correctamente.";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+		}
 	}
 
 	/**
@@ -340,15 +234,16 @@ public class AuditMB
 	 */
 	public void addTableHeaderSubastasCreadas(PdfPTable table)
 	{
-		Stream.of("ID", "Producto", "Descripción", "Valor base", "Valor ofertado", "Fecha inicio", "Fecha fin").forEach(columnTitle ->
-		{
-			PdfPCell header = new PdfPCell();
-			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-			header.setBorderWidth(0);
-			header.setHorizontalAlignment(Element.ALIGN_CENTER);
-			header.setPhrase(new Phrase(columnTitle));
-			table.addCell(header);
-		});
+		Stream.of("ID", "Producto", "Descripción", "Valor base", "Valor ofertado", "Fecha inicio", "Fecha fin")
+				.forEach(columnTitle ->
+				{
+					PdfPCell header = new PdfPCell();
+					header.setBackgroundColor(BaseColor.LIGHT_GRAY);
+					header.setBorderWidth(0);
+					header.setHorizontalAlignment(Element.ALIGN_CENTER);
+					header.setPhrase(new Phrase(columnTitle));
+					table.addCell(header);
+				});
 	}
 
 	/**
@@ -397,109 +292,90 @@ public class AuditMB
 	}
 
 	/**
-	 * Método para generar archivo pdf para reporte de usuarios
+	 * Método para generar archivo excel del reporte de subastas creadas
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws DocumentException
 	 */
-	public void archivoPdfUsuario() throws FileNotFoundException, DocumentException
+	public void archivoExcelSubastasCreadas() throws FileNotFoundException, DocumentException
 	{
+		boolean generar = true;
+		int dias = (int) ((fin.getTime() - inicio.getTime()) / 86400000);
 
-		Document pdfDoc = new Document(PageSize.A4);
-
-		PdfWriter m = PdfWriter.getInstance(pdfDoc,
-				new FileOutputStream("C://ReportesGeneradosSistemaSubastas/" + usu + ".pdf"));
-
-		pdfDoc.open();
-
-		PdfPTable tableUsuario = new PdfPTable(7);
-		PdfPCell titulo = new PdfPCell(new Phrase("REPORTE POR USUARIO: " + usu));
-		titulo.setColspan(7);
-		titulo.setBackgroundColor(BaseColor.LIGHT_GRAY);
-		titulo.setBorderWidth(0);
-		titulo.setHorizontalAlignment(Element.ALIGN_CENTER);
-		tableUsuario.addCell(titulo);
-		addTableHeader(tableUsuario);
-		addRowsUser(tableUsuario);
-		pdfDoc.add(tableUsuario);
-
-		mensajeError = "Se ha generado el archivo correctamente.";
-		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
-
-		try
+		if (dias < 0)
 		{
-			Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/" + usu + ".pdf"));
-		} catch (IOException e)
-		{
+			generar = false;
+			mensajeError = "La fecha de inicio debe ser menor que la fecha final";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
 		}
-		pdfDoc.close();
-		m.close();
 
-	}
-
-	/**
-	 * Método para poner cabecera en el archivo
-	 * 
-	 * @param table
-	 */
-	public void addTableHeader(PdfPTable table)
-	{
-		Stream.of("ID", "Usuario", "Tabla", "ID Tabla", "Operación", "Fecha", "Dirección IP").forEach(columnTitle ->
+		if (generar == true)
 		{
-			PdfPCell header = new PdfPCell();
-			header.setBackgroundColor(BaseColor.LIGHT_GRAY);
-			header.setBorderWidth(0);
-			header.setHorizontalAlignment(Element.ALIGN_CENTER);
-			header.setPhrase(new Phrase(columnTitle));
-			table.addCell(header);
-		});
-	}
+			SalesuebService service = new SalesuebService();
+			Iterator it = getListaSubastasCreadas().iterator();
 
-	/**
-	 * Método para poner filas en el reporte
-	 * 
-	 * @param table
-	 */
-	public void addRowsUser(PdfPTable table)
-	{
-		Iterator it = getListaUsuario().iterator();
+			Salesueb x;
+			HSSFWorkbook libro = new HSSFWorkbook();
 
-		Audit x;
+			HSSFSheet hoja = libro.createSheet();
 
-		while (it.hasNext())
-		{
-			x = (Audit) it.next();
-			PdfPCell id = new PdfPCell(new Phrase("" + x.getId()));
-			PdfPCell userName = new PdfPCell(new Phrase(x.getUserName()));
-			PdfPCell TableName = new PdfPCell(new Phrase(x.getTableName()));
-			PdfPCell TableID = new PdfPCell(new Phrase("" + x.getTableId()));
-			PdfPCell CRUD = new PdfPCell(new Phrase(x.getOperationCrud()));
-			PdfPCell Fecha = new PdfPCell(new Phrase("" + x.getCreateDate()));
-			PdfPCell IP = new PdfPCell(new Phrase(x.getAddressIP()));
-			id.setBorder(Rectangle.NO_BORDER);
-			id.setHorizontalAlignment(Element.ALIGN_CENTER);
-			userName.setBorder(Rectangle.NO_BORDER);
-			userName.setHorizontalAlignment(Element.ALIGN_CENTER);
-			TableName.setBorder(Rectangle.NO_BORDER);
-			TableName.setHorizontalAlignment(Element.ALIGN_CENTER);
-			TableID.setBorder(Rectangle.NO_BORDER);
-			TableID.setHorizontalAlignment(Element.ALIGN_CENTER);
-			CRUD.setBorder(Rectangle.NO_BORDER);
-			CRUD.setHorizontalAlignment(Element.ALIGN_CENTER);
-			Fecha.setBorder(Rectangle.NO_BORDER);
-			Fecha.setHorizontalAlignment(Element.ALIGN_CENTER);
-			IP.setBorder(Rectangle.NO_BORDER);
-			IP.setHorizontalAlignment(Element.ALIGN_CENTER);
-			table.addCell(id);
-			table.addCell(userName);
-			table.addCell(TableName);
-			table.addCell(TableID);
-			table.addCell(CRUD);
-			table.addCell(Fecha);
-			table.addCell(IP);
+			HSSFRow fila = hoja.createRow(0);
+
+			// Se crea una celda dentro de la fila
+			HSSFCell id = fila.createCell((short) 0);
+			HSSFCell name = fila.createCell((short) 1);
+			HSSFCell descripcion = fila.createCell((short) 2);
+			HSSFCell pro = fila.createCell((short) 3);
+			HSSFCell base = fila.createCell((short) 4);
+			HSSFCell current = fila.createCell((short) 5);
+			HSSFCell fechaStar = fila.createCell((short) 6);
+			HSSFCell fechaEnd = fila.createCell((short) 7);
+
+			id.setCellValue(new HSSFRichTextString("ID"));
+			name.setCellValue(new HSSFRichTextString("Producto"));
+			descripcion.setCellValue(new HSSFRichTextString("Descripción"));
+			pro.setCellValue(new HSSFRichTextString("Proveedor"));
+			base.setCellValue(new HSSFRichTextString("Valor base"));
+			current.setCellValue(new HSSFRichTextString("Valor ofertado"));
+			fechaStar.setCellValue(new HSSFRichTextString("Fecha de inicio"));
+			fechaEnd.setCellValue(new HSSFRichTextString("Fecha final"));
+			int i = 0;
+			while (it.hasNext())
+			{
+				HSSFRow dataRow = hoja.createRow(i + 1);
+				x = (Salesueb) it.next();
+				dataRow.createCell(0).setCellValue(x.getId());
+				dataRow.createCell(1).setCellValue(x.getName());
+				dataRow.createCell(2).setCellValue(x.getDescriptionProduct());
+				dataRow.createCell(3).setCellValue(x.getIdentificationSales());
+				dataRow.createCell(4).setCellValue(x.getValueBase());
+				dataRow.createCell(5).setCellValue(x.getValueCurrent());
+				dataRow.createCell(6).setCellValue(x.getDateStart().toString());
+				dataRow.createCell(7).setCellValue(x.getDateEnd().toString());
+
+				i++;
+			}
+
+			mensajeError = "Se ha generado el archivo correctamente.";
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage("Cuidado", mensajeError));
+
+			try
+			{
+				FileOutputStream elFichero = new FileOutputStream(
+						"C://ReportesGeneradosSistemaSubastas/ReporteSubastasCreadas.xls");
+				libro.write(elFichero);
+				Desktop.getDesktop().open(new File("C://ReportesGeneradosSistemaSubastas/ReporteSubastasCreadas.xls"));
+				elFichero.close();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
+
+	
 
 	/**
 	 * Dar la auditoria
@@ -634,31 +510,31 @@ public class AuditMB
 	{
 		this.mensajeError = mensajeError;
 	}
-	
+
 	public List inicializarSubastasCreadas()
 	{
 		listaSubastasCreadas = new ArrayList<>();
 		SalesuebService service = new SalesuebService();
 		SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.0");
 		List<Audit> listaFiltada = new AuditService().getAuditFilter("createDate BETWEEN '" + formato.format(inicio)
-				+ "'AND '" + formato.format(fin) + "' AND operationCrud = 'CREATE' AND tableName = 'Salesueb'");
-		
+				+ "'AND '" + formato.format(fin) + "' AND operationCrud = 'CREAR' AND tableName = 'Salesueb'");
+
 		Iterator<Audit> it = listaFiltada.iterator();
-		
-		while(it.hasNext())
+
+		while (it.hasNext())
 		{
 			Audit x = it.next();
 			Salesueb elemento = service.listaSalesuebID(x.getTableId());
 			listaSubastasCreadas.add(elemento);
 		}
-		
+
 		return listaSubastasCreadas;
 	}
 
 	public List getListaSubastasCreadas()
 	{
 		listaSubastasCreadas = inicializarSubastasCreadas();
-		
+
 		return listaSubastasCreadas;
 	}
 
@@ -696,7 +572,5 @@ public class AuditMB
 	{
 		this.file = file;
 	}
-	
-	
 
 }

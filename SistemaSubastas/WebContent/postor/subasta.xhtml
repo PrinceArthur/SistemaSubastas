@@ -127,7 +127,7 @@ body {
 				</p:panel>
 				<p:dataTable id="tbl" var="oferta" scrollable="true"
 					scrollHeight="50%" value="#{userMB.listaOfertaSubasta}"
-					style="width:80%;height:100%;align: top;margin-left:10%">
+					style="width:80%;height:300px;align: top;margin-left:10%">
 					<p:column>
 						<center>
 							<p:outputLabel value="#{oferta.dateOffer}" />
@@ -148,6 +148,22 @@ body {
 
 			</p:panelGrid>
 		</p:panel>
+		
+		<p:layout fullPage="true" >
+
+    
+
+    <p:layoutUnit position="south" size="40"  style="text-align:center">
+        <h:outputText   style="font-size:75%;font-family:Courier" value="Universidad el bosque | Estefania Pérez Torres | Guillermo Marcano Funes | Richard Mora Perilla" />
+    </p:layoutUnit>
+
+    
+
+    <p:layoutUnit position="center" visible="false"/>
+
+
+</p:layout>
+		
 	</h:form>
 
 	<p:dialog id="dlg1" header="Ofertar" widgetVar="dlg1" modal="true"
@@ -158,7 +174,7 @@ body {
 			<p:panelGrid columns="2" styleClass="panel">
 
 				<p:outputLabel value="Digite su oferta: " />
-				<p:inputNumber value="#{userMB.oferta.valueOffer}" id="noMod">
+				<p:inputNumber value="#{userMB.oferta.valueOffer}" minValue="0" id="noMod">
 				</p:inputNumber>
 				<p:commandButton value="Ofertar" action="#{userMB.agregarOferta}"
 					update=":#{p:component('formM')} :#{p:component('pg')} :#{p:component('growl')}: #{p:component('tbl')}"
