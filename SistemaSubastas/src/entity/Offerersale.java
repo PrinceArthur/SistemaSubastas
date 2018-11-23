@@ -28,6 +28,8 @@ public class Offerersale implements Serializable {
 	private int valueOffer;
 
 	private String winner;
+	
+	private String producto;
 
 	public Offerersale() {
 	}
@@ -79,5 +81,17 @@ public class Offerersale implements Serializable {
 	public void setWinner(String winner) {
 		this.winner = winner;
 	}
+
+	public String getProducto()
+	{
+		return producto;
+	}
+
+	public void setProducto(String producto)
+	{
+		this.producto = producto;
+	}
+	
+	
 
 }
